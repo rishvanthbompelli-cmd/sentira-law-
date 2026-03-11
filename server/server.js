@@ -26,7 +26,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 })
 
-// Initialize Database and Table
+// Initialize Database and Tables
 async function initDatabase() {
   try {
     // First connect without database to create it
@@ -51,8 +51,41 @@ async function initDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)
+    
+    // Create cases table
+    await poolConnection.query(`
+      CREATE TABLE IF NOT EXISTS cases (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        case_id VARCHAR(50) UNIQUE NOT NULL,
+        full_name VARCHAR(100) NOT NULL,
+        phone VARCHAR(20),
+        email VARCHAR(150) NOT NULL,
+        address TEXT,
+        issue_type VARCHAR(50),
+        description TEXT,
+        id_proof VARCHAR(255),
+        documents VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+    
+    // Create contacts table
+    await poolConnection.query(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        full_name VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL,
+        phone VARCHAR(20),
+        subject VARCHAR(200),
+        message TEXT,
+        status VARCHAR(20) DEFAULT 'unread',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+    
     poolConnection.release()
-    console.log('Users table created/verified successfully')
+    console.log('All tables created/verified successfully')
   } catch (error) {
     console.error('Database initialization error:', error.message)
   }
@@ -61,17 +94,17 @@ async function initDatabase() {
 // Initialize database on startup
 initDatabase()
 
-// Login Route - Plain password comparison
+// ============ AUTH ROUTES ============
+
+// Login Route
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
     
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
     
-    // Find user by email
     const [users] = await pool.query(
       'SELECT * FROM users WHERE email = ?',
       [email]
@@ -83,19 +116,16 @@ app.post('/login', async (req, res) => {
     
     const user = users[0]
     
-    // Compare password (plain text comparison as per requirements)
     if (password !== user.password) {
       return res.status(401).json({ error: 'Invalid email or password' })
     }
     
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       JWT_SECRET,
       { expiresIn: '7d' }
     )
     
-    // Return success with user data (without password)
     res.json({
       success: true,
       message: 'Login successful',
@@ -117,12 +147,10 @@ app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body
     
-    // Validate input
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' })
     }
     
-    // Check if email already exists
     const [existingUsers] = await pool.query(
       'SELECT id FROM users WHERE email = ?',
       [email]
@@ -132,13 +160,11 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already registered' })
     }
     
-    // Insert user (storing password as plain text as per requirements)
     const [result] = await pool.query(
       'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
       [name, email, password]
     )
     
-    // Generate token
     const token = jwt.sign(
       { userId: result.insertId, email },
       JWT_SECRET,
@@ -154,6 +180,85 @@ app.post('/register', async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error)
     res.status(500).json({ error: 'Registration failed' })
+  }
+})
+
+// ============ CASES ROUTES ============
+
+// Submit Case
+app.post('/api/cases', async (req, res) => {
+  try {
+    const { caseId, fullName, phone, email, address, issueType, description, idProof, documents } = req.body
+    
+    if (!caseId || !fullName || !email) {
+      return res.status(400).json({ error: 'Case ID, name and email are required' })
+    }
+    
+    const [result] = await pool.query(
+      `INSERT INTO cases (case_id, full_name, phone, email, address, issue_type, description, id_proof, documents) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [caseId, fullName, phone, email, address, issueType, description, idProof, documents]
+    )
+    
+    res.status(201).json({
+      success: true,
+      message: 'Case submitted successfully',
+      caseId: caseId,
+      id: result.insertId
+    })
+  } catch (error) {
+    console.error('Submit case error:', error)
+    res.status(500).json({ error: 'Failed to submit case' })
+  }
+})
+
+// Get All Cases
+app.get('/api/cases', async (req, res) => {
+  try {
+    const [cases] = await pool.query('SELECT * FROM cases ORDER BY created_at DESC')
+    res.json({ success: true, cases })
+  } catch (error) {
+    console.error('Get cases error:', error)
+    res.status(500).json({ error: 'Failed to fetch cases' })
+  }
+})
+
+// ============ CONTACTS ROUTES ============
+
+// Submit Contact
+app.post('/api/contacts', async (req, res) => {
+  try {
+    const { fullName, email, phone, subject, message } = req.body
+    
+    if (!fullName || !email || !message) {
+      return res.status(400).json({ error: 'Full name, email and message are required' })
+    }
+    
+    const [result] = await pool.query(
+      `INSERT INTO contacts (full_name, email, phone, subject, message) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [fullName, email, phone, subject, message]
+    )
+    
+    res.status(201).json({
+      success: true,
+      message: 'Message sent successfully',
+      id: result.insertId
+    })
+  } catch (error) {
+    console.error('Submit contact error:', error)
+    res.status(500).json({ error: 'Failed to send message' })
+  }
+})
+
+// Get All Contacts
+app.get('/api/contacts', async (req, res) => {
+  try {
+    const [contacts] = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC')
+    res.json({ success: true, contacts })
+  } catch (error) {
+    console.error('Get contacts error:', error)
+    res.status(500).json({ error: 'Failed to fetch contacts' })
   }
 })
 

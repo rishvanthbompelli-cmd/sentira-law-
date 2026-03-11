@@ -18,6 +18,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
   
   const [submitted, setSubmitted] = useState(false)
   const [caseId, setCaseId] = useState('')
+  const [error, setError] = useState('')
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -31,34 +32,61 @@ export default function CaseSubmissionForm({ onNavigate }) {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     
     // Generate unique case ID
     const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase()
-    setCaseId(newCaseId)
-    setSubmitted(true)
     
-    // Store case data in localStorage
-    const caseData = {
-      caseId: newCaseId,
-      ...formData,
-      documents,
-      submittedAt: new Date().toISOString()
+    try {
+      // Send data to backend API
+      const response = await fetch('http://localhost:3001/api/cases', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          caseId: newCaseId,
+          fullName: formData.fullName,
+          phone: formData.phone,
+          email: formData.email,
+          address: formData.address,
+          issueType: formData.issueType,
+          description: formData.description,
+          idProof: documents.idProof,
+          documents: documents.documents
+        })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setCaseId(newCaseId)
+        setSubmitted(true)
+        
+        // Also store in localStorage for backup/offline
+        const caseData = {
+          caseId: newCaseId,
+          ...formData,
+          documents,
+          submittedAt: new Date().toISOString()
+        }
+        
+        localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
+        localStorage.setItem('recentCaseId', newCaseId)
+        
+        // Navigate to dashboard
+        setTimeout(() => {
+          onNavigate('case-dashboard')
+        }, 2000)
+      } else {
+        setError(data.error || 'Failed to submit case')
+      }
+    } catch (err) {
+      console.error('Submit case error:', err)
+      setError('Failed to submit case. Please try again.')
     }
-    
-    localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
-    localStorage.setItem('recentCaseId', newCaseId)
-    
-    // Store case in the cases array for dashboard
-    const existingCases = JSON.parse(localStorage.getItem('cases')) || []
-    existingCases.push(caseData)
-    localStorage.setItem('cases', JSON.stringify(existingCases))
-    
-    // Navigate to dashboard
-    setTimeout(() => {
-      onNavigate('case-dashboard')
-    }, 2000)
   }
 
   const issueTypes = [

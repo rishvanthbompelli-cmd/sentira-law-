@@ -10,17 +10,41 @@ export default function Contact({ onNavigate }) {
     message: ''
   })
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // In a real app, you would send this to a backend
-    console.log('Contact form submitted:', formData)
-    setSubmitted(true)
+    setError('')
+    setLoading(true)
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setSubmitted(true)
+      } else {
+        setError(data.error || 'Failed to send message')
+      }
+    } catch (err) {
+      console.error('Contact form error:', err)
+      setError('Failed to send message. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
