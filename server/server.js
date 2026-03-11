@@ -61,8 +61,59 @@ async function initDatabase() {
 // Initialize database on startup
 initDatabase()
 
+// Login Route - Plain password comparison
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body
+    
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' })
+    }
+    
+    // Find user by email
+    const [users] = await pool.query(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    )
+    
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password' })
+    }
+    
+    const user = users[0]
+    
+    // Compare password (plain text comparison as per requirements)
+    if (password !== user.password) {
+      return res.status(401).json({ error: 'Invalid email or password' })
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+    
+    // Return success with user data (without password)
+    res.json({
+      success: true,
+      message: 'Login successful',
+      token,
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email 
+      }
+    })
+  } catch (error) {
+    console.error('Login error:', error)
+    res.status(500).json({ error: 'Login failed' })
+  }
+})
+
 // Register Route
-app.post('/api/register', async (req, res) => {
+app.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body
     
@@ -81,13 +132,10 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already registered' })
     }
     
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
-    
-    // Insert user
+    // Insert user (storing password as plain text as per requirements)
     const [result] = await pool.query(
       'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-      [name, email, hashedPassword]
+      [name, email, password]
     )
     
     // Generate token
@@ -98,6 +146,7 @@ app.post('/api/register', async (req, res) => {
     )
     
     res.status(201).json({
+      success: true,
       message: 'Registration successful',
       token,
       user: { id: result.insertId, name, email }
@@ -108,55 +157,8 @@ app.post('/api/register', async (req, res) => {
   }
 })
 
-// Login Route
-app.post('/api/login', async (req, res) => {
-  try {
-    const { email, password } = req.body
-    
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' })
-    }
-    
-    // Find user
-    const [users] = await pool.query(
-      'SELECT * FROM users WHERE email = ?',
-      [email]
-    )
-    
-    if (users.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or password' })
-    }
-    
-    const user = users[0]
-    
-    // Compare password
-    const isMatch = await bcrypt.compare(password, user.password)
-    
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid email or password' })
-    }
-    
-    // Generate token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    )
-    
-    res.json({
-      message: 'Login successful',
-      token,
-      user: { id: user.id, name: user.name, email: user.email }
-    })
-  } catch (error) {
-    console.error('Login error:', error)
-    res.status(500).json({ error: 'Login failed' })
-  }
-})
-
 // Verify Token Route
-app.get('/api/verify', async (req, res) => {
+app.get('/verify', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
     

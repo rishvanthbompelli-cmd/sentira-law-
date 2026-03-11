@@ -17,31 +17,14 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     setError('')
   }
 
-  const handleDemoLogin = () => {
-    const demoUser = {
-      id: Date.now(),
-      name: 'Demo User',
-      email: 'demo@sentira-law.com',
-      isDemo: true
-    }
-    
-    localStorage.setItem('token', 'demo-token')
-    localStorage.setItem('user', JSON.stringify(demoUser))
-    
-    if (onLoginSuccess) {
-      onLoginSuccess(demoUser)
-    }
-    
-    onNavigate('case-dashboard')
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      const endpoint = isLoginMode ? '/api/login' : '/api/register'
+      const endpoint = isLoginMode ? '/login' : '/register'
+      
       const response = await fetch(`http://localhost:3001${endpoint}`, {
         method: 'POST',
         headers: {
@@ -68,24 +51,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
       // Navigate to dashboard
       onNavigate('case-dashboard')
     } catch (err) {
-      // If backend is not available or returns error, use demo mode
-      console.log('Login error, using demo mode:', err.message)
-      
-      const demoUser = {
-        id: Date.now(),
-        name: formData.name || (isLoginMode ? 'Demo User' : formData.email.split('@')[0]),
-        email: formData.email,
-        isDemo: true
-      }
-      
-      localStorage.setItem('token', 'demo-token')
-      localStorage.setItem('user', JSON.stringify(demoUser))
-      
-      if (onLoginSuccess) {
-        onLoginSuccess(demoUser)
-      }
-      
-      onNavigate('case-dashboard')
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -166,13 +132,6 @@ export default function Login({ onNavigate, onLoginSuccess }) {
               {isLoginMode ? 'Create Account' : 'Login'}
             </button>
           </p>
-          
-          <div className="demo-section">
-            <p className="demo-text">or</p>
-            <button type="button" className="demo-btn" onClick={handleDemoLogin}>
-              Try Demo Account
-            </button>
-          </div>
         </div>
       </div>
     </div>
