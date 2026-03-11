@@ -1,0 +1,54 @@
+/* ========================================
+   SENTIRA-LAW: Core Color System
+   Professional, Calm & Trustworthy
+   ======================================== */
+
+:root {
+  /* Primary Colors - Professional Legal Blue */
+  --primary-color: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
+  --secondary-color: #7c3aed;
+  
+  /* Deep Navy - Authority, Trust, Mental Stability */
+  --navy-dark: #0a1628;
+  --navy-primary: #0f2a54;
+  --navy-medium: #1a3a6a;
+  --navy-light: #2a4a7f;
+
+  /* Soft Violet/Purple - AI, Intelligence, Empathy */
+  --violet-deep: #6b5ba8;
+  --violet-primary: #7d6db3;
+  --violet-soft: #9d8ebf;
+  --violet-light: #b9a8d1;
+  --violet-pale: #e0d7f0;
+
+  /* Accent Colors - Premium Feel */
+  --gold-soft: #d4a574;
+  --gold-pale: #e8c9a0;
+  --silver-soft: #c8c8d8;
+  --silver-pale: #dcdce8;
+
+  /* Text Colors - Optimized for light backgrounds */
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+  --text-light: #6b7280;
+
+  /* Glass/Transparency */
+  --glass-bg-light: rgba(255, 255, 255, 0.05);
+  --glass-bg-medium: rgba(15, 42, 84, 0.3);
+  --glass-bg-dark: rgba(10, 22, 40, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.12);
+
+  /* Overlay for video background */
+  --overlay-navy: rgba(10, 22, 40, 0.55);
+  --overlay-light: rgba(15, 42, 84, 0.3);
+
+  /* Functional Colors */
+  --success: #4ade80;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #7d6db3;
+}

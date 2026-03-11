@@ -1,0 +1,953 @@
+# React + Vite Project Setup Complete
+
+This project has been converted to React with Vite. The original `index.html` is deprecated.
+
+## Getting Started
+
+1. Install dependencies:
+   ```
+   npm install
+   ```
+
+2. Start the development server:
+   ```
+   npm run dev
+   ```
+
+3. Build for production:
+   ```
+   npm run build
+   ```
+
+## Project Structure
+
+- `src/` - React source files
+  - `App.jsx` - Main React component
+  - `main.jsx` - React entry point
+  - `App.css` - Component styles
+- `public/` - Static assets
+  - `index.html` - HTML template
+- `vite.config.js` - Vite configuration
+
+Your app is now ready to run!
+            color: #e0e0f8;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4em;
+        }
+
+        .panel h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .icon {
+            font-size: 1.3em;
+        }
+
+        textarea, input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        textarea {
+            min-height: 120px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .secondary-btn {
+            background: #6c757d;
+        }
+
+        .secondary-btn:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .analysis-result {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            line-height: 1.6;
+        }
+
+        .heat-level {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .heat-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .heat-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .heat-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-highlight {
+            background: #ffe0e0;
+            padding: 10px;
+            border-left: 3px solid #d32f2f;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .positive-suggestion {
+            background: #e8f5e9;
+            padding: 10px;
+            border-left: 3px solid #4caf50;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .mediator-note {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+            border-radius: 6px;
+            color: #1565c0;
+        }
+
+        .document-section {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .document-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .document-text {
+            color: #555;
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .settlement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .settlement-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .settlement-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .settlement-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .print-button {
+            background: #28a745;
+            margin-top: 20px;
+        }
+
+        .print-button:hover {
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .copy-button {
+            background: #17a2b8;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .copy-button:hover {
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-box .number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-box .label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        .emoji-button {
+            font-size: 1.2em;
+            padding: 8px 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .tabs, button, textarea, input {
+                display: none;
+            }
+            .document-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ Sentira-Law</h1>
+            <p>AI-Powered Emotional Legal Mediator</p>
+            <p class="tagline">Resolve disputes peacefully, intelligently, and legally.</p>
+        </div>
+
+        <div class="main-content">
+            <!-- LEFT PANEL: ANALYSIS -->
+            <div class="panel">
+                <h2><span class="icon">🔍</span> Emotional Analysis</h2>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('analyze', 'tab1')">Analyze Text</button>
+                    <button class="tab" onclick="switchTab('heat', 'tab1')">Heat Map</button>
+                </div>
+
+                <div id="analyze-tab1" class="tab-content active">
+                    <h3>Analyze Communication</h3>
+                    <label for="partyName">Party Name/Role:</label>
+                    <input type="text" id="partyName" placeholder="e.g., Landlord, Tenant, Employee...">
+                    
+                    <label for="communicationText">Paste text to analyze:</label>
+                    <textarea id="communicationText" placeholder="Paste email, chat transcript, or letter here..."></textarea>
+                    
+                    <button onclick="analyzeText()">🔍 Analyze Tone & Risks</button>
+                    <button class="secondary-btn" onclick="clearAnalysis()">Clear</button>
+
+                    <div id="analysisOutput"></div>
+                </div>
+
+                <div id="heat-tab1" class="tab-content">
+                    <h3>Emotional Intensity Heat Map</h3>
+                    <p style="color: #666; margin-bottom: 15px;">The system will generate a heat map showing emotional escalation patterns.</p>
+                    
+                    <button onclick="generateHeatMap()">🌡️ Generate Heat Map</button>
+                    <div id="heatMapOutput"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: MEDIATION & DOCUMENTATION -->
+            <div class="panel">
+                <h2><span class="icon">🤝</span> The Bridge: Mediation</h2>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('mediate', 'tab2')">Mediate</button>
+                    <button class="tab" onclick="switchTab('mou', 'tab2')">MoU Generator</button>
+                </div>
+
+                <div id="mediate-tab2" class="tab-content active">
+                    <h3>Neutral Settlement Proposal</h3>
+                    
+                    <label for="disputeType">Dispute Type:</label>
+                    <select id="disputeType">
+                        <option value="">-- Select Type --</option>
+                        <option value="landlord-tenant">Landlord-Tenant</option>
+                        <option value="employment">Employment</option>
+                        <option value="contract">Contract/Commercial</option>
+                        <option value="property">Property/Boundary</option>
+                        <option value="monetary">Monetary/Loan</option>
+                        <option value="family">Family/Marriage</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label for="party1Claim">Party 1 Claim/Position:</label>
+                    <textarea id="party1Claim" placeholder="What does the first party want/claim?"></textarea>
+
+                    <label for="party2Claim">Party 2 Claim/Position:</label>
+                    <textarea id="party2Claim" placeholder="What does the second party want/claim?"></textarea>
+
+                    <label for="commonGround">Common Ground (if any):</label>
+                    <textarea id="commonGround" placeholder="Any shared interests or agreements already made?"></textarea>
+
+                    <button onclick="generateMediation()">🤝 Propose Settlement</button>
+                    <button class="secondary-btn" onclick="clearMediation()">Clear</button>
+
+                    <div id="mediationOutput"></div>
+                </div>
+
+                <div id="mou-tab2" class="tab-content">
+                    <h3>Memorandum of Understanding</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Generate a neutral MoU when parties have reached an agreement.</p>
+                    
+                    <label for="mouParty1">Party 1 Name:</label>
+                    <input type="text" id="mouParty1" placeholder="e.g., Mr. ABC">
+                    
+                    <label for="mouParty2">Party 2 Name:</label>
+                    <input type="text" id="mouParty2" placeholder="e.g., Mr. XYZ">
+
+                    <label for="mouAgreement">Agreement Details:</label>
+                    <textarea id="mouAgreement" placeholder="Describe what both parties have agreed to..."></textarea>
+
+                    <label for="mouConditions">Conditions & Terms:</label>
+                    <textarea id="mouConditions" placeholder="Any specific conditions, timelines, or obligations..."></textarea>
+
+                    <button onclick="generateMoU()">📄 Generate MoU</button>
+                    <button class="secondary-btn" onclick="clearMoU()">Clear</button>
+
+                    <div id="mouOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>Disclaimer:</strong> Sentira-Law is an AI mediator for dispute resolution and de-escalation. It does not replace professional legal counsel. Always consult with a qualified lawyer before making final legal decisions.
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TONE & EMOTION ANALYSIS ENGINE
+        // ============================================
+
+        const aggressiveWords = [
+            'stupidly', 'idiot', 'moron', 'incompetent', 'ridiculous', 'absurd',
+            'sue you', 'illegal', 'criminal', 'fraud', 'liar', 'dishonest',
+            'unacceptable', 'disgusting', 'pathetic', 'terrible', 'worst',
+            'demand', 'threaten', 'harass', 'blackmail', 'extortion'
+        ];
+
+        const hostileWords = [
+            'angry', 'furious', 'enraged', 'hate', 'despise', 'contempt',
+            'disgusted', 'betrayed', 'betrayal', 'backstab', 'deceitful'
+        ];
+
+        const manipulativeWords = [
+            'if you don\'t', 'you have to', 'no choice', 'forced', 'blackmail',
+            'comply', 'obey', 'surrender', 'give in', 'back down'
+        ];
+
+        const professionalWords = [
+            'appreciate', 'understand', 'discuss', 'resolve', 'agreement',
+            'mutually', 'fair', 'reasonable', 'compromise', 'cooperate',
+            'solution', 'together', 'respectfully', 'kindly', 'would'
+        ];
+
+        function analyzeText() {
+            const text = document.getElementById('communicationText').value.toLowerCase();
+            const partyName = document.getElementById('partyName').value || 'Party';
+            const output = document.getElementById('analysisOutput');
+
+            if (!text.trim()) {
+                output.innerHTML = '<p style="color: red;">Please enter text to analyze.</p>';
+                return;
+            }
+
+            let aggressiveCount = 0, hostileCount = 0, manipulativeCount = 0, professionalCount = 0;
+            let foundAggressive = [], foundHostile = [], foundManipulative = [], foundProfessional = [];
+
+            aggressiveWords.forEach(word => {
+                if (text.includes(word)) {
+                    aggressiveCount++;
+                    foundAggressive.push(word);
+                }
+            });
+
+            hostileWords.forEach(word => {
+                if (text.includes(word)) {
+                    hostileCount++;
+                    foundHostile.push(word);
+                }
+            });
+
+            manipulativeWords.forEach(word => {
+                if (text.includes(word)) {
+                    manipulativeCount++;
+                    foundManipulative.push(word);
+                }
+            });
+
+            professionalWords.forEach(word => {
+                if (text.includes(word)) {
+                    professionalCount++;
+                    foundProfessional.push(word);
+                }
+            });
+
+            let riskLevel = 'Low';
+            let heatColor = 'heat-low';
+            if (aggressiveCount + hostileCount + manipulativeCount > 3) {
+                riskLevel = 'High';
+                heatColor = 'heat-high';
+            } else if (aggressiveCount + hostileCount + manipulativeCount > 0) {
+                riskLevel = 'Medium';
+                heatColor = 'heat-medium';
+            }
+
+            let html = `
+                <div class="analysis-result">
+                    <h4>${partyName}'s Emotional Tone Analysis</h4>
+                    <div class="heat-level ${heatColor}">Risk Level: ${riskLevel}</div>
+                    
+                    <h5 style="margin-top: 15px; color: #333;">Key Findings:</h5>
+            `;
+
+            if (foundAggressive.length > 0) {
+                html += `
+                    <div class="risk-highlight">
+                        <strong>⚠️ Aggressive Language Detected:</strong><br>
+                        "${foundAggressive.join('", "')}"<br>
+                        <small style="color: #d32f2f;">This wording may damage credibility in court and weaken your position.</small>
+                    </div>
+                `;
+            }
+
+            if (foundHostile.length > 0) {
+                html += `
+                    <div class="risk-highlight">
+                        <strong>🔥 Hostile Tone Detected:</strong><br>
+                        "${foundHostile.join('", "')}"<br>
+                        <small style="color: #d32f2f;">Emotional outbursts can be used against you in legal proceedings.</small>
+                    </div>
+                `;
+            }
+
+            if (foundManipulative.length > 0) {
+                html += `
+                    <div class="risk-highlight">
+                        <strong>⛔ Potential Coercion/Manipulation:</strong><br>
+                        "${foundManipulative.join('", "')}"<br>
+                        <small style="color: #d32f2f;">This approach risks counter-accusations of threats or undue influence.</small>
+                    </div>
+                `;
+            }
+
+            if (foundProfessional.length > 0) {
+                html += `
+                    <div class="positive-suggestion">
+                        <strong>✅ Professional Language Found:</strong><br>
+                        "${foundProfessional.join('", "')}"<br>
+                        <small style="color: #2e7d32;">This strengthens credibility and promotes constructive dialogue.</small>
+                    </div>
+                `;
+            }
+
+            html += `
+                <h5 style="margin-top: 15px; color: #333;">📝 Suggested Rephrasings:</h5>
+                <div class="positive-suggestion">
+            `;
+
+            if (foundAggressive.length > 0) {
+                html += `
+                    <strong>Instead of harsh language:</strong><br>
+                    "I understand this is frustrating, but I believe there's a misunderstanding. Let's discuss this professionally to find a fair solution."<br><br>
+                `;
+            }
+
+            if (foundHostile.length > 0) {
+                html += `
+                    <strong>Instead of emotional outbursts:</strong><br>
+                    "I have concerns about this situation and would like to address them constructively with your support."<br><br>
+                `;
+            }
+
+            if (foundManipulative.length > 0) {
+                html += `
+                    <strong>Instead of threats:</strong><br>
+                    "I hope we can resolve this amicably. If needed, we may explore formal dispute resolution processes."<br>
+                `;
+            }
+
+            html += `
+                </div>
+                <div class="mediator-note">
+                    <strong>💡 Mediator's Advice:</strong><br>
+                    Your communication style reflects your emotional state and can significantly impact negotiation outcomes and judicial perception. 
+                    Focus on facts, interests, and solutions rather than blame or coercion. Always document agreements in writing.
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        function generateHeatMap() {
+            const text = document.getElementById('communicationText').value.toLowerCase();
+            const output = document.getElementById('heatMapOutput');
+
+            if (!text.trim()) {
+                output.innerHTML = '<p style="color: red;">Please analyze text first using the "Analyze" tab.</p>';
+                return;
+            }
+
+            const lines = text.split('\n');
+            let heatMapHtml = `<h4>Emotional Escalation Heat Map</h4>`;
+
+            lines.forEach((line, index) => {
+                if (line.trim()) {
+                    let lineScore = 0;
+                    aggressiveWords.forEach(w => { if (line.includes(w)) lineScore += 2; });
+                    hostileWords.forEach(w => { if (line.includes(w)) lineScore += 1.5; });
+                    manipulativeWords.forEach(w => { if (line.includes(w)) lineScore += 1.5; });
+
+                    let intensity = 'Low';
+                    let barColor = '#4caf50';
+                    if (lineScore > 3) {
+                        intensity = 'High';
+                        barColor = '#d32f2f';
+                    } else if (lineScore > 1.5) {
+                        intensity = 'Medium';
+                        barColor = '#ff9800';
+                    }
+
+                    const barWidth = Math.min(lineScore * 10, 100);
+                    heatMapHtml += `
+                        <div style="margin: 10px 0;">
+                            <div style="font-size: 0.9em; color: #666; margin-bottom: 3px;">
+                                Line ${index + 1}: <span class="heat-level" style="background: ${barColor}20; color: ${barColor};">${intensity}</span>
+                            </div>
+                            <div style="background: #e0e0e0; border-radius: 4px; height: 20px;">
+                                <div style="background: ${barColor}; width: ${barWidth}%; height: 100%; border-radius: 4px; transition: width 0.3s;"></div>
+                            </div>
+                            <small style="color: #999;">"${line.substring(0, 60)}${line.length > 60 ? '...' : ''}"</small>
+                        </div>
+                    `;
+                }
+            });
+
+            output.innerHTML = heatMapHtml;
+        }
+
+        // ============================================
+        // MEDIATION ENGINE
+        // ============================================
+
+        function generateMediation() {
+            const disputeType = document.getElementById('disputeType').value;
+            const party1Claim = document.getElementById('party1Claim').value;
+            const party2Claim = document.getElementById('party2Claim').value;
+            const commonGround = document.getElementById('commonGround').value;
+            const output = document.getElementById('mediationOutput');
+
+            if (!disputeType || !party1Claim.trim() || !party2Claim.trim()) {
+                output.innerHTML = '<p style="color: red;">Please fill in all dispute details.</p>';
+                return;
+            }
+
+            let settlements = {};
+
+            // Dispute-specific settlement templates
+            if (disputeType === 'landlord-tenant') {
+                settlements = {
+                    property: "A written rental agreement with clear terms, duration, and conditions",
+                    repair: "Landlord commits to timely repairs within 7 days; Tenant agrees to report issues in writing",
+                    deposit: "Security deposit held in joint account; Released within 30 days of checkout with itemized deductions",
+                    notice: "Both parties commit to 30 days notice for termination"
+                };
+            } else if (disputeType === 'employment') {
+                settlements = {
+                    salary: "Transparent salary structure with written employment contract",
+                    hours: "Clearly defined working hours and overtime compensation",
+                    leave: "Fair leave policy with documented approvals",
+                    severance: "Mutually agreed severance terms if termination occurs"
+                };
+            } else if (disputeType === 'contract') {
+                settlements = {
+                    terms: "Revised contract with clear deliverables and timelines",
+                    payment: "Payment schedule agreed in writing with milestones",
+                    disputes: "Third-party arbitration clause for future disputes",
+                    termination: "Graceful exit clause with notice period and compensation"
+                };
+            } else if (disputeType === 'property') {
+                settlements = {
+                    boundary: "Professional survey to establish clear boundaries",
+                    access: "Right-of-way agreement if applicable",
+                    dispute: "Binding arbitration or mediation if future conflicts arise",
+                    documentation: "Updated property records with both parties' signatures"
+                };
+            } else if (disputeType === 'monetary') {
+                settlements = {
+                    principal: "Clear acknowledgment of principal amount owed",
+                    interest: "Agreed interest rate (if any) as per applicable laws",
+                    repayment: "Structured repayment plan with defined dates and amounts",
+                    documentation: "Written promissory note signed by both parties"
+                };
+            } else {
+                settlements = {
+                    understanding: "Both parties confirm mutual understanding of the issue",
+                    proposal: "A fair middle-ground solution addressing core concerns",
+                    implementation: "Clear steps and timelines for implementation",
+                    monitoring: "Periodic review mechanism to ensure compliance"
+                };
+            }
+
+            let html = `
+                <div class="mediator-note">
+                    <strong>🤝 Neutral Settlement Proposal</strong><br>
+                    Based on both parties' positions and applicable legal principles, here's a fair middle-ground solution:
+                </div>
+
+                <div class="settlement-grid">
+                    <div class="settlement-card">
+                        <h4>📌 Core Agreement</h4>
+                        <p>${Object.values(settlements)[0]}</p>
+                    </div>
+                    <div class="settlement-card">
+                        <h4>📌 Key Terms</h4>
+                        <p>${Object.values(settlements)[1]}</p>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 15px; margin: 15px 0; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <h4>💡 Mediator's Analysis:</h4>
+                    <p style="color: #555; line-height: 1.6;">
+                        <strong>Party 1's Interests:</strong> ${party1Claim}<br><br>
+                        <strong>Party 2's Interests:</strong> ${party2Claim}<br><br>
+                        ${commonGround ? `<strong>Common Ground:</strong> ${commonGround}<br><br>` : ''}
+                        <strong>Proposed Middle Ground:</strong> 
+                        The settlement above addresses both parties' core interests while maintaining legal compliance under Indian law. 
+                        This approach prioritizes fairness, clarity, and enforceability.
+                    </p>
+                </div>
+
+                <div style="background: #fff9e6; padding: 15px; margin: 15px 0; border-radius: 6px; border-left: 4px solid #ffc107;">
+                    <strong>⚖️ Legal Basis (Indian Law Principles):</strong><br>
+                    <small style="color: #666; line-height: 1.6;">
+                        • Contracts Act, 1872: Emphasis on clear, agreed terms<br>
+                        • Indian Penal Code: Avoidance of coercion or duress<br>
+                        • Civil Procedure Code: Encouragement of settlement before litigation<br>
+                        • Mediation & Conciliation: ADR (Alternative Dispute Resolution) is legally recognized and enforceable
+                    </small>
+                </div>
+
+                <div style="background: #f0f4ff; padding: 15px; margin: 15px 0; border-radius: 6px; border-left: 4px solid #667eea;">
+                    <strong>✅ Next Steps:</strong>
+                    <ol style="color: #555; margin-left: 20px; margin-top: 10px;">
+                        <li>Both parties review this proposal</li>
+                        <li>Discuss modifications if needed (section below)</li>
+                        <li>Once agreed, proceed to MoU generation</li>
+                        <li>Execute MoU with witness(es) if possible</li>
+                        <li>Retain copies for both parties</li>
+                    </ol>
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        // ============================================
+        // MoU GENERATOR
+        // ============================================
+
+        function generateMoU() {
+            const party1 = document.getElementById('mouParty1').value || 'Party 1';
+            const party2 = document.getElementById('mouParty2').value || 'Party 2';
+            const agreement = document.getElementById('mouAgreement').value;
+            const conditions = document.getElementById('mouConditions').value;
+            const output = document.getElementById('mouOutput');
+
+            if (!agreement.trim()) {
+                output.innerHTML = '<p style="color: red;">Please describe the agreement.</p>';
+                return;
+            }
+
+            const today = new Date().toLocaleDateString('en-GB');
+
+            let html = `
+                <div style="background: white; padding: 30px; border: 2px solid #667eea; border-radius: 8px; margin-top: 20px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h3 style="color: #667eea; font-size: 1.4em;">MEMORANDUM OF UNDERSTANDING</h3>
+                        <p style="color: #666; font-style: italic;">Non-Binding Dispute Resolution Agreement</p>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>📋 PARTIES TO THE AGREEMENT</h4>
+                        <div class="document-text">
+                            <strong>Party 1:</strong> ${party1}<br>
+                            <strong>Party 2:</strong> ${party2}<br>
+                            <strong>Date:</strong> ${today}
+                        </div>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>📝 AGREED TERMS & CONDITIONS</h4>
+                        <div class="document-text">
+                            <p><strong>The parties hereby agree to the following:</strong></p>
+                            <p>${agreement.split('\n').map(line => `${line}<br>`).join('')}</p>
+                        </div>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>⏰ CONDITIONS, OBLIGATIONS & TIMELINES</h4>
+                        <div class="document-text">
+                            ${conditions ? `<p>${conditions.split('\n').map(line => `${line}<br>`).join('')}</p>` : 
+                            '<p>Both parties commit to fulfilling the above agreement in good faith and within mutually agreed timelines.</p>'}
+                        </div>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>⚠️ DISPUTE RESOLUTION</h4>
+                        <div class="document-text">
+                            <p>In the event of any dispute regarding the interpretation or implementation of this MoU:</p>
+                            <ol style="margin-left: 20px;">
+                                <li>The parties shall first attempt amicable resolution through discussion.</li>
+                                <li>If unresolved within 15 days, the parties may seek mediation.</li>
+                                <li>If mediation fails, either party may pursue legal remedies as applicable under Indian law.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>📌 GENERAL CLAUSES</h4>
+                        <div class="document-text">
+                            <p><strong>Confidentiality:</strong> The parties agree to maintain confidentiality regarding the terms of this agreement unless required by law.</p>
+                            <p><strong>Good Faith:</strong> Both parties commit to implementing this agreement in good faith and with mutual respect.</p>
+                            <p><strong>Modification:</strong> Any changes to this agreement must be made in writing and signed by both parties.</p>
+                            <p><strong>Entire Agreement:</strong> This MoU constitutes the entire agreement between the parties regarding this dispute.</p>
+                        </div>
+                    </div>
+
+                    <div class="document-section">
+                        <h4>✍️ SIGNATURES & ACKNOWLEDGMENT</h4>
+                        <div class="document-text">
+                            <p style="margin-bottom: 30px;">We hereby acknowledge that we have read, understood, and agree to the terms outlined in this Memorandum of Understanding.</p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                                <div>
+                                    <p style="margin-bottom: 50px;">_______________________</p>
+                                    <p><strong>${party1}</strong></p>
+                                    <p style="color: #999; font-size: 0.9em;">Name & Signature</p>
+                                    <p style="color: #999; font-size: 0.9em;">Date: ${today}</p>
+                                </div>
+                                <div>
+                                    <p style="margin-bottom: 50px;">_______________________</p>
+                                    <p><strong>${party2}</strong></p>
+                                    <p style="color: #999; font-size: 0.9em;">Name & Signature</p>
+                                    <p style="color: #999; font-size: 0.9em;">Date: ${today}</p>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd;">
+                                <p style="color: #999; font-size: 0.85em;">
+                                    <strong>Witness (if available):</strong><br>
+                                    Name: _______________________<br>
+                                    Signature: _______________________<br>
+                                    Date: ${today}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 15px; margin-top: 20px; border-radius: 6px;">
+                        <strong>⚖️ LEGAL DISCLAIMER:</strong>
+                        <small style="display: block; color: #666; margin-top: 8px; line-height: 1.6;">
+                            This Memorandum of Understanding is prepared by Sentira-Law as a neutral mediation tool and is NON-BINDING unless explicitly stated as legally binding by mutual consent with proper legal counsel. 
+                            This document is meant to formalize a settlement agreement and is not a substitute for professional legal advice. 
+                            For complex legal matters, parties are advised to consult with qualified legal professionals before execution.
+                        </small>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="print-button" onclick="window.print()">🖨️ Print MoU</button>
+                        <button class="copy-button" onclick="copyMoU()">📋 Copy Text</button>
+                    </div>
+                </div>
+            `;
+
+            output.innerHTML = html;
+        }
+
+        function copyMoU() {
+            const mouContent = document.querySelector('[style*="border: 2px solid"]').innerText;
+            navigator.clipboard.writeText(mouContent).then(() => {
+                alert('MoU copied to clipboard!');
+            });
+        }
+
+        // ============================================
+        // UI UTILITIES
+        // ============================================
+
+        function switchTab(tabName, tabGroup) {
+            const tabs = document.querySelectorAll(`.tab-content.active`);
+            tabs.forEach(tab => {
+                if (tabGroup === 'tab1' && (tab.id.includes('-tab1') || !tab.id.includes('tab'))) {
+                    tab.classList.remove('active');
+                } else if (tabGroup === 'tab2' && (tab.id.includes('-tab2') || !tab.id.includes('tab'))) {
+                    tab.classList.remove('active');
+                }
+            });
+
+            const buttons = document.querySelectorAll(`.tab`);
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const targetTab = document.getElementById(`${tabName}-${tabGroup}`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+
+            event.target.classList.add('active');
+        }
+
+        function clearAnalysis() {
+            document.getElementById('communicationText').value = '';
+            document.getElementById('analysisOutput').innerHTML = '';
+            document.getElementById('heatMapOutput').innerHTML = '';
+        }
+
+        function clearMediation() {
+            document.getElementById('disputeType').value = '';
+            document.getElementById('party1Claim').value = '';
+            document.getElementById('party2Claim').value = '';
+            document.getElementById('commonGround').value = '';
+            document.getElementById('mediationOutput').innerHTML = '';
+        }
+
+        function clearMoU() {
+            document.getElementById('mouParty1').value = '';
+            document.getElementById('mouParty2').value = '';
+            document.getElementById('mouAgreement').value = '';
+            document.getElementById('mouConditions').value = '';
+            document.getElementById('mouOutput').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
