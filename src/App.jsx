@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './styles/colors.css'
 import './styles/global.css'
 import './App.css'
@@ -6,17 +6,84 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CaseSubmissionForm from './components/CaseSubmissionForm'
 import TopLawyers from './components/TopLawyers'
-import LawyerProfile from './components/LawyerProfile'
 import QRCaseAccess from './components/QRCaseAccess'
 import CaseDashboard from './components/CaseDashboard'
+import LawyerLocation from './components/LawyerLocation'
+
+// Get initial page from hash or default to case-submission
+const getInitialPage = () => {
+  const hash = window.location.hash.replace('#', '')
+  
+  if (hash.includes('/case-access/')) {
+    const caseId = hash.split('/case-access/')[1]
+    return `case-access-${caseId}`
+  } else if (hash === '/dashboard') {
+    return 'case-dashboard'
+  } else if (hash === '/lawyers') {
+    return 'top-lawyers'
+  } else if (hash === '/lawyer-locations') {
+    return 'lawyer-locations'
+  } else if (hash === '/qr-access') {
+    return 'qr-access'
+  }
+  
+  return 'case-submission'
+}
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('case-submission')
+  const [currentPage, setCurrentPage] = useState(getInitialPage)
 
   const handleNavigation = (page) => {
     setCurrentPage(page)
+    // Update URL hash for QR code compatibility
+    if (page.startsWith('case-access-')) {
+      const caseId = page.replace('case-access-', '')
+      window.location.hash = `/case-access/${caseId}`
+    } else if (page === 'case-dashboard') {
+      window.location.hash = '/dashboard'
+    } else if (page === 'top-lawyers') {
+      window.location.hash = '/lawyers'
+    } else if (page.startsWith('lawyer-locations-')) {
+      const lawyerId = page.replace('lawyer-locations-', '')
+      window.location.hash = `/lawyer-locations-${lawyerId}`
+    } else if (page === 'lawyer-locations') {
+      window.location.hash = '/lawyer-locations'
+    } else if (page === 'qr-access') {
+      window.location.hash = '/qr-access'
+    } else if (page === 'case-submission') {
+      window.location.hash = '/'
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  // Handle hash-based routing for QR code links
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '')
+      
+      if (hash.includes('/case-access/')) {
+        const caseId = hash.split('/case-access/')[1]
+        setCurrentPage(`case-access-${caseId}`)
+      } else if (hash === '/dashboard') {
+        setCurrentPage('case-dashboard')
+      } else if (hash === '/lawyers') {
+        setCurrentPage('top-lawyers')
+      } else if (hash.includes('/lawyer-locations-')) {
+        const lawyerId = hash.split('/lawyer-locations-')[1]
+        setCurrentPage(`lawyer-locations-${lawyerId}`)
+      } else if (hash === '/lawyer-locations') {
+        setCurrentPage('lawyer-locations')
+      } else if (hash === '/qr-access') {
+        setCurrentPage('qr-access')
+      } else if (hash === '/' || hash === '') {
+        setCurrentPage('case-submission')
+      }
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
 
   return (
     <div className="app">
@@ -38,19 +105,27 @@ function App() {
         <Navbar currentPage={currentPage} onNavigate={handleNavigation} />
         
         <main className="main-content">
-          {/* NAVBAR 1 - Case Submission */}
+          {/* Submit Case */}
           {currentPage === 'case-submission' && <CaseSubmissionForm onNavigate={handleNavigation} />}
           
-          {/* NAVBAR 2 - Top Lawyers */}
+          {/* Top Lawyers */}
           {currentPage === 'top-lawyers' && <TopLawyers onNavigate={handleNavigation} />}
           
-          {/* NAVBAR 3 - Lawyer Profile */}
-          {currentPage.startsWith('lawyer-profile-') && <LawyerProfile lawyerId={currentPage.split('-')[2]} onNavigate={handleNavigation} />}
+          {/* Lawyer Locations */}
+          {(currentPage === 'lawyer-locations' || currentPage.startsWith('lawyer-locations-')) && (
+            <LawyerLocation 
+              lawyerId={currentPage.startsWith('lawyer-locations-') ? currentPage.replace('lawyer-locations-', '') : null} 
+              onNavigate={handleNavigation} 
+            />
+          )}
           
-          {/* NAVBAR 4 - QR Case Access */}
-          {currentPage.startsWith('qr-case-') && <QRCaseAccess caseId={currentPage.split('-')[2]} onNavigate={handleNavigation} />}
+          {/* QR Code Access */}
+          {currentPage === 'qr-access' && <QRCaseAccess caseId={null} onNavigate={handleNavigation} />}
           
-          {/* NAVBAR 5 - Case Dashboard */}
+          {/* QR Case Access (specific case) */}
+          {currentPage.startsWith('case-access-') && <QRCaseAccess caseId={currentPage.split('-')[2]} onNavigate={handleNavigation} />}
+          
+          {/* Case Dashboard */}
           {currentPage === 'case-dashboard' && <CaseDashboard onNavigate={handleNavigation} />}
         </main>
 

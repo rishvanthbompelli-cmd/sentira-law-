@@ -1,54 +1,64 @@
 /* ========================================
-   SENTIRA-LAW: Core Color System
-   Professional, Calm & Trustworthy
+   Color Variables - Premium Legal Tech Theme
    ======================================== */
 
 :root {
-  /* Primary Colors - Professional Legal Blue */
-  --primary-color: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #3b82f6;
-  --secondary-color: #7c3aed;
+  /* Primary Colors */
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
   
-  /* Deep Navy - Authority, Trust, Mental Stability */
-  --navy-dark: #0a1628;
-  --navy-primary: #0f2a54;
-  --navy-medium: #1a3a6a;
-  --navy-light: #2a4a7f;
-
-  /* Soft Violet/Purple - AI, Intelligence, Empathy */
-  --violet-deep: #6b5ba8;
-  --violet-primary: #7d6db3;
-  --violet-soft: #9d8ebf;
-  --violet-light: #b9a8d1;
-  --violet-pale: #e0d7f0;
-
-  /* Accent Colors - Premium Feel */
-  --gold-soft: #d4a574;
-  --gold-pale: #e8c9a0;
-  --silver-soft: #c8c8d8;
-  --silver-pale: #dcdce8;
-
-  /* Text Colors - Optimized for light backgrounds */
-  --text-primary: #1f2937;
-  --text-secondary: #4b5563;
-  --text-tertiary: #9ca3af;
-  --text-light: #6b7280;
-
-  /* Glass/Transparency */
-  --glass-bg-light: rgba(255, 255, 255, 0.05);
-  --glass-bg-medium: rgba(15, 42, 84, 0.3);
-  --glass-bg-dark: rgba(10, 22, 40, 0.5);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-light: rgba(255, 255, 255, 0.12);
-
-  /* Overlay for video background */
-  --overlay-navy: rgba(10, 22, 40, 0.55);
-  --overlay-light: rgba(15, 42, 84, 0.3);
-
-  /* Functional Colors */
-  --success: #4ade80;
+  /* Secondary Colors */
+  --secondary-color: #8b5cf6;
+  --secondary-light: #a78bfa;
+  --secondary-dark: #7c3aed;
+  
+  /* Accent Colors */
+  --accent-purple: #a855f7;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  
+  /* Background Colors */
+  --bg-dark: #0f172a;
+  --bg-darker: #020617;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  /* Border Colors */
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.2);
+  
+  /* Status Colors */
+  --success: #22c55e;
   --warning: #f59e0b;
   --error: #ef4444;
-  --info: #7d6db3;
+  --info: #3b82f6;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
 }

@@ -1,409 +1,127 @@
-/* ========================================
-   QR Case Access - Professional Legal Theme
-   ======================================== */
-
-.qr-case-container {
-  max-width: 1000px;
+/* QR Container */
+.qr-container {
+  max-width: 500px;
   margin: 0 auto;
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
+  padding: 40px 20px;
 }
 
-.qr-case-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.qr-case-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
-.qr-case-header p {
-  color: #4b5563;
-  font-size: 1.1rem;
-}
-
-.qr-case-content {
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 2rem;
-  align-items: start;
-}
-
-/* QR Section */
-.qr-section {
-  position: sticky;
-  top: 2rem;
-}
-
+/* QR Card */
 .qr-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e7eb;
+  padding: 30px;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.qr-image-container {
-  background: #f9fafb;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
+.qr-header {
+  margin-bottom: 25px;
 }
 
-.qr-image {
-  width: 100%;
-  max-width: 250px;
-  height: auto;
+.qr-header h1 {
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin-bottom: 10px;
 }
 
-.case-id-display {
+.qr-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* QR Code */
+.qr-code-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  border-radius: 10px;
-  color: white;
-}
-
-.case-id-label {
-  font-size: 0.75rem;
-  opacity: 0.9;
-}
-
-.case-id-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.qr-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.btn-qr-action {
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.btn-qr-action:first-child {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  color: white;
-  border: none;
-}
-
-.btn-qr-action:last-child {
-  background: #ffffff;
-  color: #2563eb;
-  border: 2px solid #2563eb;
-}
-
-.btn-qr-action:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-}
-
-/* Details Section */
-.details-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.case-details-card,
-.recommended-lawyers-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
-}
-
-.case-details-card h2,
-.recommended-lawyers-card h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2563eb;
-  margin-bottom: 1.5rem;
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.detail-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-}
-
-.detail-value {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.issue-type {
-  text-transform: capitalize;
-  color: #2563eb;
-}
-
-.problem-description h3,
-.ai-analysis-summary h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.75rem;
-}
-
-.problem-description p {
-  color: #4b5563;
-  line-height: 1.7;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.ai-analysis-summary {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #f3f4f6;
-}
-
-.analysis-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.analysis-badge {
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.tone-neutral { background: #dbeafe; color: #1d4ed8; }
-.tone-aggressive { background: #fee2e2; color: #dc2626; }
-.tone-threatening { background: #fef3c7; color: #d97706; }
-.tone-stressed { background: #dbeafe; color: #2563eb; }
-
-.complexity-low { background: #dcfce7; color: #16a34a; }
-.complexity-medium { background: #fef3c7; color: #d97706; }
-.complexity-high { background: #fee2e2; color: #dc2626; }
-
-.urgency-low { background: #dcfce7; color: #16a34a; }
-.urgency-medium { background: #fef3c7; color: #d97706; }
-.urgency-high { background: #fee2e2; color: #dc2626; }
-
-/* Recommended Lawyers */
-.recommendation-note {
-  color: #6b7280;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-.lawyers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.lawyer-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-}
-
-.lawyer-item:hover {
-  background: #eff6ff;
-}
-
-.lawyer-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.lawyer-name {
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.lawyer-specialization {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
-
-.lawyer-rating {
-  font-weight: 600;
-  color: #f59e0b;
-  font-size: 0.9rem;
-}
-
-.btn-call-lawyer {
-  padding: 0.5rem 1rem;
-  background: #2563eb;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-call-lawyer:hover {
-  background: #1d4ed8;
-}
-
-.btn-view-all-lawyers {
-  width: 100%;
-  margin-top: 1.5rem;
-  padding: 0.75rem;
-  background: #ffffff;
-  color: #2563eb;
-  border: 2px solid #2563eb;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-view-all-lawyers:hover {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-/* Mobile Notice */
-.mobile-notice {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #eff6ff;
+  padding: 25px;
+  background: #f9f9f9;
   border-radius: 12px;
-  text-align: center;
+  margin-bottom: 20px;
 }
 
-.mobile-icon {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 0.5rem;
+.qr-code {
+  width: 220px;
+  height: 220px;
 }
 
-.mobile-notice p {
-  color: #4b5563;
-  font-size: 0.9rem;
+.qr-loading {
+  color: #666;
+  padding: 50px;
 }
 
-/* Loading & Error States */
-.loading-state,
-.error-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: #ffffff;
-  border-radius: 16px;
-}
-
-.loading-spinner {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e5e7eb;
-  border-radius: 50%;
-  border-top-color: #2563eb;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.error-icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 1rem;
-}
-
-.error-state h2 {
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
-.error-state p {
-  color: #6b7280;
-  margin-bottom: 1.5rem;
-}
-
-.btn-back {
-  padding: 0.75rem 1.5rem;
-  background: #2563eb;
-  color: white;
-  border: none;
+/* QR Info */
+.qr-info {
+  padding: 15px;
+  background: #f0f0f0;
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  margin-bottom: 20px;
 }
 
-.btn-back:hover {
-  background: #1d4ed8;
+.qr-info p {
+  color: #1a1a2e;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+/* Case Preview */
+.case-preview {
+  text-align: left;
+  padding: 15px;
+  background: #e8f4f8;
+  border-radius: 8px;
+  border: 1px solid #b8e0ea;
+}
+
+.case-preview h3 {
+  font-size: 1rem;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.case-preview p {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 5px 0;
+}
+
+/* Instructions */
+.qr-instructions {
+  margin-top: 25px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.qr-instructions h3 {
+  font-size: 1.1rem;
+  color: #1a1a2e;
+  margin-bottom: 15px;
+}
+
+.qr-instructions ol {
+  padding-left: 20px;
+  color: #666;
+}
+
+.qr-instructions li {
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 /* Responsive */
-@media (max-width: 992px) {
-  .qr-case-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .qr-section {
-    position: static;
-  }
-}
-
 @media (max-width: 768px) {
-  .qr-case-container {
-    padding: 1rem;
+  .qr-container {
+    padding: 20px 15px;
   }
   
-  .qr-case-header h1 {
-    font-size: 1.75rem;
+  .qr-card {
+    padding: 20px;
   }
   
-  .detail-grid {
-    grid-template-columns: 1fr;
+  .qr-code {
+    width: 180px;
+    height: 180px;
   }
 }
