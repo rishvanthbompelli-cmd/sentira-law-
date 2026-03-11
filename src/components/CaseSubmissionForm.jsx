@@ -50,6 +50,11 @@ export default function CaseSubmissionForm({ onNavigate }) {
     localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
     localStorage.setItem('recentCaseId', newCaseId)
     
+    // Store case in the cases array for dashboard
+    const existingCases = JSON.parse(localStorage.getItem('cases')) || []
+    existingCases.push(caseData)
+    localStorage.setItem('cases', JSON.stringify(existingCases))
+    
     // Navigate to dashboard
     setTimeout(() => {
       onNavigate('case-dashboard')

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './Navbar.css'
 
-export default function Navbar({ currentPage, onNavigate }) {
+export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
@@ -9,7 +9,8 @@ export default function Navbar({ currentPage, onNavigate }) {
     { id: 'top-lawyers', label: 'Top Lawyers', icon: '⚖️' },
     { id: 'lawyer-locations', label: 'Locations', icon: '📍' },
     { id: 'case-dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'qr-access', label: 'QR Code', icon: '📱' }
+    { id: 'qr-access', label: 'QR Code', icon: '📱' },
+    { id: 'contact', label: 'Contact Us', icon: '📧' }
   ]
 
   const toggleMobileMenu = () => {
@@ -43,8 +44,23 @@ export default function Navbar({ currentPage, onNavigate }) {
           ))}
         </div>
 
-        {/* Right Section - New Case Button */}
+        {/* Right Section - New Case Button and User */}
         <div className="navbar-right">
+          {user ? (
+            <div className="user-section">
+              <span className="user-name">{user.name}</span>
+              <button className="btn-logout" onClick={onLogout}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button 
+              className="btn-login"
+              onClick={() => onNavigate('login')}
+            >
+              <span>Login</span>
+            </button>
+          )}
           <button 
             className="btn-new-case"
             onClick={() => onNavigate('case-submission')}

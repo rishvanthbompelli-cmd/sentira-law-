@@ -9,6 +9,9 @@ import TopLawyers from './components/TopLawyers'
 import QRCaseAccess from './components/QRCaseAccess'
 import CaseDashboard from './components/CaseDashboard'
 import LawyerLocation from './components/LawyerLocation'
+import Support from './components/Support'
+import Login from './components/Login'
+import Contact from './components/Contact'
 
 // Get initial page from hash or default to case-submission
 const getInitialPage = () => {
@@ -25,6 +28,10 @@ const getInitialPage = () => {
     return 'lawyer-locations'
   } else if (hash === '/qr-access') {
     return 'qr-access'
+  } else if (hash === '/contact' || hash === '/support') {
+    return 'contact'
+  } else if (hash === '/login') {
+    return 'login'
   }
   
   return 'case-submission'
@@ -32,6 +39,26 @@ const getInitialPage = () => {
 
 function App() {
   const [currentPage, setCurrentPage] = useState(getInitialPage)
+  const [user, setUser] = useState(null)
+
+  // Check for existing user on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    handleNavigation('case-submission')
+  }
 
   const handleNavigation = (page) => {
     setCurrentPage(page)
@@ -50,6 +77,10 @@ function App() {
       window.location.hash = '/lawyer-locations'
     } else if (page === 'qr-access') {
       window.location.hash = '/qr-access'
+    } else if (page === 'contact') {
+      window.location.hash = '/contact'
+    } else if (page === 'login') {
+      window.location.hash = '/login'
     } else if (page === 'case-submission') {
       window.location.hash = '/'
     }
@@ -75,6 +106,10 @@ function App() {
         setCurrentPage('lawyer-locations')
       } else if (hash === '/qr-access') {
         setCurrentPage('qr-access')
+      } else if (hash === '/support' || hash === '/contact') {
+        setCurrentPage('contact')
+      } else if (hash === '/login') {
+        setCurrentPage('login')
       } else if (hash === '/' || hash === '') {
         setCurrentPage('case-submission')
       }
@@ -102,7 +137,7 @@ function App() {
 
       {/* Main Content */}
       <div className="content-wrapper">
-        <Navbar currentPage={currentPage} onNavigate={handleNavigation} />
+        <Navbar currentPage={currentPage} onNavigate={handleNavigation} user={user} onLogout={handleLogout} />
         
         <main className="main-content">
           {/* Submit Case */}
@@ -124,6 +159,12 @@ function App() {
           
           {/* QR Case Access (specific case) */}
           {currentPage.startsWith('case-access-') && <QRCaseAccess caseId={currentPage.split('-')[2]} onNavigate={handleNavigation} />}
+          
+          {/* Contact Page */}
+          {currentPage === 'contact' && <Contact onNavigate={handleNavigation} />}
+          
+          {/* Login Page */}
+          {currentPage === 'login' && <Login onNavigate={handleNavigation} onLoginSuccess={handleLoginSuccess} />}
           
           {/* Case Dashboard */}
           {currentPage === 'case-dashboard' && <CaseDashboard onNavigate={handleNavigation} />}
