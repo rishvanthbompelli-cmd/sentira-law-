@@ -118,6 +118,373 @@
   gap: 24px;
 }
 
+/* Description with AI Button */
+.description-with-button {
+  position: relative;
+}
+
+.description-with-button textarea {
+  width: 100%;
+}
+
+.description-with-button .ai-analyze-btn {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.description-with-button .ai-analyze-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.description-with-button .ai-analyze-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ai-analyze-btn .ai-icon {
+  font-size: 1rem;
+}
+
+.ai-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI Case Analysis Panel */
+.ai-case-analysis-panel {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 32px;
+  animation: slideDown 0.4s ease;
+  box-shadow: 0 10px 40px rgba(99, 102, 241, 0.15);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-case-analysis-panel .ai-analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-case-analysis-panel .ai-analysis-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #818cf8;
+  margin: 0;
+}
+
+.ai-case-analysis-panel .ai-timestamp {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Analysis Metrics Grid */
+.analysis-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.metric-card.severity {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.metric-card.risk {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.metric-card.urgency {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.metric-card .metric-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+}
+
+.metric-card .metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.metric-card.severity .metric-value {
+  color: #818cf8;
+}
+
+.metric-card.risk .metric-value {
+  color: #34d399;
+}
+
+.metric-card.risk.high .metric-value {
+  color: #f87171;
+}
+
+.metric-card.risk.medium .metric-value {
+  color: #fbbf24;
+}
+
+.metric-card.urgency .metric-value {
+  color: #fbbf24;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.metric-card.severity .progress-fill {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+}
+
+.metric-card.urgency .progress-fill {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+/* Risk Indicator */
+.risk-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.risk-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+.risk-dot.low {
+  background: #34d399;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.risk-dot.medium {
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.risk-dot.high {
+  background: #f87171;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* Tone Detection Section */
+.tone-detection-section {
+  margin-bottom: 24px;
+}
+
+.tone-detection-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 16px 0;
+}
+
+.tone-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tone-item {
+  display: grid;
+  grid-template-columns: 140px 1fr 50px;
+  align-items: center;
+  gap: 12px;
+}
+
+.tone-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tone-bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tone-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.tone-bar.aggressive {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.tone-bar.neutral {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.tone-bar.threat {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.tone-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: right;
+}
+
+/* Issue Prediction Section */
+.issue-prediction-section {
+  margin-bottom: 24px;
+}
+
+.issue-prediction-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 16px 0;
+}
+
+.prediction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prediction-item {
+  display: grid;
+  grid-template-columns: 130px 1fr 100px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.prediction-category {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.prediction-bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prediction-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.prediction-confidence {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
+}
+
+/* Detailed Insights Section */
+.detailed-insights-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.detailed-insights-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 14px 0;
+}
+
+.insights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.insights-list li {
+  position: relative;
+  padding: 10px 0 10px 24px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.insights-list li::before {
+  content: '•';
+  position: absolute;
+  left: 8px;
+  color: #818cf8;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+/* File Input */
 .file-input-wrapper {
   position: relative;
 }
@@ -161,6 +528,12 @@
 .file-input-wrapper input[type="file"]::file-selector-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* When file is selected, change border style */
+.file-input-wrapper input[type="file"].file-selected {
+  border-style: solid;
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .file-name {
@@ -271,6 +644,36 @@
   .form-header h1 {
     font-size: 1.8rem;
   }
+
+  .analysis-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .tone-item {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .tone-value {
+    text-align: left;
+  }
+
+  .prediction-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .prediction-confidence {
+    text-align: left;
+  }
+
+  .description-with-button .ai-analyze-btn {
+    position: static;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -280,5 +683,15 @@
   
   .form-header p {
     font-size: 0.95rem;
+  }
+
+  .ai-case-analysis-panel {
+    padding: 20px;
+  }
+
+  .ai-case-analysis-panel .ai-analysis-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }

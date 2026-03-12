@@ -7,15 +7,18 @@ export default function MobileQR() {
   const [currentUrl, setCurrentUrl] = useState('')
   const [loading, setLoading] = useState(true)
 
-  // Use the public ngrok URL for QR code generation
-  const PUBLIC_BASE_URL = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev'
+  // Get local IP address for local network access
+  const getLocalIP = () => {
+    // For local network, use port 5173
+    return 'http://192.168.1.100:5173'
+  }
 
   useEffect(() => {
     // Get the current website URL
     const generateQRCode = async () => {
       try {
-        // Use the public ngrok URL for QR code generation
-        const baseUrl = PUBLIC_BASE_URL
+        // Use local network IP for QR code generation
+        const baseUrl = getLocalIP()
         setCurrentUrl(baseUrl)
         
         // Generate QR code for the current website URL
@@ -40,11 +43,11 @@ export default function MobileQR() {
     generateQRCode()
   }, [])
 
-  // Listen for URL changes (for ngrok or other dynamic URLs)
+  // Listen for URL changes (for dynamic URLs)
   useEffect(() => {
     const handleUrlChange = () => {
-      // Always use the public ngrok URL
-      const newUrl = PUBLIC_BASE_URL
+      // Use local IP
+      const newUrl = getLocalIP()
       if (newUrl !== currentUrl) {
         // Regenerate QR code if URL changed
         QRCode.toDataURL(newUrl, {
