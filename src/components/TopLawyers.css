@@ -79,6 +79,13 @@
   margin-bottom: 5px;
 }
 
+.lawyer-experience {
+  font-size: 13px;
+  color: #059669;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
 .lawyer-cases {
   font-size: 13px;
   color: #111827;
@@ -218,6 +225,7 @@
 }
 
 .profile-info .location,
+.profile-info .experience,
 .profile-info .cases {
   font-size: 1rem;
   color: #666;
@@ -255,4 +263,42 @@
     width: 150px;
     height: 150px;
   }
+}
+
+/* Availability Schedule */
+.availability-schedule {
+  margin-top: 10px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.schedule-item {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 12px 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #bae6fd;
+}
+
+.schedule-item .day {
+  font-weight: 600;
+  color: #0369a1;
+  font-size: 0.9rem;
+}
+
+.schedule-item .time {
+  color: #0c4a6e;
+  font-size: 0.85rem;
+}
+
+.no-availability {
+  color: #9ca3af;
+  font-style: italic;
 }
