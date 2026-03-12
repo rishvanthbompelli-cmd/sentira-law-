@@ -1,6 +1,6 @@
 /* Dashboard Container */
 .dashboard-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -18,6 +18,226 @@
 
 .dashboard-header p {
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* Cases Table Section */
+.cases-table-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.cases-table-section h2 {
+  font-size: 1.3rem;
+  color: #111827;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Cases Table */
+.cases-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cases-table th {
+  text-align: left;
+  padding: 12px 15px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cases-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.case-row:hover {
+  background: #f8fafc;
+}
+
+.case-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.case-id {
+  font-weight: 700;
+  color: #6366f1;
+  font-size: 0.9rem;
+}
+
+.case-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Similar Cases Button */
+.btn-similar-cases {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-similar-cases:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-similar-cases:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Similar Cases Row */
+.similar-cases-row td {
+  padding: 0;
+  background: #f8fafc;
+}
+
+.similar-cases-container {
+  padding: 20px;
+}
+
+.similar-cases-container h4 {
+  color: #1e293b;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.similar-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.similar-case-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease;
+}
+
+.similar-case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.similarity-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 15px;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.similar-case-card h5 {
+  color: #1e293b;
+  margin: 10px 0 5px;
+  font-size: 0.95rem;
+}
+
+.similar-case-card p {
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.similar-case-card .outcome {
+  color: #10b981;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.no-similar {
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Loading */
+.loading-similar {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f1f5f9;
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+}
+
+.skeleton-badge {
+  height: 24px;
+  width: 60px;
+  border-radius: 12px;
+}
+
+.skeleton-btn {
+  height: 30px;
+  width: 100px;
+  border-radius: 6px;
+}
+
+.skeleton-row td {
+  padding: 15px;
 }
 
 /* Cards */
@@ -41,56 +261,6 @@
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #e5e7eb;
-}
-
-/* Case Info */
-.case-info {
-  display: grid;
-  gap: 15px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-row .label {
-  font-weight: 500;
-  color: #4b5563;
-}
-
-.info-row .value {
-  color: #111827;
-}
-
-/* Documents */
-.doc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.doc-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 8px;
-}
-
-.doc-icon {
-  font-size: 1.5rem;
-}
-
-.doc-name {
-  color: #1a1a2e;
 }
 
 /* Lawyers */
@@ -192,210 +362,24 @@
     padding: 20px 15px;
   }
   
-  .info-row {
-    flex-direction: column;
-    gap: 5px;
+  .cases-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .cases-table th,
+  .cases-table td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .similar-cases-grid {
+    grid-template-columns: 1fr;
   }
   
   .lawyer-item {
     flex-direction: column;
     gap: 15px;
     text-align: center;
-  }
-}
-
-/* Cases List Section */
-.cases-list-section {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-.cases-list-section h2 {
-  font-size: 1.3rem;
-  color: #111827;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.cases-scroll-container {
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.cases-scroll-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.cases-scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.cases-scroll-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.cases-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
-}
-
-.case-card {
-  background: #f9f9f9;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 15px;
-  border: 1px solid #e5e7eb;
-}
-
-.case-card:last-child {
-  margin-bottom: 0;
-}
-
-.case-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.case-header .case-id {
-  font-weight: 700;
-  color: #6366f1;
-  font-size: 1rem;
-}
-
-.case-header .case-date {
-  color: #888;
-  font-size: 0.85rem;
-}
-
-/* Similar Cases Section */
-.similar-cases-section {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-.similar-cases-section h2 {
-  font-size: 1.3rem;
-  color: #111827;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.similar-cases-desc {
-  color: #6b7280;
-  margin-bottom: 20px;
-  font-size: 0.95rem;
-}
-
-.loading-similar {
-  text-align: center;
-  padding: 30px;
-  color: #6b7280;
-}
-
-.loading-spinner {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #6366f1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.similar-cases-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.similar-case-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.similar-case-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.similar-case-header {
-  margin-bottom: 12px;
-}
-
-.similarity-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.similar-case-body h3 {
-  font-size: 1.1rem;
-  color: #1e293b;
-  margin-bottom: 10px;
-}
-
-.similar-description {
-  color: #64748b;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 15px;
-}
-
-.similar-outcome {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.outcome-label {
-  color: #64748b;
-  font-size: 0.85rem;
-}
-
-.outcome-value {
-  color: #10b981;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.no-similar-cases {
-  text-align: center;
-  padding: 30px;
-  color: #6b7280;
-  background: #f9fafb;
-  border-radius: 12px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .similar-cases-grid {
-    grid-template-columns: 1fr;
   }
 }

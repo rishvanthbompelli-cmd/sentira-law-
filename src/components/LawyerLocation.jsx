@@ -127,54 +127,58 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
         <p>Find the office locations of top legal professionals in India</p>
       </div>
       
-      <div className="map-container">
-        {/* Map Section */}
-        <div className="map-section">
-          <MapContainer 
-            center={mapCenter} 
-            zoom={zoom} 
-            style={{ height: '500px', width: '100%', borderRadius: '16px' }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {lawyers.map((lawyer) => (
-              <Marker 
-                key={lawyer.id} 
-                position={[lawyer.lat, lawyer.lng]}
-                eventHandlers={{
-                  click: () => handleLawyerClick(lawyer),
-                }}
+      <div className="locations-grid max-w-7xl mx-auto px-6">
+        {/* Map Section - 70% width */}
+        <div className="locations-map-section">
+          <div className="w-full h-full">
+            <MapContainer 
+              center={mapCenter} 
+              zoom={zoom} 
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-            ))}
-            <MapUpdater center={mapCenter} zoom={zoom} />
-          </MapContainer>
-          
-          {/* Zoom Controls */}
-          <div className="zoom-controls">
-            <button className="zoom-btn" onClick={handleZoomIn}>+</button>
-            <button className="zoom-btn" onClick={handleZoomOut}>−</button>
+              {lawyers.map((lawyer) => (
+                <Marker 
+                  key={lawyer.id} 
+                  position={[lawyer.lat, lawyer.lng]}
+                  eventHandlers={{
+                    click: () => handleLawyerClick(lawyer),
+                  }}
+                />
+              ))}
+              <MapUpdater center={mapCenter} zoom={zoom} />
+            </MapContainer>
+            
+            {/* Zoom Controls */}
+            <div className="zoom-controls">
+              <button className="zoom-btn" onClick={handleZoomIn}>+</button>
+              <button className="zoom-btn" onClick={handleZoomOut}>−</button>
+            </div>
           </div>
         </div>
         
-        {/* Address List */}
-        <div className="address-list">
-          <h3>Lawyer Addresses</h3>
-          {lawyers.map((lawyer) => (
-            <div 
-              key={lawyer.id} 
-              className={`address-card ${selectedLawyer?.id === lawyer.id ? 'selected' : ''}`}
-              onClick={() => handleLawyerClick(lawyer)}
-            >
-              <img src={lawyer.photo} alt={lawyer.name} className="address-photo" />
-              <div className="address-info">
-                <h4>{lawyer.name}</h4>
-                <p className="address-location">{lawyer.address}</p>
-                <p className="address-city">{lawyer.location}</p>
+        {/* Lawyer Addresses Section - 30% width */}
+        <div className="locations-list-section">
+          <h2 className="text-xl font-semibold mb-4 text-white border-b border-slate-600 pb-4">Lawyer Addresses</h2>
+          <div className="space-y-4">
+            {lawyers.map((lawyer) => (
+              <div 
+                key={lawyer.id} 
+                className={`address-card ${selectedLawyer?.id === lawyer.id ? 'selected' : ''}`}
+                onClick={() => handleLawyerClick(lawyer)}
+              >
+                <img src={lawyer.photo} alt={lawyer.name} className="address-photo" />
+                <div className="address-info">
+                  <h4>{lawyer.name}</h4>
+                  <p className="address-location">{lawyer.address}</p>
+                  <p className="address-city">{lawyer.location}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

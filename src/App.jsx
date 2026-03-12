@@ -5,7 +5,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CaseSubmissionForm from './components/CaseSubmissionForm'
-import TopLawyers from './components/TopLawyers'
+import TopLawyers, { preloadLawyers } from './components/TopLawyers'
 import QRCaseAccess from './components/QRCaseAccess'
 import CaseDashboard from './components/CaseDashboard'
 import LawyerLocation from './components/LawyerLocation'
@@ -40,6 +40,7 @@ const getInitialPage = () => {
 function App() {
   const [currentPage, setCurrentPage] = useState(getInitialPage)
   const [user, setUser] = useState(null)
+  const [isPreloading, setIsPreloading] = useState(false)
 
   // Check for existing user on mount
   useEffect(() => {
@@ -48,6 +49,24 @@ function App() {
       setUser(JSON.parse(storedUser))
     }
   }, [])
+
+  // Preload lawyers data in background on app load
+  useEffect(() => {
+    preloadLawyers().then(() => {
+      console.log('Lawyers data preloaded')
+    }).catch(err => {
+      console.log('Preload error:', err)
+    })
+  }, [])
+
+  const handleNavigationHover = (page) => {
+    if (page === 'top-lawyers' && !isPreloading) {
+      setIsPreloading(true)
+      preloadLawyers().then(() => {
+        setIsPreloading(false)
+      })
+    }
+  }
 
   const handleLoginSuccess = (userData) => {
     setUser(userData)
@@ -61,8 +80,12 @@ function App() {
   }
 
   const handleNavigation = (page) => {
+    if (page === 'top-lawyers') {
+      preloadLawyers()
+    }
+    
     setCurrentPage(page)
-    // Update URL hash for QR code compatibility
+    
     if (page.startsWith('case-access-')) {
       const caseId = page.replace('case-access-', '')
       window.location.hash = `/case-access/${caseId}`
@@ -87,7 +110,6 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Handle hash-based routing for QR code links
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '')
@@ -115,14 +137,13 @@ function App() {
       }
     }
 
-    // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
   return (
-    <div className="app">
-      {/* Animated Background */}
+    <>
+      {/* Animated Background - behind everything */}
       <div className="animated-background">
         <div className="gradient-bg"></div>
         <div className="floating-orbs">
@@ -132,21 +153,19 @@ function App() {
         </div>
       </div>
 
-      {/* Overlay for readability */}
+      {/* Overlay */}
       <div className="bg-overlay"></div>
 
-      {/* Main Content */}
-      <div className="content-wrapper">
-        <Navbar currentPage={currentPage} onNavigate={handleNavigation} user={user} onLogout={handleLogout} />
-        
-        <main className="main-content">
-          {/* Submit Case */}
+      {/* Navbar - fixed at top */}
+      <Navbar currentPage={currentPage} onNavigate={handleNavigation} user={user} onLogout={handleLogout} />
+      
+      {/* Main Content Area */}
+      <main className="main-content">
+        <div className="content-wrapper">
           {currentPage === 'case-submission' && <CaseSubmissionForm onNavigate={handleNavigation} />}
           
-          {/* Top Lawyers */}
           {currentPage === 'top-lawyers' && <TopLawyers onNavigate={handleNavigation} />}
           
-          {/* Lawyer Locations */}
           {(currentPage === 'lawyer-locations' || currentPage.startsWith('lawyer-locations-')) && (
             <LawyerLocation 
               lawyerId={currentPage.startsWith('lawyer-locations-') ? currentPage.replace('lawyer-locations-', '') : null} 
@@ -154,25 +173,20 @@ function App() {
             />
           )}
           
-          {/* QR Code Access */}
           {currentPage === 'qr-access' && <QRCaseAccess caseId={null} onNavigate={handleNavigation} />}
           
-          {/* QR Case Access (specific case) */}
           {currentPage.startsWith('case-access-') && <QRCaseAccess caseId={currentPage.split('-')[2]} onNavigate={handleNavigation} />}
           
-          {/* Contact Page */}
           {currentPage === 'contact' && <Contact onNavigate={handleNavigation} />}
           
-          {/* Login Page */}
           {currentPage === 'login' && <Login onNavigate={handleNavigation} onLoginSuccess={handleLoginSuccess} />}
           
-          {/* Case Dashboard */}
           {currentPage === 'case-dashboard' && <CaseDashboard onNavigate={handleNavigation} />}
-        </main>
+        </div>
 
         <Footer />
-      </div>
-    </div>
+      </main>
+    </>
   )
 }
 

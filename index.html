@@ -5,6 +5,39 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sentira Law - AI-Powered Emotional Legal Mediator</title>
+    <style>
+      /* Reset all default margins and padding */
+      html, body {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      /* Reset video and other media elements */
+      video, .video-overlay {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      /* Ensure video is positioned behind everything */
+      #bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      }
+      .video-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.7);
+        z-index: 0;
+      }
+    </style>
   </head>
   <body>
     <!-- Background video: place your file at /public/videos/bg.mp4 -->

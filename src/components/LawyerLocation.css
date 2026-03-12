@@ -1,9 +1,47 @@
 /* Lawyer Location Container */
 .lawyer-location-container {
   padding: 40px 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   min-height: 100vh;
+}
+
+/* Locations Grid - Two Column Layout */
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 24px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.locations-map-section {
+  grid-column: span 7;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.locations-list-section {
+  grid-column: span 3;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 24px;
+  height: 600px;
+  overflow-y: auto;
+}
+
+/* Responsive - Stack on smaller screens */
+@media (max-width: 1024px) {
+  .locations-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .locations-map-section,
+  .locations-list-section {
+    grid-column: span 1;
+    height: 500px;
+  }
 }
 
 .location-header {
@@ -23,11 +61,8 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Map Container */
+/* Map Container - Using Tailwind Grid now */
 .map-container {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 30px;
   margin-bottom: 30px;
 }
 
@@ -35,15 +70,9 @@
   position: relative;
 }
 
-.map-section {
-  position: relative;
-}
-
 .map-section .leaflet-container {
-  height: 500px;
+  height: 100%;
   width: 100%;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   z-index: 1;
 }
 
@@ -84,26 +113,12 @@
   transform: scale(0.95);
 }
 
-.map-overlay {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-/* Address List */
+/* Address List - Using Tailwind now */
 .address-list {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 20px;
-  max-height: 540px;
-  overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -232,17 +247,7 @@
   background: #dc2626;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .map-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .address-list {
-    max-height: 400px;
-  }
-}
-
+/* Responsive - Using Tailwind responsive classes */
 @media (max-width: 768px) {
   .lawyer-location-container {
     padding: 20px 15px;

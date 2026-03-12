@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
 import './TopLawyers.css'
 
 // Import images individually to ensure correct mapping
@@ -223,13 +223,61 @@ const fallbackLawyers = [
   }
 ]
 
+// Cache for lawyers data
+let lawyersCache = null
+let lawyersCacheTime = 0
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+// Preload lawyers data (called from App.jsx)
+export const preloadLawyers = async () => {
+  if (lawyersCache && Date.now() - lawyersCacheTime < CACHE_DURATION) {
+    return lawyersCache
+  }
+  
+  try {
+    const response = await fetch('http://localhost:3001/api/lawyers')
+    const data = await response.json()
+    if (data.success && data.lawyers && data.lawyers.length > 0) {
+      const mappedLawyers = data.lawyers.map((lawyer, index) => ({
+        ...lawyer,
+        photo: fallbackLawyers[index]?.photo || lawyer.photo,
+        cases: lawyer.cases || fallbackLawyers[index]?.cases || 0,
+        description: lawyer.description || fallbackLawyers[index]?.description || lawyer.about,
+        about: lawyer.about || fallbackLawyers[index]?.about || lawyer.description,
+        rating: lawyer.rating || fallbackLawyers[index]?.rating || 4.5,
+        consultationFee: lawyer.consultationFee || fallbackLawyers[index]?.consultationFee || "₹30,000",
+        email: lawyer.email || fallbackLawyers[index]?.email || "info@sentiralaw.com",
+        phone: lawyer.phone || fallbackLawyers[index]?.phone || "+91 98765 43210",
+        availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
+      }))
+      lawyersCache = mappedLawyers
+      lawyersCacheTime = Date.now()
+      return mappedLawyers
+    }
+  } catch (error) {
+    console.log('Preload failed, using fallback:', error.message)
+  }
+  return fallbackLawyers
+}
+
+// Get cached lawyers or fallback
+const getCachedLawyers = () => {
+  if (lawyersCache && Date.now() - lawyersCacheTime < CACHE_DURATION) {
+    return lawyersCache
+  }
+  return fallbackLawyers
+}
+
 export default function TopLawyers({ onNavigate }) {
-  const [lawyers, setLawyers] = useState(fallbackLawyers)
-  const [loading, setLoading] = useState(true)
+  const [lawyers, setLawyers] = useState(getCachedLawyers)
+  const [loading, setLoading] = useState(!lawyersCache)
   const [selectedLawyer, setSelectedLawyer] = useState(null)
 
   useEffect(() => {
-    fetchLawyers()
+    // Use cache immediately, then refresh in background
+    if (!lawyersCache) {
+      fetchLawyers()
+    }
   }, [])
 
   const fetchLawyers = async () => {
@@ -237,7 +285,6 @@ export default function TopLawyers({ onNavigate }) {
       const response = await fetch('http://localhost:3001/api/lawyers')
       const data = await response.json()
       if (data.success && data.lawyers && data.lawyers.length > 0) {
-        // Map MongoDB lawyers to fallback format with local images
         const mappedLawyers = data.lawyers.map((lawyer, index) => ({
           ...lawyer,
           photo: fallbackLawyers[index]?.photo || lawyer.photo,
@@ -251,6 +298,8 @@ export default function TopLawyers({ onNavigate }) {
           availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
         }))
         setLawyers(mappedLawyers)
+        lawyersCache = mappedLawyers
+        lawyersCacheTime = Date.now()
       }
     } catch (error) {
       console.log('Using fallback lawyer data:', error.message)
@@ -327,10 +376,25 @@ export default function TopLawyers({ onNavigate }) {
     )
   }
 
+  // Skeleton loader
   if (loading) {
     return (
       <div className="lawyers-container">
-        <div className="loading">Loading lawyers...</div>
+        <div className="lawyers-header">
+          <h1>Top Indian Lawyers</h1>
+          <p>Expert legal professionals ready to help with your case</p>
+        </div>
+        <div className="lawyers-grid">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="lawyer-card skeleton-card">
+              <div className="skeleton skeleton-photo"></div>
+              <div className="skeleton skeleton-name"></div>
+              <div className="skeleton skeleton-spec"></div>
+              <div className="skeleton skeleton-loc"></div>
+              <div className="skeleton skeleton-btn"></div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -346,12 +410,13 @@ export default function TopLawyers({ onNavigate }) {
         {lawyers.map((lawyer) => (
           <div 
             key={lawyer.id} 
-            className="lawyer-card"
+            className="lawyer-card w-full"
           >
             <img 
               src={lawyer.photo} 
               alt={lawyer.name} 
               className="lawyer-photo"
+              loading="lazy"
             />
             <div className="lawyer-info">
               <h3>{lawyer.name}</h3>

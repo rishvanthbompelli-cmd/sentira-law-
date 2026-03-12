@@ -18,7 +18,7 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   }
 
   return (
-    <nav className="navbar">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0f172a] shadow-lg">
       <div className="navbar-container">
         {/* Left Section - Logo */}
         <a href="#" className="navbar-left" onClick={() => onNavigate('case-submission')}>

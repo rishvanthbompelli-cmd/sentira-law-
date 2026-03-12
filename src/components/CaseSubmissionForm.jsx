@@ -223,15 +223,23 @@ export default function CaseSubmissionForm({ onNavigate }) {
           description: formData.description,
           idProof: documents.idProof ? documents.idProof.name : null,
           documents: documents.documents ? documents.documents.name : null,
-          submittedAt: new Date().toISOString()
+          submittedAt: new Date().toISOString(),
+          status: 'Pending'
         }
         
+        // Store individual case
         localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
+        
+        // Update central cases array
+        const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
+        existingCases.push(caseData)
+        localStorage.setItem('cases', JSON.stringify(existingCases))
+        
         localStorage.setItem('recentCaseId', newCaseId)
         
-        // Navigate to top lawyers
+        // Navigate to dashboard to see the case
         setTimeout(() => {
-          onNavigate('top-lawyers')
+          onNavigate('case-dashboard')
         }, 1500)
       } else {
         setError(data.error || 'Failed to submit case')
@@ -253,15 +261,22 @@ export default function CaseSubmissionForm({ onNavigate }) {
         description: formData.description,
         idProof: documents.idProof ? documents.idProof.name : null,
         documents: documents.documents ? documents.documents.name : null,
-        submittedAt: new Date().toISOString()
+        submittedAt: new Date().toISOString(),
+        status: 'Pending'
       }
       
       localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
+      
+      // Update central cases array
+      const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
+      existingCases.push(caseData)
+      localStorage.setItem('cases', JSON.stringify(existingCases))
+      
       localStorage.setItem('recentCaseId', newCaseId)
       
-      // Navigate to top lawyers (offline mode)
+      // Navigate to dashboard (offline mode)
       setTimeout(() => {
-        onNavigate('top-lawyers')
+        onNavigate('case-dashboard')
       }, 1500)
     }
   }

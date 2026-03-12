@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './CaseDashboard.css'
 
 export default function CaseDashboard({ onNavigate }) {
   const [cases, setCases] = useState([])
   const [loading, setLoading] = useState(true)
-  const [similarCases, setSimilarCases] = useState([])
-  const [loadingSimilar, setLoadingSimilar] = useState(false)
-  const [selectedCaseForSimilarity, setSelectedCaseForSimilarity] = useState(null)
+  const [similarCases, setSimilarCases] = useState({})
+  const [loadingSimilar, setLoadingSimilar] = useState({})
+  const [selectedCaseId, setSelectedCaseId] = useState(null)
 
-  useEffect(() => {
-    // Get all cases from localStorage
+  // Fetch cases from localStorage
+  const loadCases = useCallback(() => {
     try {
       const storedCases = localStorage.getItem('cases')
       if (storedCases) {
@@ -17,11 +17,6 @@ export default function CaseDashboard({ onNavigate }) {
         // Sort by submission date, newest first
         parsedCases.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
         setCases(parsedCases)
-        
-        // If there are cases, fetch similar cases for the most recent one
-        if (parsedCases.length > 0) {
-          fetchSimilarCases(parsedCases[0].caseId)
-        }
       }
     } catch (err) {
       console.error('Error loading cases:', err)
@@ -29,44 +24,43 @@ export default function CaseDashboard({ onNavigate }) {
     setLoading(false)
   }, [])
 
-  // Fetch similar cases from MongoDB
+  useEffect(() => {
+    loadCases()
+  }, [loadCases])
+
+  // Fetch similar cases for a specific case
   const fetchSimilarCases = async (caseId) => {
-    setLoadingSimilar(true)
-    setSelectedCaseForSimilarity(caseId)
+    if (similarCases[caseId] || loadingSimilar[caseId]) return
+    
+    setLoadingSimilar(prev => ({ ...prev, [caseId]: true }))
+    
     try {
       const response = await fetch(`http://localhost:3001/api/cases/similar/${caseId}`)
       const data = await response.json()
       if (data.success) {
-        setSimilarCases(data.similarCases || [])
+        setSimilarCases(prev => ({ ...prev, [caseId]: data.similarCases || [] }))
       }
     } catch (err) {
       console.error('Error fetching similar cases:', err)
       // Use mock data if backend is not available
-      setSimilarCases([
-        {
-          caseId: "CASE-001",
-          caseType: "rental",
-          caseDescription: "Tenant refusing to pay rent for commercial property. Landlord seeking eviction and unpaid rent recovery.",
-          resolutionType: "Settlement",
-          similarity: 82
-        },
-        {
-          caseId: "CASE-002",
-          caseType: "contract",
-          caseDescription: "Client failed to make payment for services rendered. Seeking legal action for recovery of outstanding amount.",
-          resolutionType: "Mediation",
-          similarity: 76
-        },
-        {
-          caseId: "CASE-007",
-          caseType: "rental",
-          caseDescription: "Landlord refusing to return security deposit after lease termination without valid reason.",
-          resolutionType: "Mediation",
-          similarity: 68
-        }
-      ])
+      setSimilarCases(prev => ({ 
+        ...prev, 
+        [caseId]: [
+          { caseId: "CASE-001", caseType: "rental", caseDescription: "Tenant refusing to pay rent for commercial property.", resolutionType: "Settlement", similarity: 82 },
+          { caseId: "CASE-002", caseType: "contract", caseDescription: "Client failed to make payment for services rendered.", resolutionType: "Mediation", similarity: 76 }
+        ]
+      }))
     }
-    setLoadingSimilar(false)
+    setLoadingSimilar(prev => ({ ...prev, [caseId]: false }))
+  }
+
+  const toggleSimilarCases = (caseId) => {
+    if (selectedCaseId === caseId) {
+      setSelectedCaseId(null)
+    } else {
+      setSelectedCaseId(caseId)
+      fetchSimilarCases(caseId)
+    }
   }
 
   // Format the issue type for display
@@ -81,18 +75,18 @@ export default function CaseDashboard({ onNavigate }) {
       'employment': 'Employment Issue',
       'other': 'Other'
     }
-    return typeMap[type] || type
+    return typeMap[type] || type || 'N/A'
   }
 
   // Format resolution type for display
   const formatResolutionType = (type) => {
     const typeMap = {
       'Mediation': 'Mediation',
-      'Settlement': 'Negotiated Settlement',
-      'Court': 'Court Judgment',
+      'Settlement': 'Settlement',
+      'Court': 'Court',
       'Pending': 'Pending'
     }
-    return typeMap[type] || type
+    return typeMap[type] || 'Pending'
   }
 
   // Get color based on similarity percentage
@@ -102,17 +96,37 @@ export default function CaseDashboard({ onNavigate }) {
     return '#64748b' // slate
   }
 
+  // Get status color
+  const getStatusColor = (status) => {
+    const colors = {
+      'Pending': '#f59e0b',
+      'In Review': '#3b82f6',
+      'Resolved': '#22c55e',
+      'Closed': '#64748b'
+    }
+    return colors[status] || '#64748b'
+  }
+
   // Format date for display
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric'
     })
   }
+
+  // Skeleton loader for table rows
+  const SkeletonRow = () => (
+    <tr className="skeleton-row">
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-badge"></div></td>
+      <td><div className="skeleton skeleton-btn"></div></td>
+    </tr>
+  )
 
   // Sample recommended lawyers
   const recommendedLawyers = [
@@ -124,7 +138,30 @@ export default function CaseDashboard({ onNavigate }) {
   if (loading) {
     return (
       <div className="dashboard-container">
-        <div className="loading">Loading...</div>
+        <div className="dashboard-header">
+          <h1>Case Dashboard</h1>
+          <p>View all your submitted case details and recommended lawyers</p>
+        </div>
+        
+        <div className="cases-table-section">
+          <h2>Your Submitted Cases</h2>
+          <table className="cases-table">
+            <thead>
+              <tr>
+                <th>Case Title</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <SkeletonRow />
+              <SkeletonRow />
+              <SkeletonRow />
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }
@@ -138,81 +175,90 @@ export default function CaseDashboard({ onNavigate }) {
 
       {cases.length > 0 ? (
         <>
-          <div className="cases-list-section">
+          <div className="cases-table-section">
             <h2>Your Submitted Cases</h2>
-            <div className="cases-scroll-container">
-              {cases.map((caseItem) => (
-                <div key={caseItem.caseId} className="case-card">
-                  <div className="case-header">
-                    <span className="case-id">{caseItem.caseId}</span>
-                    <span className="case-date">{formatDate(caseItem.submittedAt)}</span>
-                  </div>
-                  <div className="case-info">
-                    <div className="info-row">
-                      <span className="label">User Name:</span>
-                      <span className="value">{caseItem.fullName}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="label">Legal Issue Type:</span>
-                      <span className="value">{formatIssueType(caseItem.issueType)}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="label">Description:</span>
-                      <span className="value">{caseItem.description}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="label">Email:</span>
-                      <span className="value">{caseItem.email}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="label">Phone:</span>
-                      <span className="value">{caseItem.phone}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Similar Cases Section */}
-          <div className="similar-cases-section">
-            <h2>Similar Cases</h2>
-            <p className="similar-cases-desc">
-              Based on your most recent case description, here are similar cases from our database:
-            </p>
-            
-            {loadingSimilar ? (
-              <div className="loading-similar">
-                <span className="loading-spinner"></span>
-                <p>Finding similar cases...</p>
-              </div>
-            ) : similarCases.length > 0 ? (
-              <div className="similar-cases-grid">
-                {similarCases.map((similarCase, index) => (
-                  <div key={index} className="similar-case-card">
-                    <div className="similar-case-header">
-                      <span className="similarity-badge" style={{ backgroundColor: getSimilarityColor(similarCase.similarity) }}>
-                        {similarCase.similarity}% Match
-                      </span>
-                    </div>
-                    <div className="similar-case-body">
-                      <h3>{formatIssueType(similarCase.caseType)}</h3>
-                      <p className="similar-description">
-                        {similarCase.caseDescription?.substring(0, 120)}...
-                      </p>
-                      <div className="similar-outcome">
-                        <span className="outcome-label">Outcome:</span>
-                        <span className="outcome-value">{formatResolutionType(similarCase.resolutionType)}</span>
-                      </div>
-                    </div>
-                  </div>
+            <table className="cases-table">
+              <thead>
+                <tr>
+                  <th>Case Title</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cases.map((caseItem) => (
+                  <>
+                    <tr key={caseItem.caseId} className="case-row">
+                      <td className="case-title-cell">
+                        <span className="case-id">{caseItem.caseId}</span>
+                        <span className="case-desc">{caseItem.description?.substring(0, 50)}...</span>
+                      </td>
+                      <td>{formatIssueType(caseItem.issueType)}</td>
+                      <td>{formatDate(caseItem.submittedAt)}</td>
+                      <td>
+                        <span 
+                          className="status-badge" 
+                          style={{ backgroundColor: getStatusColor(caseItem.status) }}
+                        >
+                          {caseItem.status || 'Pending'}
+                        </span>
+                      </td>
+                      <td>
+                        <button 
+                          className="btn-similar-cases"
+                          onClick={() => toggleSimilarCases(caseItem.caseId)}
+                          disabled={loadingSimilar[caseItem.caseId]}
+                        >
+                          {loadingSimilar[caseItem.caseId] ? 'Loading...' : 
+                           selectedCaseId === caseItem.caseId ? 'Hide Similar' : 'Similar Cases'}
+                        </button>
+                      </td>
+                    </tr>
+                    {selectedCaseId === caseItem.caseId && (
+                      <tr key={`${caseItem.caseId}-similar`} className="similar-cases-row">
+                        <td colSpan={5}>
+                          <div className="similar-cases-container">
+                            <h4>Similar Cases for {caseItem.caseId}</h4>
+                            {loadingSimilar[caseItem.caseId] ? (
+                              <div className="loading-similar">
+                                <span className="loading-spinner"></span>
+                                Finding similar cases...
+                              </div>
+                            ) : similarCases[caseItem.caseId]?.length > 0 ? (
+                              <div className="similar-cases-grid">
+                                {similarCases[caseItem.caseId].map((similar, index) => (
+                                  <div key={index} className="similar-case-card">
+                                    <div className="similar-header">
+                                      <span 
+                                        className="similarity-badge" 
+                                        style={{ backgroundColor: getSimilarityColor(similar.similarity) }}
+                                      >
+                                        {similar.similarity}% Match
+                                      </span>
+                                    </div>
+                                    <div className="similar-body">
+                                      <h5>{formatIssueType(similar.caseType)}</h5>
+                                      <p>{similar.caseDescription?.substring(0, 80)}...</p>
+                                      <span className="outcome">
+                                        Outcome: {formatResolutionType(similar.resolutionType)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="no-similar">No similar cases found</p>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))}
-              </div>
-            ) : (
-              <div className="no-similar-cases">
-                <p>No similar cases found. Submit more cases to get better recommendations.</p>
-              </div>
-            )}
+              </tbody>
+            </table>
           </div>
         </>
       ) : (
