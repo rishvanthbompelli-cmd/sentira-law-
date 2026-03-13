@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useCases } from '../context/CasesContext'
 import './CaseSubmissionForm.css'
 
 export default function CaseSubmissionForm({ onNavigate }) {
+  const { addCase } = useCases()
   const [formData, setFormData] = useState({
     fullName: '',
     address: '',
@@ -227,6 +229,9 @@ export default function CaseSubmissionForm({ onNavigate }) {
           status: 'Pending'
         }
         
+        // Add to global context for immediate dashboard update
+        addCase(caseData)
+        
         // Store individual case
         localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
         
@@ -264,6 +269,9 @@ export default function CaseSubmissionForm({ onNavigate }) {
         submittedAt: new Date().toISOString(),
         status: 'Pending'
       }
+      
+      // Add to global context for immediate dashboard update
+      addCase(caseData)
       
       localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
       

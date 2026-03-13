@@ -1,35 +1,42 @@
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useCallback, memo, useMemo } from 'react'
+import { useCases } from '../context/CasesContext'
 import './CaseDashboard.css'
 
-export default function CaseDashboard({ onNavigate }) {
-  const [cases, setCases] = useState([])
-  const [loading, setLoading] = useState(true)
+// Memoized skeleton row component
+const SkeletonRow = memo(function SkeletonRow() {
+  return (
+    <tr className="skeleton-row">
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-text"></div></td>
+      <td><div className="skeleton skeleton-badge"></div></td>
+      <td><div className="skeleton skeleton-btn"></div></td>
+    </tr>
+  )
+})
+
+// Memoized recommended lawyer item
+const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer, onNavigate }) {
+  return (
+    <div className="lawyer-item">
+      <div className="lawyer-info">
+        <h3>{lawyer.name}</h3>
+        <p>{lawyer.specialization}</p>
+        <p className="location">📍 {lawyer.location}</p>
+      </div>
+      <button onClick={() => onNavigate('top-lawyers')}>View Profile</button>
+    </div>
+  )
+})
+
+function CaseDashboard({ onNavigate }) {
+  const { cases, isLoading, refreshCases } = useCases()
   const [similarCases, setSimilarCases] = useState({})
   const [loadingSimilar, setLoadingSimilar] = useState({})
   const [selectedCaseId, setSelectedCaseId] = useState(null)
 
-  // Fetch cases from localStorage
-  const loadCases = useCallback(() => {
-    try {
-      const storedCases = localStorage.getItem('cases')
-      if (storedCases) {
-        const parsedCases = JSON.parse(storedCases)
-        // Sort by submission date, newest first
-        parsedCases.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
-        setCases(parsedCases)
-      }
-    } catch (err) {
-      console.error('Error loading cases:', err)
-    }
-    setLoading(false)
-  }, [])
-
-  useEffect(() => {
-    loadCases()
-  }, [loadCases])
-
   // Fetch similar cases for a specific case
-  const fetchSimilarCases = async (caseId) => {
+  const fetchSimilarCases = useCallback(async (caseId) => {
     if (similarCases[caseId] || loadingSimilar[caseId]) return
     
     setLoadingSimilar(prev => ({ ...prev, [caseId]: true }))
@@ -52,19 +59,19 @@ export default function CaseDashboard({ onNavigate }) {
       }))
     }
     setLoadingSimilar(prev => ({ ...prev, [caseId]: false }))
-  }
+  }, [similarCases, loadingSimilar])
 
-  const toggleSimilarCases = (caseId) => {
+  const toggleSimilarCases = useCallback((caseId) => {
     if (selectedCaseId === caseId) {
       setSelectedCaseId(null)
     } else {
       setSelectedCaseId(caseId)
       fetchSimilarCases(caseId)
     }
-  }
+  }, [selectedCaseId, fetchSimilarCases])
 
   // Format the issue type for display
-  const formatIssueType = (type) => {
+  const formatIssueType = useCallback((type) => {
     const typeMap = {
       'property': 'Property Dispute',
       'rental': 'Rental Matter',
@@ -76,10 +83,10 @@ export default function CaseDashboard({ onNavigate }) {
       'other': 'Other'
     }
     return typeMap[type] || type || 'N/A'
-  }
+  }, [])
 
   // Format resolution type for display
-  const formatResolutionType = (type) => {
+  const formatResolutionType = useCallback((type) => {
     const typeMap = {
       'Mediation': 'Mediation',
       'Settlement': 'Settlement',
@@ -87,17 +94,17 @@ export default function CaseDashboard({ onNavigate }) {
       'Pending': 'Pending'
     }
     return typeMap[type] || 'Pending'
-  }
+  }, [])
 
   // Get color based on similarity percentage
-  const getSimilarityColor = (similarity) => {
+  const getSimilarityColor = useCallback((similarity) => {
     if (similarity >= 80) return '#22c55e' // green
     if (similarity >= 60) return '#f59e0b' // amber
     return '#64748b' // slate
-  }
+  }, [])
 
   // Get status color
-  const getStatusColor = (status) => {
+  const getStatusColor = useCallback((status) => {
     const colors = {
       'Pending': '#f59e0b',
       'In Review': '#3b82f6',
@@ -105,37 +112,27 @@ export default function CaseDashboard({ onNavigate }) {
       'Closed': '#64748b'
     }
     return colors[status] || '#64748b'
-  }
+  }, [])
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     })
-  }
+  }, [])
 
-  // Skeleton loader for table rows
-  const SkeletonRow = () => (
-    <tr className="skeleton-row">
-      <td><div className="skeleton skeleton-text"></div></td>
-      <td><div className="skeleton skeleton-text"></div></td>
-      <td><div className="skeleton skeleton-text"></div></td>
-      <td><div className="skeleton skeleton-badge"></div></td>
-      <td><div className="skeleton skeleton-btn"></div></td>
-    </tr>
-  )
-
-  // Sample recommended lawyers
-  const recommendedLawyers = [
+  // Sample recommended lawyers - memoized
+  const recommendedLawyers = useMemo(() => [
     { name: "Harish Salve", specialization: "Corporate Law", location: "New Delhi" },
     { name: "Kapil Sibal", specialization: "Constitutional Law", location: "New Delhi" },
     { name: "Indira Jaising", specialization: "Human Rights Law", location: "Mumbai" }
-  ]
+  ], [])
 
-  if (loading) {
+  // Show skeleton only if actually loading and no cached data
+  if (isLoading && cases.length === 0) {
     return (
       <div className="dashboard-container">
         <div className="dashboard-header">
@@ -189,8 +186,8 @@ export default function CaseDashboard({ onNavigate }) {
               </thead>
               <tbody>
                 {cases.map((caseItem) => (
-                  <>
-                    <tr key={caseItem.caseId} className="case-row">
+                  <React.Fragment key={caseItem.caseId}>
+                    <tr className="case-row">
                       <td className="case-title-cell">
                         <span className="case-id">{caseItem.caseId}</span>
                         <span className="case-desc">{caseItem.description?.substring(0, 50)}...</span>
@@ -255,7 +252,7 @@ export default function CaseDashboard({ onNavigate }) {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -272,14 +269,11 @@ export default function CaseDashboard({ onNavigate }) {
         <h2>Recommended Lawyers</h2>
         <div className="lawyer-list">
           {recommendedLawyers.map((lawyer, index) => (
-            <div key={index} className="lawyer-item">
-              <div className="lawyer-info">
-                <h3>{lawyer.name}</h3>
-                <p>{lawyer.specialization}</p>
-                <p className="location">📍 {lawyer.location}</p>
-              </div>
-              <button onClick={() => onNavigate('top-lawyers')}>View Profile</button>
-            </div>
+            <RecommendedLawyer 
+              key={index} 
+              lawyer={lawyer} 
+              onNavigate={onNavigate} 
+            />
           ))}
         </div>
       </div>
@@ -297,3 +291,6 @@ export default function CaseDashboard({ onNavigate }) {
     </div>
   )
 }
+
+// Wrap with memo for performance
+export default memo(CaseDashboard)

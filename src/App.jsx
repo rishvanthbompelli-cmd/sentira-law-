@@ -12,6 +12,7 @@ import LawyerLocation from './components/LawyerLocation'
 import Support from './components/Support'
 import Login from './components/Login'
 import Contact from './components/Contact'
+import { CasesProvider, preloadCases } from './context/CasesContext'
 
 // Get initial page from hash or default to case-submission
 const getInitialPage = () => {
@@ -40,7 +41,6 @@ const getInitialPage = () => {
 function App() {
   const [currentPage, setCurrentPage] = useState(getInitialPage)
   const [user, setUser] = useState(null)
-  const [isPreloading, setIsPreloading] = useState(false)
 
   // Check for existing user on mount
   useEffect(() => {
@@ -50,22 +50,25 @@ function App() {
     }
   }, [])
 
-  // Preload lawyers data in background on app load
+  // Preload lawyers and cases data in background on app load
   useEffect(() => {
+    // Preload lawyers
     preloadLawyers().then(() => {
       console.log('Lawyers data preloaded')
     }).catch(err => {
-      console.log('Preload error:', err)
+      console.log('Lawyers preload error:', err)
+    })
+    
+    // Preload cases
+    preloadCases().then(() => {
+      console.log('Cases data preloaded')
+    }).catch(err => {
+      console.log('Cases preload error:', err)
     })
   }, [])
 
   const handleNavigationHover = (page) => {
-    if (page === 'top-lawyers' && !isPreloading) {
-      setIsPreloading(true)
-      preloadLawyers().then(() => {
-        setIsPreloading(false)
-      })
-    }
+    // Preloading on hover is optional and can be removed for better performance
   }
 
   const handleLoginSuccess = (userData) => {
@@ -80,10 +83,6 @@ function App() {
   }
 
   const handleNavigation = (page) => {
-    if (page === 'top-lawyers') {
-      preloadLawyers()
-    }
-    
     setCurrentPage(page)
     
     if (page.startsWith('case-access-')) {
@@ -142,7 +141,7 @@ function App() {
   }, [])
 
   return (
-    <>
+    <CasesProvider>
       {/* Animated Background - behind everything */}
       <div className="animated-background">
         <div className="gradient-bg"></div>
@@ -186,7 +185,7 @@ function App() {
 
         <Footer />
       </main>
-    </>
+    </CasesProvider>
   )
 }
 

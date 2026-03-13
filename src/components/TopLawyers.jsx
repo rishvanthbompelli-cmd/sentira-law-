@@ -223,17 +223,40 @@ const fallbackLawyers = [
   }
 ]
 
-// Cache for lawyers data
-let lawyersCache = null
-let lawyersCacheTime = 0
+// Cache for lawyers data - using localStorage for persistence
+const CACHE_KEY = 'sentira_lawyers_cache'
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+// Get cached lawyers from localStorage or return fallback
+const getCachedLawyers = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached)
+      if (Date.now() - timestamp < CACHE_DURATION) {
+        return data
+      }
+    }
+  } catch (e) {
+    console.log('Cache read error:', e.message)
+  }
+  return fallbackLawyers
+}
+
+// Save lawyers to localStorage cache
+const saveLawyersToCache = (lawyers) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      data: lawyers,
+      timestamp: Date.now()
+    }))
+  } catch (e) {
+    console.log('Cache save error:', e.message)
+  }
+}
 
 // Preload lawyers data (called from App.jsx)
 export const preloadLawyers = async () => {
-  if (lawyersCache && Date.now() - lawyersCacheTime < CACHE_DURATION) {
-    return lawyersCache
-  }
-  
   try {
     const response = await fetch('http://localhost:3001/api/lawyers')
     const data = await response.json()
@@ -250,8 +273,7 @@ export const preloadLawyers = async () => {
         phone: lawyer.phone || fallbackLawyers[index]?.phone || "+91 98765 43210",
         availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
       }))
-      lawyersCache = mappedLawyers
-      lawyersCacheTime = Date.now()
+      saveLawyersToCache(mappedLawyers)
       return mappedLawyers
     }
   } catch (error) {
@@ -260,25 +282,15 @@ export const preloadLawyers = async () => {
   return fallbackLawyers
 }
 
-// Get cached lawyers or fallback
-const getCachedLawyers = () => {
-  if (lawyersCache && Date.now() - lawyersCacheTime < CACHE_DURATION) {
-    return lawyersCache
-  }
-  return fallbackLawyers
-}
-
 export default function TopLawyers({ onNavigate }) {
   const [lawyers, setLawyers] = useState(getCachedLawyers)
-  const [loading, setLoading] = useState(!lawyersCache)
+  const [loading, setLoading] = useState(false) // Start with false since we have cached/fallback data
   const [selectedLawyer, setSelectedLawyer] = useState(null)
 
   useEffect(() => {
-    // Use cache immediately, then refresh in background
-    if (!lawyersCache) {
-      fetchLawyers()
-    }
-  }, [])
+    // Refresh data from server in background, but don't block rendering
+    fetchLawyers()
+  }, []) // Empty dependency - only run once on mount
 
   const fetchLawyers = async () => {
     try {
@@ -298,11 +310,10 @@ export default function TopLawyers({ onNavigate }) {
           availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
         }))
         setLawyers(mappedLawyers)
-        lawyersCache = mappedLawyers
-        lawyersCacheTime = Date.now()
+        saveLawyersToCache(mappedLawyers)
       }
     } catch (error) {
-      console.log('Using fallback lawyer data:', error.message)
+      console.log('Using cached/fallback lawyer data:', error.message)
     }
     setLoading(false)
   }
