@@ -735,7 +735,8 @@ app.get('/verify', async (req, res) => {
   }
 })
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
+// Start server - bind to all network interfaces for external access
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`)
+  console.log(`Network access: http://10.30.2.64:${PORT}`)
 })

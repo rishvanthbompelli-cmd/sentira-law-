@@ -24,7 +24,7 @@ export default function Contact({ onNavigate }) {
     setLoading(true)
     
     try {
-      const response = await fetch('http://localhost:3001/api/contacts', {
+      const response = await fetch('http://10.30.2.64:3001/api/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

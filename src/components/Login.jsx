@@ -25,7 +25,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     try {
       const endpoint = isLoginMode ? '/login' : '/register'
       
-      const response = await fetch(`http://localhost:3001${endpoint}`, {
+      const response = await fetch(`http://10.30.2.64:3001${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

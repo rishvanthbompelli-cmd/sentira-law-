@@ -9,8 +9,8 @@ export default function MobileQR() {
 
   // Get local IP address for local network access
   const getLocalIP = () => {
-    // For local network, use port 5173
-    return 'http://192.168.1.100:5173'
+    // For local network, use the network IP
+    return 'http://10.30.2.64:5173'
   }
 
   useEffect(() => {

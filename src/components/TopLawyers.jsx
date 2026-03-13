@@ -258,7 +258,7 @@ const saveLawyersToCache = (lawyers) => {
 // Preload lawyers data (called from App.jsx)
 export const preloadLawyers = async () => {
   try {
-    const response = await fetch('http://localhost:3001/api/lawyers')
+    const response = await fetch('http://10.30.2.64:3001/api/lawyers')
     const data = await response.json()
     if (data.success && data.lawyers && data.lawyers.length > 0) {
       const mappedLawyers = data.lawyers.map((lawyer, index) => ({
@@ -294,7 +294,7 @@ export default function TopLawyers({ onNavigate }) {
 
   const fetchLawyers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/lawyers')
+      const response = await fetch('http://10.30.2.64:3001/api/lawyers')
       const data = await response.json()
       if (data.success && data.lawyers && data.lawyers.length > 0) {
         const mappedLawyers = data.lawyers.map((lawyer, index) => ({

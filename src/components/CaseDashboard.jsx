@@ -42,7 +42,7 @@ function CaseDashboard({ onNavigate }) {
     setLoadingSimilar(prev => ({ ...prev, [caseId]: true }))
     
     try {
-      const response = await fetch(`http://localhost:3001/api/cases/similar/${caseId}`)
+      const response = await fetch(`http://10.30.2.64:3001/api/cases/similar/${caseId}`)
       const data = await response.json()
       if (data.success) {
         setSimilarCases(prev => ({ ...prev, [caseId]: data.similarCases || [] }))

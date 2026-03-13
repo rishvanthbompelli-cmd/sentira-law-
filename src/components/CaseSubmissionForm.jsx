@@ -190,7 +190,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
       const docName = documents.documents ? documents.documents.name : null
       
       // Send data to backend API
-      const response = await fetch('http://localhost:3001/api/cases', {
+      const response = await fetch('http://10.30.2.64:3001/api/cases', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

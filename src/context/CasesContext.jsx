@@ -43,7 +43,7 @@ export const preloadCases = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:3001/api/cases')
+    const response = await fetch('http://10.30.2.64:3001/api/cases')
     if (response.ok) {
       const data = await response.json()
       if (data.success && data.cases) {
@@ -105,7 +105,7 @@ export function CasesProvider({ children }) {
     setIsRefreshing(true)
     
     try {
-      const response = await fetch('http://localhost:3001/api/cases')
+      const response = await fetch('http://10.30.2.64:3001/api/cases')
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.cases) {
