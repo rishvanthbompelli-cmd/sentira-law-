@@ -5,6 +5,7 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
+    { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'case-submission', label: 'Submit Case', icon: '📝' },
     { id: 'top-lawyers', label: 'Top Lawyers', icon: '⚖️' },
     { id: 'lawyer-locations', label: 'Locations', icon: '📍' },
@@ -21,7 +22,7 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
     <nav className="fixed top-0 left-0 w-full z-50 bg-[#0f172a] shadow-lg">
       <div className="navbar-container">
         {/* Left Section - Logo */}
-        <a href="#" className="navbar-left" onClick={() => onNavigate('case-submission')}>
+        <a href="#" className="navbar-left" onClick={() => onNavigate('home')}>
           <div className="navbar-logo-icon">⚖️</div>
           <span className="navbar-logo-text">Sentira-Law</span>
         </a>

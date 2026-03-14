@@ -304,6 +304,8 @@
   padding: 40px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .location-lawyer-info {
@@ -362,12 +364,56 @@
   line-height: 1.6;
 }
 
-.location-map-note {
-  margin-top: 20px;
-  padding: 20px;
+.location-address-nav {
+  margin-bottom: 30px;
+  padding: 24px;
   background: rgba(15, 52, 96, 0.05);
-  border-radius: 12px;
+  border-radius: 16px;
   text-align: center;
+}
+
+.location-address-nav h3 {
+  font-size: 1.3rem;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.location-address-nav p {
+  font-size: 1.05rem;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.navigate-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.navigate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.individual-lawyer-map {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.individual-lawyer-map .leaflet-container {
+  z-index: 10;
 }
 
 .location-map-note p {

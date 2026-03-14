@@ -12,9 +12,10 @@ import LawyerLocation from './components/LawyerLocation'
 import Support from './components/Support'
 import Login from './components/Login'
 import Contact from './components/Contact'
+import Home from './components/Home'
 import { CasesProvider, preloadCases } from './context/CasesContext'
 
-// Get initial page from hash or default to case-submission
+// Get initial page from hash or default to home
 const getInitialPage = () => {
   const hash = window.location.hash.replace('#', '')
   
@@ -33,9 +34,11 @@ const getInitialPage = () => {
     return 'contact'
   } else if (hash === '/login') {
     return 'login'
+  } else if (hash === '/submit') {
+    return 'case-submission'
   }
   
-  return 'case-submission'
+  return 'home'
 }
 
 function App() {
@@ -79,7 +82,7 @@ function App() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
-    handleNavigation('case-submission')
+    handleNavigation('home')
   }
 
   const handleNavigation = (page) => {
@@ -104,6 +107,8 @@ function App() {
     } else if (page === 'login') {
       window.location.hash = '/login'
     } else if (page === 'case-submission') {
+      window.location.hash = '/submit'
+    } else if (page === 'home') {
       window.location.hash = '/'
     }
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -131,8 +136,10 @@ function App() {
         setCurrentPage('contact')
       } else if (hash === '/login') {
         setCurrentPage('login')
-      } else if (hash === '/' || hash === '') {
+      } else if (hash === '/submit') {
         setCurrentPage('case-submission')
+      } else if (hash === '/' || hash === '') {
+        setCurrentPage('home')
       }
     }
 
@@ -161,6 +168,8 @@ function App() {
       {/* Main Content Area */}
       <main className="main-content">
         <div className="content-wrapper">
+          {currentPage === 'home' && <Home onNavigate={handleNavigation} />}
+          
           {currentPage === 'case-submission' && <CaseSubmissionForm onNavigate={handleNavigation} />}
           
           {currentPage === 'top-lawyers' && <TopLawyers onNavigate={handleNavigation} />}

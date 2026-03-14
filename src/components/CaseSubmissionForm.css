@@ -695,3 +695,108 @@
     gap: 8px;
   }
 }
+
+/* Recommended Lawyer Submit Card Styles */
+.suggested-lawyer-submit-container {
+  margin-top: 32px;
+  background: rgba(30, 41, 59, 0.6); 
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid rgba(99, 102, 241, 0.3); 
+  animation: slideDown 0.5s ease-out forwards;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.lawyer-match-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #818cf8; 
+  margin: 0 0 12px 0;
+}
+
+.lawyer-match-desc {
+  color: #cbd5e1; 
+  margin-bottom: 24px;
+  font-size: 1.05rem;
+}
+
+.lawyer-details-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  background: rgba(15, 23, 42, 0.7); 
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.8); 
+}
+
+@media (min-width: 768px) {
+  .lawyer-details-card {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.lawyer-info {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .lawyer-info {
+    text-align: left;
+  }
+}
+
+.lawyer-name {
+  font-weight: 800;
+  color: white;
+  font-size: 1.6rem;
+  margin: 0 0 6px 0;
+}
+
+.lawyer-specialization {
+  color: #a5b4fc; 
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.book-consult-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); 
+  color: white;
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+.book-consult-btn:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+}
+
+.skip-link-container {
+  margin-top: 28px;
+}
+
+.skip-link-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8; 
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.skip-link-btn:hover {
+  color: white;
+}

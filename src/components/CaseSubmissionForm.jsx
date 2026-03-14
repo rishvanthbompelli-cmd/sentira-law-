@@ -23,8 +23,9 @@ export default function CaseSubmissionForm({ onNavigate }) {
   const [error, setError] = useState('')
   const [caseAnalysis, setCaseAnalysis] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [suggestedLawyer, setSuggestedLawyer] = useState(null)
   const [fileSelected, setFileSelected] = useState({ idProof: false, documents: false })
-
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -177,19 +178,39 @@ export default function CaseSubmissionForm({ onNavigate }) {
     }, 2000)
   }
 
+  const matchLawyer = () => {
+    const desc = (formData.description + ' ' + formData.issueType).toLowerCase();
+    if (desc.includes('landlord') || desc.includes('tenant') || desc.includes('rent') || desc.includes('property')) {
+      return { id: 2, name: "Kapil Sibal", specialization: "Civil & Property Law Expert" };
+    } else if (desc.includes('divorce') || desc.includes('custody') || desc.includes('family')) {
+      return { id: 10, name: "Indira Jaising", specialization: "Family & Human Rights Law Expert" };
+    } else if (desc.includes('employee') || desc.includes('employer') || desc.includes('job') || desc.includes('corporate') || desc.includes('contract')) {
+      return { id: 1, name: "Harish Salve", specialization: "Corporate Law Expert" };
+    } else if (desc.includes('crime') || desc.includes('criminal') || desc.includes('police') || desc.includes('assault')) {
+      return { id: 5, name: "Gopal Subramanium", specialization: "Criminal Defense Expert" };
+    } else {
+      return { id: 9, name: "K. Parasaran", specialization: "Senior Constitutional Expert" };
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setIsSubmitting(true)
     
     // Generate unique case ID
     const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase()
+    const mappedLawyer = matchLawyer();
+    setSuggestedLawyer(mappedLawyer);
     
     try {
-      // Get filename from file objects
       const idProofName = documents.idProof ? documents.idProof.name : null
       const docName = documents.documents ? documents.documents.name : null
       
-      // Send data to backend API
+      // Use AbortController for quicker timeout on hardcoded IP
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+
       const response = await fetch('http://10.30.2.64:3001/api/cases', {
         method: 'POST',
         headers: {
@@ -205,16 +226,18 @@ export default function CaseSubmissionForm({ onNavigate }) {
           description: formData.description,
           idProof: idProofName,
           documents: docName
-        })
+        }),
+        signal: controller.signal
       })
       
+      clearTimeout(timeoutId)
       const data = await response.json()
       
       if (data.success) {
         setCaseId(newCaseId)
         setSubmitted(true)
+        setIsSubmitting(false)
         
-        // Also store in localStorage for backup/offline
         const caseData = {
           caseId: newCaseId,
           fullName: formData.fullName,
@@ -223,39 +246,29 @@ export default function CaseSubmissionForm({ onNavigate }) {
           address: formData.address,
           issueType: formData.issueType,
           description: formData.description,
-          idProof: documents.idProof ? documents.idProof.name : null,
-          documents: documents.documents ? documents.documents.name : null,
+          idProof: idProofName,
+          documents: docName,
           submittedAt: new Date().toISOString(),
           status: 'Pending'
         }
         
-        // Add to global context for immediate dashboard update
         addCase(caseData)
-        
-        // Store individual case
         localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
         
-        // Update central cases array
         const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
         existingCases.push(caseData)
         localStorage.setItem('cases', JSON.stringify(existingCases))
-        
         localStorage.setItem('recentCaseId', newCaseId)
-        
-        // Navigate to dashboard to see the case
-        setTimeout(() => {
-          onNavigate('case-dashboard')
-        }, 1500)
       } else {
         setError(data.error || 'Failed to submit case')
+        setIsSubmitting(false)
       }
     } catch (err) {
       console.error('Submit case error:', err)
-      // Even if server fails, show success and navigate (offline mode)
       setCaseId(newCaseId)
       setSubmitted(true)
+      setIsSubmitting(false)
       
-      // Store in localStorage for backup
       const caseData = {
         caseId: newCaseId,
         fullName: formData.fullName,
@@ -270,22 +283,12 @@ export default function CaseSubmissionForm({ onNavigate }) {
         status: 'Pending'
       }
       
-      // Add to global context for immediate dashboard update
       addCase(caseData)
-      
       localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
-      
-      // Update central cases array
       const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
       existingCases.push(caseData)
       localStorage.setItem('cases', JSON.stringify(existingCases))
-      
       localStorage.setItem('recentCaseId', newCaseId)
-      
-      // Navigate to dashboard (offline mode)
-      setTimeout(() => {
-        onNavigate('case-dashboard')
-      }, 1500)
     }
   }
 
@@ -307,7 +310,35 @@ export default function CaseSubmissionForm({ onNavigate }) {
           <div className="success-icon">✅</div>
           <h2>Case Submitted Successfully!</h2>
           <p className="case-id">Case ID: <strong>{caseId}</strong></p>
-          <p>Redirecting to dashboard...</p>
+          
+          {suggestedLawyer && (
+            <div className="suggested-lawyer-submit-container">
+              <h3 className="lawyer-match-title">Case Analysis Complete</h3>
+              <p className="lawyer-match-desc">Based on your case details, we highly recommend consulting with:</p>
+              
+              <div className="lawyer-details-card">
+                <div className="lawyer-info">
+                  <p className="lawyer-name">{suggestedLawyer.name}</p>
+                  <p className="lawyer-specialization">{suggestedLawyer.specialization}</p>
+                </div>
+                <button 
+                  className="book-consult-btn"
+                  onClick={() => onNavigate('top-lawyers')}
+                >
+                  View Lawyer Profile & Book
+                </button>
+              </div>
+              
+              <div className="skip-link-container">
+                <button 
+                  className="skip-link-btn"
+                  onClick={() => onNavigate('case-dashboard')}
+                >
+                  Skip and go to Dashboard
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )
@@ -548,8 +579,14 @@ export default function CaseSubmissionForm({ onNavigate }) {
           </div>
         </div>
 
-        <button type="submit" className="submit-btn">
-          Submit Case
+        {error && <div className="error-message bg-red-900/50 border border-red-500 text-red-200 p-4 rounded-lg mb-6">{error}</div>}
+
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <><span className="ai-spinner mr-2" style={{ display: 'inline-block', verticalAlign: 'middle' }}></span>Submitting...</>
+          ) : (
+            'Submit Case'
+          )}
         </button>
       </form>
     </div>

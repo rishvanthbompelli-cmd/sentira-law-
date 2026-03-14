@@ -102,6 +102,7 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
             <button className="back-btn" onClick={() => onNavigate('lawyer-locations')}>
               ← Back to Locations
             </button>
+            <h1>Office Location for {lawyer.name}</h1>
           </div>
           <div className="location-card">
             <div className="location-lawyer-info">
@@ -110,9 +111,34 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
               <p className="lawyer-specialization">{lawyer.specialization}</p>
               <p className="lawyer-location">{lawyer.location}</p>
             </div>
-            <div className="location-address">
+            
+            <div className="location-address-nav">
               <h3>Office Address</h3>
               <p>{lawyer.address}</p>
+              
+              <button 
+                className="navigate-btn mt-4"
+                onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${lawyer.lat},${lawyer.lng}`, '_blank')}
+              >
+                🗺️ Navigate via Google Maps
+              </button>
+            </div>
+            
+            <div className="individual-lawyer-map mt-8">
+              <div className="w-full h-full rounded-xl overflow-hidden shadow-2xl border border-slate-700" style={{ isolation: 'isolate' }}>
+                <MapContainer 
+                  center={[lawyer.lat, lawyer.lng]} 
+                  zoom={14} 
+                  style={{ height: '350px', width: '100%' }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={[lawyer.lat, lawyer.lng]} />
+                  <MapUpdater center={[lawyer.lat, lawyer.lng]} zoom={14} />
+                </MapContainer>
+              </div>
             </div>
           </div>
         </div>
