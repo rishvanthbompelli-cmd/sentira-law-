@@ -12,12 +12,12 @@ export default function CaseSubmissionForm({ onNavigate }) {
     issueType: '',
     description: ''
   })
-  
+
   const [documents, setDocuments] = useState({
     idProof: null,
     documents: null
   })
-  
+
   const [submitted, setSubmitted] = useState(false)
   const [caseId, setCaseId] = useState('')
   const [error, setError] = useState('')
@@ -53,14 +53,14 @@ export default function CaseSubmissionForm({ onNavigate }) {
       // NLP Keyword detection for tone analysis
       const aggressiveKeywords = ['fight', 'attack', 'threat', 'beat', 'hurt', 'violence', 'abuse', 'harass', 'destroy', 'kill', 'sue', 'warrant', 'illegal', 'fraud', 'cheat', 'scam']
       const legalThreatKeywords = ['court', 'lawyer', 'legal', 'police', 'complaint', 'fir', 'bailable', 'non-bailable', 'penalty', 'punishment', 'sentence', 'jail', 'prison', 'accused', 'charges', 'section', 'ipc']
-      
+
       let aggressiveCount = 0
       let legalThreatCount = 0
-      
+
       aggressiveKeywords.forEach(keyword => {
         if (description.includes(keyword)) aggressiveCount++
       })
-      
+
       legalThreatKeywords.forEach(keyword => {
         if (description.includes(keyword)) legalThreatCount++
       })
@@ -78,7 +78,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
 
       // Issue category prediction based on description and selected type
       const issuePredictions = []
-      
+
       // Property-related keywords
       const propertyKeywords = ['property', 'land', 'house', 'flat', 'rent', 'tenant', 'landlord', 'ownership', 'title', 'deed', 'possession', 'eviction', 'lease']
       const contractKeywords = ['contract', 'agreement', 'breach', 'payment', 'damages', 'compensation', 'liability', 'terms', 'clause', 'violation']
@@ -134,26 +134,26 @@ export default function CaseSubmissionForm({ onNavigate }) {
 
       // Generate detailed insights
       const insights = []
-      
+
       // Property/rental insight
       if (propertyMatch > 0 || issueType === 'rental') {
         insights.push('The case appears to involve a property or rental disagreement.')
       }
-      
+
       // Tone insight
       if (aggressiveScore > 30) {
         insights.push('The language indicates moderate to high legal conflict. Consider professional mediation.')
       } else {
         insights.push('The communication tone appears relatively neutral and factual.')
       }
-      
+
       // Resolution insight
       if (legalThreatCount < 2 && caseSeverity < 60) {
         insights.push('Mediation may resolve the issue before court action is necessary.')
       } else if (legalThreatCount >= 2) {
         insights.push('The case involves legal threats - engaging a lawyer is recommended.')
       }
-      
+
       // Description completeness
       if (descriptionLength < 50) {
         insights.push('Consider providing more details about the incident for better case assessment.')
@@ -197,16 +197,16 @@ export default function CaseSubmissionForm({ onNavigate }) {
     e.preventDefault()
     setError('')
     setIsSubmitting(true)
-    
+
     // Generate unique case ID
-    const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase()
+    const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase()
     const mappedLawyer = matchLawyer();
     setSuggestedLawyer(mappedLawyer);
-    
+
     try {
       const idProofName = documents.idProof ? documents.idProof.name : null
       const docName = documents.documents ? documents.documents.name : null
-      
+
       // Use AbortController for quicker timeout on hardcoded IP
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 3000)
@@ -229,15 +229,15 @@ export default function CaseSubmissionForm({ onNavigate }) {
         }),
         signal: controller.signal
       })
-      
+
       clearTimeout(timeoutId)
       const data = await response.json()
-      
+
       if (data.success) {
         setCaseId(newCaseId)
         setSubmitted(true)
         setIsSubmitting(false)
-        
+
         const caseData = {
           caseId: newCaseId,
           fullName: formData.fullName,
@@ -251,10 +251,10 @@ export default function CaseSubmissionForm({ onNavigate }) {
           submittedAt: new Date().toISOString(),
           status: 'Pending'
         }
-        
+
         addCase(caseData)
         localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
-        
+
         const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
         existingCases.push(caseData)
         localStorage.setItem('cases', JSON.stringify(existingCases))
@@ -265,30 +265,8 @@ export default function CaseSubmissionForm({ onNavigate }) {
       }
     } catch (err) {
       console.error('Submit case error:', err)
-      setCaseId(newCaseId)
-      setSubmitted(true)
+      setError('Network error: Failed to submit case. Please try again.')
       setIsSubmitting(false)
-      
-      const caseData = {
-        caseId: newCaseId,
-        fullName: formData.fullName,
-        phone: formData.phone,
-        email: formData.email,
-        address: formData.address,
-        issueType: formData.issueType,
-        description: formData.description,
-        idProof: documents.idProof ? documents.idProof.name : null,
-        documents: documents.documents ? documents.documents.name : null,
-        submittedAt: new Date().toISOString(),
-        status: 'Pending'
-      }
-      
-      addCase(caseData)
-      localStorage.setItem(`case_${newCaseId}`, JSON.stringify(caseData))
-      const existingCases = JSON.parse(localStorage.getItem('cases') || '[]')
-      existingCases.push(caseData)
-      localStorage.setItem('cases', JSON.stringify(existingCases))
-      localStorage.setItem('recentCaseId', newCaseId)
     }
   }
 
@@ -310,27 +288,27 @@ export default function CaseSubmissionForm({ onNavigate }) {
           <div className="success-icon">✅</div>
           <h2>Case Submitted Successfully!</h2>
           <p className="case-id">Case ID: <strong>{caseId}</strong></p>
-          
+
           {suggestedLawyer && (
             <div className="suggested-lawyer-submit-container">
               <h3 className="lawyer-match-title">Case Analysis Complete</h3>
               <p className="lawyer-match-desc">Based on your case details, we highly recommend consulting with:</p>
-              
+
               <div className="lawyer-details-card">
                 <div className="lawyer-info">
                   <p className="lawyer-name">{suggestedLawyer.name}</p>
                   <p className="lawyer-specialization">{suggestedLawyer.specialization}</p>
                 </div>
-                <button 
+                <button
                   className="book-consult-btn"
                   onClick={() => onNavigate('top-lawyers')}
                 >
                   View Lawyer Profile & Book
                 </button>
               </div>
-              
+
               <div className="skip-link-container">
-                <button 
+                <button
                   className="skip-link-btn"
                   onClick={() => onNavigate('case-dashboard')}
                 >
@@ -354,7 +332,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
       <form className="case-form" onSubmit={handleSubmit}>
         <div className="form-section">
           <h2>Personal Information</h2>
-          
+
           <div className="form-group">
             <label htmlFor="fullName">Full Name *</label>
             <input
@@ -367,7 +345,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
               placeholder="Enter your full legal name"
             />
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="phone">Phone Number *</label>
@@ -381,7 +359,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="email">Email ID *</label>
               <input
@@ -395,7 +373,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="address">Address *</label>
             <textarea
@@ -412,7 +390,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
 
         <div className="form-section">
           <h2>Case Details</h2>
-          
+
           <div className="form-group">
             <label htmlFor="issueType">Type of Legal Issue *</label>
             <select
@@ -428,7 +406,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
               ))}
             </select>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="description">Problem Description *</label>
             <div className="description-with-button">
@@ -441,8 +419,8 @@ export default function CaseSubmissionForm({ onNavigate }) {
                 placeholder="Describe your legal issue in detail..."
                 rows={5}
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="ai-analyze-btn"
                 onClick={analyzeCase}
                 disabled={analyzing || (!formData.fullName && !formData.address && !formData.issueType && !formData.description)}
@@ -546,7 +524,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
 
         <div className="form-section">
           <h2>Document Upload</h2>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="idProof">ID Proof (Aadhaar/PAN/Voter ID) *</label>
@@ -562,7 +540,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
               </div>
               {fileSelected.idProof && documents.idProof && <span className="file-name">{documents.idProof.name}</span>}
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="documents">Supporting Documents</label>
               <div className="file-input-wrapper">

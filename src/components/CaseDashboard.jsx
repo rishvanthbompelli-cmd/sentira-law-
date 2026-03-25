@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo, useMemo } from 'react'
+import React, { useState, useCallback, memo, useMemo, useRef, useEffect } from 'react'
 import { useCases } from '../context/CasesContext'
 import './CaseDashboard.css'
 
@@ -34,10 +34,32 @@ function CaseDashboard({ onNavigate }) {
   const [similarCases, setSimilarCases] = useState({})
   const [loadingSimilar, setLoadingSimilar] = useState({})
   const [selectedCaseId, setSelectedCaseId] = useState(null)
+  
+  // Refs to store current state values for use in callbacks
+  const similarCasesRef = useRef({})
+  const loadingSimilarRef = useRef({})
+  const selectedCaseIdRef = useRef(null)
+  
+  // Sync refs with state
+  useEffect(() => {
+    similarCasesRef.current = similarCases
+  }, [similarCases])
+  
+  useEffect(() => {
+    loadingSimilarRef.current = loadingSimilar
+  }, [loadingSimilar])
+  
+  useEffect(() => {
+    selectedCaseIdRef.current = selectedCaseId
+  }, [selectedCaseId])
 
   // Fetch similar cases for a specific case
   const fetchSimilarCases = useCallback(async (caseId) => {
-    if (similarCases[caseId] || loadingSimilar[caseId]) return
+    // Use refs to avoid dependency issues
+    const currentSimilarCases = similarCasesRef.current
+    const currentLoadingSimilar = loadingSimilarRef.current
+    
+    if (currentSimilarCases[caseId] || currentLoadingSimilar[caseId]) return
     
     setLoadingSimilar(prev => ({ ...prev, [caseId]: true }))
     
@@ -46,32 +68,34 @@ function CaseDashboard({ onNavigate }) {
       const data = await response.json()
       if (data.success) {
         setSimilarCases(prev => ({ ...prev, [caseId]: data.similarCases || [] }))
+        similarCasesRef.current = { ...similarCasesRef.current, [caseId]: data.similarCases || [] }
       }
     } catch (err) {
       console.error('Error fetching similar cases:', err)
       // Use mock data if backend is not available
-      setSimilarCases(prev => ({ 
-        ...prev, 
-        [caseId]: [
-          { caseId: "CASE-001", caseType: "rental", caseDescription: "Tenant refusing to pay rent for commercial property.", resolutionType: "Settlement", similarity: 82 },
-          { caseId: "CASE-002", caseType: "contract", caseDescription: "Client failed to make payment for services rendered.", resolutionType: "Mediation", similarity: 76 }
-        ]
-      }))
+      const mockData = [
+        { caseId: "CASE-001", caseType: "rental", caseDescription: "Tenant refusing to pay rent for commercial property.", resolutionType: "Settlement", similarity: 82 },
+        { caseId: "CASE-002", caseType: "contract", caseDescription: "Client failed to make payment for services rendered.", resolutionType: "Mediation", similarity: 76 }
+      ]
+      setSimilarCases(prev => ({ ...prev, [caseId]: mockData }))
+      similarCasesRef.current = { ...similarCasesRef.current, [caseId]: mockData }
     }
     setLoadingSimilar(prev => ({ ...prev, [caseId]: false }))
-  }, [similarCases, loadingSimilar])
+  }, [])
 
   const toggleSimilarCases = useCallback((caseId) => {
-    if (selectedCaseId === caseId) {
+    if (selectedCaseIdRef.current === caseId) {
       setSelectedCaseId(null)
+      selectedCaseIdRef.current = null
     } else {
       setSelectedCaseId(caseId)
+      selectedCaseIdRef.current = caseId
       fetchSimilarCases(caseId)
     }
-  }, [selectedCaseId, fetchSimilarCases])
+  }, [fetchSimilarCases])
 
   // Format the issue type for display
-  const formatIssueType = useCallback((type) => {
+  const formatIssueType = useMemo(() => (type) => {
     const typeMap = {
       'property': 'Property Dispute',
       'rental': 'Rental Matter',
@@ -86,7 +110,7 @@ function CaseDashboard({ onNavigate }) {
   }, [])
 
   // Format resolution type for display
-  const formatResolutionType = useCallback((type) => {
+  const formatResolutionType = useMemo(() => (type) => {
     const typeMap = {
       'Mediation': 'Mediation',
       'Settlement': 'Settlement',
@@ -97,14 +121,14 @@ function CaseDashboard({ onNavigate }) {
   }, [])
 
   // Get color based on similarity percentage
-  const getSimilarityColor = useCallback((similarity) => {
+  const getSimilarityColor = useMemo(() => (similarity) => {
     if (similarity >= 80) return '#22c55e' // green
     if (similarity >= 60) return '#f59e0b' // amber
     return '#64748b' // slate
   }, [])
 
   // Get status color
-  const getStatusColor = useCallback((status) => {
+  const getStatusColor = useMemo(() => (status) => {
     const colors = {
       'Pending': '#f59e0b',
       'In Review': '#3b82f6',
@@ -115,7 +139,7 @@ function CaseDashboard({ onNavigate }) {
   }, [])
 
   // Format date for display
-  const formatDate = useCallback((dateString) => {
+  const formatDate = useMemo(() => (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
@@ -170,123 +194,9 @@ function CaseDashboard({ onNavigate }) {
         <p>View all your submitted case details and recommended lawyers</p>
       </div>
 
-      {cases.length > 0 ? (
-        <>
-          <div className="cases-table-section">
-            <h2>Your Submitted Cases</h2>
-            <table className="cases-table">
-              <thead>
-                <tr>
-                  <th>Case Title</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cases.map((caseItem) => (
-                  <React.Fragment key={caseItem.caseId}>
-                    <tr className="case-row">
-                      <td className="case-title-cell">
-                        <span className="case-id">{caseItem.caseId}</span>
-                        <span className="case-desc">{caseItem.description?.substring(0, 50)}...</span>
-                      </td>
-                      <td>{formatIssueType(caseItem.issueType)}</td>
-                      <td>{formatDate(caseItem.submittedAt)}</td>
-                      <td>
-                        <span 
-                          className="status-badge" 
-                          style={{ backgroundColor: getStatusColor(caseItem.status) }}
-                        >
-                          {caseItem.status || 'Pending'}
-                        </span>
-                      </td>
-                      <td>
-                        <button 
-                          className="btn-similar-cases"
-                          onClick={() => toggleSimilarCases(caseItem.caseId)}
-                          disabled={loadingSimilar[caseItem.caseId]}
-                        >
-                          {loadingSimilar[caseItem.caseId] ? 'Loading...' : 
-                           selectedCaseId === caseItem.caseId ? 'Hide Similar' : 'Similar Cases'}
-                        </button>
-                      </td>
-                    </tr>
-                    {selectedCaseId === caseItem.caseId && (
-                      <tr key={`${caseItem.caseId}-similar`} className="similar-cases-row">
-                        <td colSpan={5}>
-                          <div className="similar-cases-container">
-                            <h4>Similar Cases for {caseItem.caseId}</h4>
-                            {loadingSimilar[caseItem.caseId] ? (
-                              <div className="loading-similar">
-                                <span className="loading-spinner"></span>
-                                Finding similar cases...
-                              </div>
-                            ) : similarCases[caseItem.caseId]?.length > 0 ? (
-                              <div className="similar-cases-grid">
-                                {similarCases[caseItem.caseId].map((similar, index) => (
-                                  <div key={index} className="similar-case-card">
-                                    <div className="similar-header">
-                                      <span 
-                                        className="similarity-badge" 
-                                        style={{ backgroundColor: getSimilarityColor(similar.similarity) }}
-                                      >
-                                        {similar.similarity}% Match
-                                      </span>
-                                    </div>
-                                    <div className="similar-body">
-                                      <h5>{formatIssueType(similar.caseType)}</h5>
-                                      <p>{similar.caseDescription?.substring(0, 80)}...</p>
-                                      <span className="outcome">
-                                        Outcome: {formatResolutionType(similar.resolutionType)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="no-similar">No similar cases found</p>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      ) : (
-        <div className="no-case">
-          <p>No cases submitted yet.</p>
-          <button onClick={() => onNavigate('case-submission')}>Submit a Case</button>
-        </div>
-      )}
-
-      <div className="lawyers-card">
-        <h2>Recommended Lawyers</h2>
-        <div className="lawyer-list">
-          {recommendedLawyers.map((lawyer, index) => (
-            <RecommendedLawyer 
-              key={index} 
-              lawyer={lawyer} 
-              onNavigate={onNavigate} 
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="summary-card">
-        <h2>Case Summary</h2>
-        <div className="summary-content">
-          {cases.length > 0 ? (
-            <p>You have <strong>{cases.length}</strong> case{cases.length !== 1 ? 's' : ''} submitted. Our team will review your case{cases.length !== 1 ? 's' : ''} and connect you with appropriate legal professionals.</p>
-          ) : (
-            <p>Submit a case to get a personalized summary and lawyer recommendations.</p>
-          )}
-        </div>
+      <div className="no-case">
+        <p>No cases submitted yet.</p>
+        <button onClick={() => onNavigate('case-submission')}>Submit a Case</button>
       </div>
     </div>
   )

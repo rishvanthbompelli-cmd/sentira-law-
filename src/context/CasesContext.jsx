@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 
 const CasesContext = createContext(null)
 
@@ -85,7 +85,7 @@ export const preloadCases = async () => {
 export function CasesProvider({ children }) {
   const [cases, setCases] = useState(() => getCachedCases() || [])
   const [isLoading, setIsLoading] = useState(() => getCachedCases() === null)
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const isRefreshingRef = useRef(false)
 
   // Fetch cases from API
   const fetchCases = useCallback(async (forceRefresh = false) => {
@@ -98,11 +98,11 @@ export function CasesProvider({ children }) {
     }
 
     // If already loading, don't fetch again
-    if (isRefreshing) {
+    if (isRefreshingRef.current) {
       return cases
     }
 
-    setIsRefreshing(true)
+    isRefreshingRef.current = true
     
     try {
       const response = await fetch('http://10.30.2.64:3001/api/cases')
@@ -127,6 +127,7 @@ export function CasesProvider({ children }) {
           saveCasesToCache(apiCases)
           localStorage.setItem('cases', JSON.stringify(apiCases))
           setIsLoading(false)
+          isRefreshingRef.current = false
           return apiCases
         }
       }
@@ -147,9 +148,9 @@ export function CasesProvider({ children }) {
     }
     
     setIsLoading(false)
-    setIsRefreshing(false)
+    isRefreshingRef.current = false
     return cases
-  }, [cases, isRefreshing])
+  }, [])
 
   // Add a new case
   const addCase = useCallback((newCase) => {
@@ -170,14 +171,17 @@ export function CasesProvider({ children }) {
     return fetchCases(true)
   }, [fetchCases])
 
-  // Initialize: load cached data immediately, then refresh in background
+  // Initialize: load cached data immediately, then optionally refresh in background
   useEffect(() => {
     const cached = getCachedCases()
     if (cached) {
       setCases(cached)
       setIsLoading(false)
-      // Refresh in background
-      fetchCases(true)
+      // Only refresh if cache is stale (older than 1 minute)
+      const cachedTimestamp = JSON.parse(localStorage.getItem(CASES_CACHE_KEY) || '{}').timestamp || 0
+      if (Date.now() - cachedTimestamp > 60000) {
+        fetchCases(true)
+      }
     } else {
       fetchCases()
     }

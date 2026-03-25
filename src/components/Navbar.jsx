@@ -45,15 +45,12 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
           ))}
         </div>
 
-        {/* Right Section - New Case Button and User */}
+        {/* Right Section - New Case Button and Logout */}
         <div className="navbar-right">
           {user ? (
-            <div className="user-section">
-              <span className="user-name">{user.name}</span>
-              <button className="btn-logout" onClick={onLogout}>
-                Logout
-              </button>
-            </div>
+            <button className="btn-logout" onClick={onLogout}>
+              Logout
+            </button>
           ) : (
             <button 
               className="btn-login"
