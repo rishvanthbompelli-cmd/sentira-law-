@@ -50,5 +50,38 @@
 
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- n8n Official Chat Widget -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <style>
+      /* Enforce high z-index and prevent overflow issues from parents */
+      :root {
+        --chat--z-index: 999999;
+      }
+      body {
+        overflow-x: hidden; /* Only disable horizontal scroll if needed, keep vertical scroll */
+      }
+    </style>
+    <script type="module">
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+      createChat({
+          // My ngrok webhook URL
+          webhookUrl: 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/e8337304-9fe3-46f0-9283-69954e4700ba/chat', 
+          
+          // Custom greeting for Sentira Law
+          initialMessages: [
+              'Welcome to Sentira Law! I am your AI legal assistant. How can I help you today?'
+          ],
+          
+          // Custom header text
+          i18n: {
+              en: {
+                  title: 'Sentira Law Assistant ⚖️',
+                  subtitle: "Start a chat. We're here to help you 24/7.",
+              },
+          },
+      });
+    </script>
   </body>
 </html>

@@ -23,37 +23,55 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     setLoading(true)
 
     try {
-      const endpoint = isLoginMode ? '/login' : '/register'
-      
-      const response = await fetch(`http://10.30.2.64:3001${endpoint}`, {
+      const n8nWebhookUrl = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook-test/webform';
+
+      // Send the data to n8n
+      const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true' // Bypass ngrok HTML intercept
         },
-        body: JSON.stringify(formData)
-      })
+        body: JSON.stringify({
+          name: formData.name, // Included for register mode
+          email: formData.email,
+          password: formData.password
+        })
+      });
 
-      const data = await response.json()
+      if (response.ok) {
+        console.log("Success! Credentials sent to n8n.");
+        
+        // n8n doesn't return user tokens yet, so we set a mock session to let them into the dashboard
+        const mockUser = {
+          name: formData.name || 'Sentira User',
+          email: formData.email,
+          id: 'user-' + Date.now()
+        };
+        
+        localStorage.setItem('token', 'n8n-session-token');
+        localStorage.setItem('user', JSON.stringify(mockUser));
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong')
+        if (onLoginSuccess) {
+          onLoginSuccess(mockUser);
+        }
+        
+        // Navigate to dashboard automatically
+        onNavigate('case-dashboard');
+      } else {
+        console.error("Failed to reach n8n.");
+        throw new Error('Failed to login via n8n webhook. Please try again.');
       }
-
-      // Store token and user info
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-
-      // Call the onLoginSuccess callback
-      if (onLoginSuccess) {
-        onLoginSuccess(data.user)
+    } catch (error) {
+      console.error("Error connecting:", error);
+      // Give the user a more descriptive error if it's a fetch failure (usually CORS or offline)
+      if (error.message === 'Failed to fetch') {
+         setError("Connection blocked. Please ensure 'Respond to CORS' is enabled in your n8n Webhook node and ngrok is running.");
+      } else {
+         setError(error.message || "An error occurred while connecting.");
       }
-
-      // Navigate to dashboard
-      onNavigate('case-dashboard')
-    } catch (err) {
-      setError(err.message)
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
