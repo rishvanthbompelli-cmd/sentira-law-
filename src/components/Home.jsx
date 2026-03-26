@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/glass.css';
+import './AIResponseBox.css';
 
 export default function Home({ onNavigate }) {
   const [caseText, setCaseText] = useState('');
@@ -86,6 +87,7 @@ export default function Home({ onNavigate }) {
       {/* Hero Banner Section */}
       <div className="hero-banner">
         <div className="banner-content">
+          <div className="glowing-text-backdrop"></div>
           <h1>Modern Legal Resolutions</h1>
           <p>Find clarity and expert guidance for your legal disputes. Experience the perfect blend of empathetic AI mediation and world-class human legal expertise.</p>
         </div>
@@ -184,20 +186,19 @@ export default function Home({ onNavigate }) {
                   </div>
                 ) : (
                   <>
-                    <p className="text-slate-200 leading-relaxed text-sm md:text-base mb-4">
+                    <p>
                       {aiResponse}
                     </p>
                     
                     {suggestedLawyer && (
-                      <div className="suggested-lawyer-card border-t border-blue-500/30 pt-4 mt-4">
-                        <h4 className="text-md font-semibold text-blue-400 mb-2">Recommended Legal Expert:</h4>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                      <div className="suggested-lawyer-card">
+                        <h4><span>⚖️</span> Recommended Legal Expert:</h4>
+                        <div className="lawyer-info-button">
                           <div>
-                            <p className="font-bold text-white text-lg">{suggestedLawyer.name}</p>
-                            <p className="text-slate-400 text-sm">{suggestedLawyer.specialization}</p>
+                            <p>{suggestedLawyer.name}</p>
+                            <p>{suggestedLawyer.specialization}</p>
                           </div>
                           <button 
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded transition-colors whitespace-nowrap"
                             onClick={() => onNavigate('top-lawyers')}
                           >
                             View & Book Consult

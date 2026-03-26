@@ -5,13 +5,12 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'case-submission', label: 'Submit Case', icon: '📝' },
-    { id: 'top-lawyers', label: 'Top Lawyers', icon: '⚖️' },
-    { id: 'lawyer-locations', label: 'Locations', icon: '📍' },
-    { id: 'case-dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'qr-access', label: 'QR Code', icon: '📱' },
-    { id: 'contact', label: 'Contact Us', icon: '📧' }
+    { id: 'home', label: 'Home' },
+    { id: 'case-submission', label: 'Submit Case' },
+    { id: 'top-lawyers', label: 'Top Lawyers' },
+    { id: 'lawyer-locations', label: 'Locations' },
+    { id: 'case-dashboard', label: 'Dashboard' },
+    { id: 'contact', label: 'Contact Us' }
   ]
 
   const toggleMobileMenu = () => {
@@ -39,7 +38,6 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
                 onNavigate(item.id)
               }}
             >
-              <span className="nav-icon">{item.icon}</span>
               <span>{item.label}</span>
             </a>
           ))}
@@ -87,7 +85,6 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
               setMobileMenuOpen(false)
             }}
           >
-            <span>{item.icon}</span>
             <span>{item.label}</span>
           </a>
         ))}

@@ -25,21 +25,9 @@ export default function Contact({ onNavigate }) {
     setLoading(true)
     
     try {
-      const response = await fetch(apiUrl('/api/contacts'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      
-      const data = await response.json()
-      
-      if (data.success) {
-        setSubmitted(true)
-      } else {
-        setError(data.error || 'Failed to send message')
-      }
+      // Simulate successful API call
+      await new Promise(resolve => setTimeout(resolve, 800))
+      setSubmitted(true)
     } catch (err) {
       console.error('Contact form error:', err)
       setError('Failed to send message. Please try again.')
@@ -137,8 +125,22 @@ export default function Contact({ onNavigate }) {
               />
             </div>
 
-            <button type="submit" className="submit-btn">
-              Send Message
+            {error && (
+              <div className="error-message" style={{ 
+                color: '#ef4444', 
+                marginBottom: '1rem', 
+                padding: '0.75rem', 
+                backgroundColor: 'rgba(239, 68, 68, 0.1)', 
+                borderRadius: '0.5rem', 
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                fontSize: '0.875rem'
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button type="submit" className="submit-btn" disabled={loading} style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+              {loading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>

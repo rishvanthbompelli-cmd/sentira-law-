@@ -61,8 +61,8 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           onLoginSuccess(mockUser);
         }
         
-        // Navigate to dashboard automatically
-        onNavigate('case-dashboard');
+        // Navigate to home automatically
+        onNavigate('home');
       } else {
         console.error("Failed to reach n8n.");
         throw new Error(`Failed to login via n8n webhook (Status: ${response.status}). Please check your Webhook URL.`);
@@ -118,7 +118,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
               value={formData.email}

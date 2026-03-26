@@ -5,22 +5,30 @@ import jwt from 'jsonwebtoken'
 import mysql from 'mysql2/promise'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-dotenv.config()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+dotenv.config({ path: path.join(__dirname, '.env') })
 
 const app = express()
 const PORT = process.env.PORT || 3001
 const JWT_SECRET = process.env.JWT_SECRET || 'sentira-law-secret-key-2024'
 
 // Middleware
-app.use(cors())
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true
+}))
 app.use(express.json())
 
 // MySQL Connection Pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  password: process.env.DB_PASSWORD || 'sura123',
   database: process.env.DB_NAME || 'sentira_law',
   waitForConnections: true,
   connectionLimit: 10,
@@ -69,17 +77,21 @@ const Lawyer = mongoose.model('Lawyer', lawyerSchema)
 
 // Initialize Database and Tables
 async function initDatabase() {
+  let connection
   try {
     // First connect without database to create it
-    const connection = await mysql.createConnection({
+    connection = await mysql.createConnection({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || ''
+      password: process.env.DB_PASSWORD || 'sura123'
     })
     
     await connection.query(`CREATE DATABASE IF NOT EXISTS sentira_law`)
     await connection.end()
     console.log('Database created/verified successfully')
+    
+    // Wait a moment for database to be ready
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     // Now create the users table
     const poolConnection = await pool.getConnection()
@@ -418,9 +430,9 @@ async function initMongoDB() {
   }
 }
 
-// Initialize databases
-initDatabase()
-initMongoDB()
+// Initialize databases - use fire and forget so they don't block server startup
+initDatabase().catch(err => console.error('MySQL init error:', err))
+initMongoDB().catch(err => console.error('MongoDB init error:', err))
 
 // ============ AUTH ROUTES ============
 
@@ -515,32 +527,54 @@ app.post('/register', async (req, res) => {
 
 // Submit Case
 app.post('/api/cases', async (req, res) => {
+  let connection
   try {
     const { caseId, fullName, phone, email, address, issueType, description, idProof, documents } = req.body
+    
+    console.log('========== CASE SUBMISSION ==========')
+    console.log('caseId:', caseId)
+    console.log('fullName:', fullName)
+    console.log('email:', email)
+    console.log('issueType:', issueType)
     
     if (!caseId || !fullName || !email) {
       return res.status(400).json({ error: 'Case ID, name and email are required' })
     }
     
-    const [result] = await pool.query(
-      `INSERT INTO cases (case_id, full_name, phone, email, address, issue_type, description, id_proof, documents) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [caseId, fullName, phone, email, address, issueType, description, idProof, documents]
-    )
-
-    // Also save to MongoDB for similarity matching (async, non-blocking)
+    // Get a connection from the pool with extended timeout
+    connection = await Promise.race([
+      pool.getConnection(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 20000))
+    ])
+    console.log('Database connection successful')
+    
+    // Insert case
+    let result
     try {
-      Case.create({
-        caseId: caseId,
-        caseTitle: `${issueType} Case`,
-        caseType: issueType,
-        caseDescription: description,
-        uploadedDocuments: documents ? [documents] : [],
-        resolutionType: 'Pending'
-      }).catch(() => {}) // Ignore MongoDB errors
-    } catch (mongoError) {
-      console.log('MongoDB case save warning:', mongoError.message)
+      [result] = await connection.query(
+        `INSERT INTO cases (case_id, full_name, phone, email, address, issue_type, description, id_proof, documents, status) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        [
+          caseId, 
+          fullName || '', 
+          phone || '', 
+          email, 
+          address || '', 
+          issueType || '', 
+          description || '', 
+          idProof || null, 
+          documents || null
+        ]
+      )
+    } catch (queryError) {
+      console.error('Query error:', queryError.message)
+      console.error('Query error code:', queryError.code)
+      throw queryError
     }
+    
+    console.log('Case inserted, insertId:', result.insertId)
+    connection.release()
+    connection = null
     
     res.status(201).json({
       success: true,
@@ -548,9 +582,16 @@ app.post('/api/cases', async (req, res) => {
       caseId: caseId,
       id: result.insertId
     })
+    console.log('Response sent successfully')
   } catch (error) {
-    console.error('Submit case error:', error)
-    res.status(500).json({ error: 'Failed to submit case' })
+    console.error('========== CASE SUBMISSION ERROR ==========')
+    console.error('Error name:', error.name)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
+    if (connection) {
+      try { connection.release() } catch(e) {}
+    }
+    res.status(500).json({ error: 'Failed to submit case: ' + error.message })
   }
 })
 
@@ -667,6 +708,71 @@ app.get('/api/lawyers/:id', async (req, res) => {
   } catch (error) {
     console.error('Get lawyer error:', error)
     res.status(500).json({ error: 'Failed to fetch lawyer' })
+  }
+})
+
+// ============ AI ANALYSIS ROUTE ============
+app.post('/api/analyze-case', async (req, res) => {
+  try {
+    const { formData } = req.body
+    const apiKey = process.env.GEMINI_API_KEY
+    
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Gemini API Key is missing in server/.env' })
+    }
+
+    const payload = {
+      contents: [{
+        parts: [{
+          text: `You are an expert legal AI assistant determining if a user needs a lawyer. Analyze this Indian legal scenario carefully.
+Name: ${formData?.fullName || 'Not provided'}
+Email: ${formData?.email || 'Not provided'}
+Phone: ${formData?.phone || 'Not provided'}
+Case Type: ${formData?.issueType || 'Unknown'}
+Location: ${formData?.address || 'Unknown'}
+Problem Description: "${formData?.description || ''}"
+
+Based on the details above, respond ONLY with a raw JSON object string having this exact structure (no markdown tags like \`\`\`json):
+{
+  "caseSeverity": 75,
+  "riskLevel": "High",
+  "urgencyScore": 80,
+  "toneDetection": { "aggressive": 60, "neutral": 20, "legalThreat": 20 },
+  "issuePredictions": [
+    { "category": "Criminal Defense", "confidence": 90 }
+  ],
+  "lawyerRecommendation": "Strongly Advise Lawyer - The situation involves criminal elements and requires immediate legal counsel.",
+  "insights": [
+    "Generate 3-4 professional legal insights here."
+  ]
+}
+Ensure 'lawyerRecommendation' explicitly states if a lawyer is useful or not based on the severity of their message/email.`
+        }]
+      }]
+    };
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message || 'Error from Gemini API' });
+    }
+    
+    let textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
+    
+    const analysis = JSON.parse(textResult);
+    analysis.timestamp = new Date().toISOString();
+    
+    res.json(analysis);
+  } catch (error) {
+    console.error('AI Analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze case. Please try again.' });
   }
 })
 

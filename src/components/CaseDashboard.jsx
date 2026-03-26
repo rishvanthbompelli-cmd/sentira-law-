@@ -195,10 +195,102 @@ function CaseDashboard({ onNavigate }) {
         <p>View all your submitted case details and recommended lawyers</p>
       </div>
 
-      <div className="no-case">
-        <p>No cases submitted yet.</p>
-        <button onClick={() => onNavigate('case-submission')}>Submit a Case</button>
-      </div>
+      {cases.length === 0 ? (
+        <div className="no-case">
+          <p>No cases submitted yet.</p>
+          <button onClick={() => onNavigate('case-submission')}>Submit a Case</button>
+        </div>
+      ) : (
+        <div className="cases-table-section">
+          <h2>Your Submitted Cases</h2>
+          <table className="cases-table">
+            <thead>
+              <tr>
+                <th>Case Title</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cases.map(item => (
+                <React.Fragment key={item.caseId}>
+                  <tr className="case-row">
+                    <td>
+                      <strong>{item.caseId}</strong>
+                      <p className="case-desc-preview">{item.description ? item.description.substring(0, 40) + '...' : 'No description provided'}</p>
+                    </td>
+                    <td>{formatIssueType(item.issueType)}</td>
+                    <td>{formatDate(item.submittedAt)}</td>
+                    <td>
+                      <span className="status-badge" style={{ backgroundColor: getStatusColor(item.status) }}>
+                        {item.status || 'Pending'}
+                      </span>
+                    </td>
+                    <td>
+                      <button 
+                        className="similar-cases-btn" 
+                        onClick={() => toggleSimilarCases(item.caseId)}
+                      >
+                        {selectedCaseId === item.caseId ? 'Hide Similar Cases' : 'Find Similar Cases'}
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  {selectedCaseId === item.caseId && (
+                    <tr className="similar-cases-row">
+                      <td colSpan="5">
+                        <div className="similar-cases-container">
+                          <h4>Similar Past Cases & Resolutions</h4>
+                          
+                          {loadingSimilar[item.caseId] ? (
+                            <div className="loading-similar">
+                              <div className="spinner"></div>
+                              <p>Analyzing database for legal precedents...</p>
+                            </div>
+                          ) : similarCases[item.caseId] && similarCases[item.caseId].length > 0 ? (
+                            <div className="similar-cases-grid">
+                              {similarCases[item.caseId].map((sc, idx) => (
+                                <div key={idx} className="similar-case-card">
+                                  <div className="similar-case-header">
+                                    <span className="sc-id">{sc.caseId}</span>
+                                    <div className="similarity-badge" style={{ borderColor: getSimilarityColor(sc.similarity), color: getSimilarityColor(sc.similarity) }}>
+                                      {sc.similarity}% Match
+                                    </div>
+                                  </div>
+                                  <p className="sc-desc">{sc.caseDescription}</p>
+                                  <div className="sc-footer">
+                                    <span className="sc-label">Resolution:</span>
+                                    <span className="sc-resolution">{formatResolutionType(sc.resolutionType)}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="no-similar-cases">No highly similar cases found in the database.</p>
+                          )}
+                          
+                          <div className="lawyer-recommendation-section">
+                            <h4>Recommended Legal Experts</h4>
+                            <p className="lawyer-rec-desc">Based on your case profile, these experts have the highest success rate in similar matters.</p>
+                            
+                            <div className="recommended-lawyers-list">
+                              {recommendedLawyers.map((lawyer, idx) => (
+                                <RecommendedLawyer key={idx} lawyer={lawyer} onNavigate={onNavigate} />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

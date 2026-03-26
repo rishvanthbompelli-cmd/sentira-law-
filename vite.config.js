@@ -15,7 +15,16 @@ export default defineConfig({
         target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/api')
+        logLevel: 'debug',
+        onProxyReq: (proxyReq, req, res) => {
+          console.log('[Proxy] Forwarding request:', req.method, req.url)
+        },
+        onProxyRes: (proxyRes, req, res) => {
+          console.log('[Proxy] Response:', proxyRes.statusCode, req.url)
+        },
+        onError: (err, req, res) => {
+          console.error('[Proxy Error]', err.message)
+        }
       },
       '/webhook-test': {
         target: 'https://basinlike-hermila-nonmeditative.ngrok-free.dev',

@@ -274,7 +274,8 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .main-content {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
+    padding-top: 0.5rem;
   }
   
   .heading-1 {
