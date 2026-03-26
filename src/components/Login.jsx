@@ -28,7 +28,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
       // 2. Click "Test URL" and copy the link (e.g., http://localhost:5678/webhook-test/...)
       // 3. Make sure "Respond to CORS" is enabled in the Webhook node settings.
       // We use the exact URL requested
-      const n8nWebhookUrl = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook-test/webform';
+      const n8nWebhookUrl = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/webform';
 
       // Send the data to n8n
       const response = await fetch(n8nWebhookUrl, {
@@ -46,21 +46,21 @@ export default function Login({ onNavigate, onLoginSuccess }) {
 
       if (response.ok) {
         console.log("Success! Credentials sent to n8n.");
-        
+
         // n8n doesn't return user tokens yet, so we set a mock session to let them into the dashboard
         const mockUser = {
           name: formData.name || 'Sentira User',
           email: formData.email,
           id: 'user-' + Date.now()
         };
-        
+
         localStorage.setItem('token', 'n8n-session-token');
         localStorage.setItem('user', JSON.stringify(mockUser));
 
         if (onLoginSuccess) {
           onLoginSuccess(mockUser);
         }
-        
+
         // Navigate to home automatically
         onNavigate('home');
       } else {
@@ -71,9 +71,9 @@ export default function Login({ onNavigate, onLoginSuccess }) {
       console.error('Full error object:', error);
       // Give the user a more descriptive error if it's a fetch failure (usually CORS or offline)
       if (error.message === 'Failed to fetch') {
-         setError("Connection blocked. Please ensure 'Respond to CORS' is enabled in your n8n Webhook node, the correct URL is set in Login.jsx, and you clicked 'Listen for Test Event'.");
+        setError("Connection blocked. Please ensure 'Respond to CORS' is enabled in your n8n Webhook node, the correct URL is set in Login.jsx, and you clicked 'Listen for Test Event'.");
       } else {
-         setError(error.message || "An error occurred while connecting.");
+        setError(error.message || "An error occurred while connecting.");
       }
     } finally {
       setLoading(false);
@@ -93,8 +93,8 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           <div className="login-logo">⚖️</div>
           <h1>{isLoginMode ? 'Welcome Back' : 'Create Account'}</h1>
           <p>
-            {isLoginMode 
-              ? 'Sign in to access your Sentira-Law dashboard' 
+            {isLoginMode
+              ? 'Sign in to access your Sentira-Law dashboard'
               : 'Join Sentira-Law to submit cases and connect with lawyers'}
           </p>
         </div>

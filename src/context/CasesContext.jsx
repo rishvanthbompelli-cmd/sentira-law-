@@ -168,6 +168,21 @@ export function CasesProvider({ children }) {
     })
   }, [])
 
+  // Delete a case
+  const deleteCase = useCallback(async (caseId) => {
+    try {
+      await fetch(apiUrl(`/api/cases/${caseId}`), { method: 'DELETE' })
+    } catch (err) {
+      console.log('Delete API call failed, removing locally:', err.message)
+    }
+    setCases(prevCases => {
+      const updated = prevCases.filter(c => c.caseId !== caseId)
+      saveCasesToCache(updated)
+      localStorage.setItem('cases', JSON.stringify(updated))
+      return updated
+    })
+  }, [])
+
   // Refresh cases
   const refreshCases = useCallback(() => {
     return fetchCases(true)
@@ -194,6 +209,7 @@ export function CasesProvider({ children }) {
     isLoading,
     fetchCases,
     addCase,
+    deleteCase,
     refreshCases
   }
 

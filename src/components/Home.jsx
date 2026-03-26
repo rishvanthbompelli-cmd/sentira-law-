@@ -120,11 +120,6 @@ export default function Home({ onNavigate }) {
               <p className="feature-desc">Track case progress, legal documents, and upcoming hearings.</p>
             </div>
             
-            <div className="feature-item cursor-pointer" onClick={() => onNavigate('qr-access')}>
-              <div className="feature-icon">📱</div>
-              <h3 className="feature-title">Quick Access</h3>
-              <p className="feature-desc">Scan secure QR codes to instantly retrieve case files on-the-go.</p>
-            </div>
           </div>
         </div>
       </div>

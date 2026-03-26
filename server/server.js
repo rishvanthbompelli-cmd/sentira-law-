@@ -606,6 +606,18 @@ app.get('/api/cases', async (req, res) => {
   }
 })
 
+// Delete a Case (MySQL)
+app.delete('/api/cases/:caseId', async (req, res) => {
+  try {
+    const { caseId } = req.params
+    await pool.query('DELETE FROM cases WHERE case_id = ?', [caseId])
+    res.json({ success: true, message: 'Case deleted successfully' })
+  } catch (error) {
+    console.error('Delete case error:', error)
+    res.status(500).json({ error: 'Failed to delete case' })
+  }
+})
+
 // ============ CASES ROUTES (MongoDB) - SIMILARITY FINDER ============
 
 // Get similar cases based on description

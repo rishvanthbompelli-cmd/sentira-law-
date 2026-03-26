@@ -21,6 +21,7 @@ const CaseAIAnalyzer = ({ description }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true' // Necessary to bypass the ngrok HTML intercept screen
         },
         body: JSON.stringify({ description })
       });
@@ -52,10 +53,10 @@ const CaseAIAnalyzer = ({ description }) => {
   return (
     <div className="ai-analyzer-container">
       <div className="ai-analyzer-action">
-        <button 
+        <button
           type="button"
-          className="ai-analyze-btn glass-btn" 
-          onClick={handleAnalyze} 
+          className="ai-analyze-btn glass-btn"
+          onClick={handleAnalyze}
           disabled={loadingAI || !description}
         >
           {loadingAI ? (
@@ -77,18 +78,18 @@ const CaseAIAnalyzer = ({ description }) => {
           <div className="ai-results-header">
             <h3>🤖 Structural Legal Insights</h3>
           </div>
-          
+
           <div className="ai-metrics-grid">
             <div className="ai-metric-box">
               <span className="ai-metric-label">Case Type</span>
               <span className="ai-metric-value">{analysis.type || 'Uncategorized'}</span>
             </div>
-            
+
             <div className="ai-metric-box">
               <span className="ai-metric-label">Severity</span>
               <div className="severity-wrapper">
-                <span 
-                  className="severity-dot" 
+                <span
+                  className="severity-dot"
                   style={{ backgroundColor: getSeverityColor(analysis.severity) }}
                 ></span>
                 <span className="ai-metric-value" style={{ color: getSeverityColor(analysis.severity) }}>
@@ -96,21 +97,21 @@ const CaseAIAnalyzer = ({ description }) => {
                 </span>
               </div>
             </div>
-            
+
             <div className="ai-metric-box">
               <span className="ai-metric-label">Confidence</span>
               <span className="ai-metric-value">{analysis.confidence || 'N/A'}</span>
               {analysis.confidence && (
                 <div className="confidence-bar-bg">
-                  <div 
-                    className="confidence-bar-fill" 
+                  <div
+                    className="confidence-bar-fill"
                     style={{ width: analysis.confidence.toString().replace('%', '') + '%' }}
                   ></div>
                 </div>
               )}
             </div>
           </div>
-          
+
           <div className="ai-detailed-section">
             <h4 className="ai-section-title">📋 Recommended Steps</h4>
             <ul className="ai-steps-list">
@@ -123,7 +124,7 @@ const CaseAIAnalyzer = ({ description }) => {
               )}
             </ul>
           </div>
-          
+
           <div className="ai-detailed-section">
             <h4 className="ai-section-title">💡 Legal Advice Summary</h4>
             <p className="ai-advice-text">{analysis.advice || 'No additional advice available at this time.'}</p>

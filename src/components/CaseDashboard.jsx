@@ -25,7 +25,7 @@ const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer, onNavigate }
         <p>{lawyer.specialization}</p>
         <p className="location">📍 {lawyer.location}</p>
       </div>
-      <button onClick={() => onNavigate('top-lawyers')}>View Profile</button>
+      <button onClick={() => onNavigate(`top-lawyers-${lawyer.id}`)}>View Profile</button>
     </div>
   )
 })
@@ -151,9 +151,9 @@ function CaseDashboard({ onNavigate }) {
 
   // Sample recommended lawyers - memoized
   const recommendedLawyers = useMemo(() => [
-    { name: "Harish Salve", specialization: "Corporate Law", location: "New Delhi" },
-    { name: "Kapil Sibal", specialization: "Constitutional Law", location: "New Delhi" },
-    { name: "Indira Jaising", specialization: "Human Rights Law", location: "Mumbai" }
+    { id: 1, name: "Harish Salve", specialization: "Corporate Law", location: "New Delhi" },
+    { id: 2, name: "Kapil Sibal", specialization: "Constitutional Law", location: "New Delhi" },
+    { id: 10, name: "Indira Jaising", specialization: "Human Rights Law", location: "Mumbai" }
   ], [])
 
   // Show skeleton only if actually loading and no cached data

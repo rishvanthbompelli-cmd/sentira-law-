@@ -283,7 +283,7 @@ export const preloadLawyers = async () => {
   return fallbackLawyers
 }
 
-export default function TopLawyers({ onNavigate }) {
+export default function TopLawyers({ onNavigate, lawyerId }) {
   const [lawyers, setLawyers] = useState(getCachedLawyers)
   const [loading, setLoading] = useState(false) // Start with false since we have cached/fallback data
   const [selectedLawyer, setSelectedLawyer] = useState(null)
@@ -292,6 +292,16 @@ export default function TopLawyers({ onNavigate }) {
     // Refresh data from server in background, but don't block rendering
     fetchLawyers()
   }, []) // Empty dependency - only run once on mount
+
+  // Auto-select lawyer if lawyerId is provided
+  useEffect(() => {
+    if (lawyerId && lawyers.length > 0) {
+      const lawyer = lawyers.find(l => l.id === parseInt(lawyerId))
+      if (lawyer) {
+        setSelectedLawyer(lawyer)
+      }
+    }
+  }, [lawyerId, lawyers])
 
   const fetchLawyers = async () => {
     try {

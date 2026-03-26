@@ -113,6 +113,23 @@
   cursor: not-allowed;
 }
 
+.similar-cases-btn {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.similar-cases-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
 /* Similar Cases Row */
 .similar-cases-row td {
   padding: 0;

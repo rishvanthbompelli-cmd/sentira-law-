@@ -332,40 +332,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
           </div>
         </div>
 
-        <div className="form-section">
-          <h2>Document Upload</h2>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="idProof">ID Proof (Aadhaar/PAN/Voter ID) *</label>
-              <div className="file-input-wrapper">
-                <input
-                  type="file"
-                  id="idProof"
-                  name="idProof"
-                  onChange={handleFileChange}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  required
-                />
-              </div>
-              {fileSelected.idProof && documents.idProof && <span className="file-name">{documents.idProof.name}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="documents">Supporting Documents</label>
-              <div className="file-input-wrapper">
-                <input
-                  type="file"
-                  id="documents"
-                  name="documents"
-                  onChange={handleFileChange}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                />
-              </div>
-              {fileSelected.documents && documents.documents && <span className="file-name">{documents.documents.name}</span>}
-            </div>
-          </div>
-        </div>
 
         {error && <div className="error-message bg-red-900/50 border border-red-500 text-red-200 p-4 rounded-lg mb-6">{error}</div>}
 

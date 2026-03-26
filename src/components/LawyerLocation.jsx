@@ -42,6 +42,31 @@ const lawyers = [
   { id: 10, name: "Indira Jaising", photo: indiraJaisingImg, specialization: "Human Rights Law, Constitutional Law", location: "Mumbai, India", address: "High Court, Mumbai", lat: 18.9388, lng: 72.8354 }
 ]
 
+const createLawyerIcon = (photoUrl, isSelected) => {
+  return L.divIcon({
+    html: `
+      <div style="
+        width: ${isSelected ? '60px' : '45px'}; 
+        height: ${isSelected ? '60px' : '45px'}; 
+        border-radius: 50%; 
+        overflow: hidden; 
+        border: 3px solid ${isSelected ? '#6366f1' : 'white'}; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        background-color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: ${isSelected ? '1000' : '1'};
+      ">
+        <img src="${photoUrl}" style="width: 100%; height: 100%; object-fit: cover;" alt="Lawyer Marker" />
+      </div>
+      ${isSelected ? `<div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid #6366f1;"></div>` : ''}
+    `,
+    className: 'custom-lawyer-marker',
+    iconSize: isSelected ? [60, 68] : [45, 45],
+    iconAnchor: isSelected ? [30, 68] : [22, 22]
+  });
+};
+
 // Component to update map view
 function MapUpdater({ center, zoom }) {
   const map = useMap()
@@ -135,7 +160,7 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <Marker position={[lawyer.lat, lawyer.lng]} />
+                  <Marker position={[lawyer.lat, lawyer.lng]} icon={createLawyerIcon(lawyer.photo, true)} />
                   <MapUpdater center={[lawyer.lat, lawyer.lng]} zoom={14} />
                 </MapContainer>
               </div>
@@ -170,6 +195,7 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
                 <Marker 
                   key={lawyer.id} 
                   position={[lawyer.lat, lawyer.lng]}
+                  icon={createLawyerIcon(lawyer.photo, selectedLawyer?.id === lawyer.id)}
                   eventHandlers={{
                     click: () => handleLawyerClick(lawyer),
                   }}

@@ -93,6 +93,9 @@ function App() {
     if (page.startsWith('case-access-')) {
       const caseId = page.replace('case-access-', '')
       window.location.hash = `/case-access/${caseId}`
+    } else if (page.startsWith('top-lawyers-')) {
+      const lawyerId = page.replace('top-lawyers-', '')
+      window.location.hash = `/lawyers/${lawyerId}`
     } else if (page === 'case-dashboard') {
       window.location.hash = '/dashboard'
     } else if (page === 'top-lawyers') {
@@ -131,6 +134,9 @@ function App() {
       if (hash.includes('/case-access/')) {
         const caseId = hash.split('/case-access/')[1]
         setCurrentPage(`case-access-${caseId}`)
+      } else if (hash.includes('/lawyers/')) {
+        const lawyerId = hash.split('/lawyers/')[1]
+        setCurrentPage(`top-lawyers-${lawyerId}`)
       } else if (hash === '/dashboard') {
         setCurrentPage('case-dashboard')
       } else if (hash === '/lawyers') {
@@ -181,7 +187,12 @@ function App() {
               
               {currentPage === 'case-submission' && <CaseSubmissionForm onNavigate={handleNavigation} />}
               
-              {currentPage === 'top-lawyers' && <TopLawyers onNavigate={handleNavigation} />}
+              {(currentPage === 'top-lawyers' || currentPage.startsWith('top-lawyers-')) && (
+                <TopLawyers 
+                  lawyerId={currentPage.startsWith('top-lawyers-') ? currentPage.replace('top-lawyers-', '') : null} 
+                  onNavigate={handleNavigation} 
+                />
+              )}
               
               {(currentPage === 'lawyer-locations' || currentPage.startsWith('lawyer-locations-')) && (
                 <LawyerLocation 
