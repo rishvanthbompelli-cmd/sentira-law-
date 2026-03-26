@@ -23,6 +23,11 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     setLoading(true)
 
     try {
+      // ⚠️ IMPORTANT: Replace this URL with your actual n8n Test Webhook URL!
+      // 1. Double-click the Webhook node in n8n.
+      // 2. Click "Test URL" and copy the link (e.g., http://localhost:5678/webhook-test/...)
+      // 3. Make sure "Respond to CORS" is enabled in the Webhook node settings.
+      // We use the exact URL requested
       const n8nWebhookUrl = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook-test/webform';
 
       // Send the data to n8n
@@ -30,7 +35,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true' // Bypass ngrok HTML intercept
+          'ngrok-skip-browser-warning': 'true' // Needed to bypass ngrok HTML intercept screen
         },
         body: JSON.stringify({
           name: formData.name, // Included for register mode
@@ -60,13 +65,13 @@ export default function Login({ onNavigate, onLoginSuccess }) {
         onNavigate('case-dashboard');
       } else {
         console.error("Failed to reach n8n.");
-        throw new Error('Failed to login via n8n webhook. Please try again.');
+        throw new Error(`Failed to login via n8n webhook (Status: ${response.status}). Please check your Webhook URL.`);
       }
     } catch (error) {
-      console.error("Error connecting:", error);
+      console.error('Full error object:', error);
       // Give the user a more descriptive error if it's a fetch failure (usually CORS or offline)
       if (error.message === 'Failed to fetch') {
-         setError("Connection blocked. Please ensure 'Respond to CORS' is enabled in your n8n Webhook node and ngrok is running.");
+         setError("Connection blocked. Please ensure 'Respond to CORS' is enabled in your n8n Webhook node, the correct URL is set in Login.jsx, and you clicked 'Listen for Test Event'.");
       } else {
          setError(error.message || "An error occurred while connecting.");
       }

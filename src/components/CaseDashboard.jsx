@@ -1,5 +1,6 @@
 import React, { useState, useCallback, memo, useMemo, useRef, useEffect } from 'react'
 import { useCases } from '../context/CasesContext'
+import { apiUrl } from '../apiClient'
 import './CaseDashboard.css'
 
 // Memoized skeleton row component
@@ -64,7 +65,7 @@ function CaseDashboard({ onNavigate }) {
     setLoadingSimilar(prev => ({ ...prev, [caseId]: true }))
     
     try {
-      const response = await fetch(`http://10.30.2.64:3001/api/cases/similar/${caseId}`)
+      const response = await fetch(apiUrl(`/api/cases/similar/${caseId}`))
       const data = await response.json()
       if (data.success) {
         setSimilarCases(prev => ({ ...prev, [caseId]: data.similarCases || [] }))

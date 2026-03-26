@@ -9,6 +9,19 @@ export default defineConfig({
       "basinlike-hermila-nonmeditative.ngrok-free.dev"
     ],
     port: 5173,
-    open: false
+    open: false,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/api')
+      },
+      '/webhook-test': {
+        target: 'https://basinlike-hermila-nonmeditative.ngrok-free.dev',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })

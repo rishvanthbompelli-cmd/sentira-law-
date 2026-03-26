@@ -34,6 +34,8 @@ const saveCasesToCache = (cases) => {
   }
 }
 
+import { apiUrl } from '../apiClient'
+
 // Preload cases from API - called on app load
 export const preloadCases = async () => {
   // Check cache first
@@ -43,7 +45,7 @@ export const preloadCases = async () => {
   }
 
   try {
-    const response = await fetch('http://10.30.2.64:3001/api/cases')
+    const response = await fetch(apiUrl('/api/cases'))
     if (response.ok) {
       const data = await response.json()
       if (data.success && data.cases) {
@@ -105,7 +107,7 @@ export function CasesProvider({ children }) {
     isRefreshingRef.current = true
     
     try {
-      const response = await fetch('http://10.30.2.64:3001/api/cases')
+      const response = await fetch(apiUrl('/api/cases'))
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.cases) {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useCases } from '../context/CasesContext'
+import { apiUrl } from '../apiClient'
 import './CaseSubmissionForm.css'
 
 export default function CaseSubmissionForm({ onNavigate }) {
@@ -199,7 +200,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
     setIsSubmitting(true)
 
     // Generate unique case ID
-    const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase()
+    const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase()
     const mappedLawyer = matchLawyer();
     setSuggestedLawyer(mappedLawyer);
 
@@ -207,11 +208,11 @@ export default function CaseSubmissionForm({ onNavigate }) {
       const idProofName = documents.idProof ? documents.idProof.name : null
       const docName = documents.documents ? documents.documents.name : null
 
-      // Use AbortController for quicker timeout on hardcoded IP
+      // Use AbortController for timeout
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
 
-      const response = await fetch('http://10.30.2.64:3001/api/cases', {
+      const response = await fetch(apiUrl('/api/cases'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

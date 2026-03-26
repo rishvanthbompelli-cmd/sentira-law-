@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { apiUrl } from '../apiClient'
 import './Contact.css'
 
 export default function Contact({ onNavigate }) {
@@ -24,7 +25,7 @@ export default function Contact({ onNavigate }) {
     setLoading(true)
     
     try {
-      const response = await fetch('http://10.30.2.64:3001/api/contacts', {
+      const response = await fetch(apiUrl('/api/contacts'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

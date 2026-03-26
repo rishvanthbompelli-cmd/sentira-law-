@@ -528,16 +528,16 @@ app.post('/api/cases', async (req, res) => {
       [caseId, fullName, phone, email, address, issueType, description, idProof, documents]
     )
 
-    // Also save to MongoDB for similarity matching
+    // Also save to MongoDB for similarity matching (async, non-blocking)
     try {
-      await Case.create({
+      Case.create({
         caseId: caseId,
         caseTitle: `${issueType} Case`,
         caseType: issueType,
         caseDescription: description,
         uploadedDocuments: documents ? [documents] : [],
         resolutionType: 'Pending'
-      })
+      }).catch(() => {}) // Ignore MongoDB errors
     } catch (mongoError) {
       console.log('MongoDB case save warning:', mongoError.message)
     }
