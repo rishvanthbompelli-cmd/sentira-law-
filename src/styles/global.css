@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 /* ========================================
-   Global Styles - Premium Legal Tech Theme
+   Global Styles - Premium AI Legal Tech Glassmorphism
    ======================================== */
 
 * {
@@ -79,7 +79,7 @@ body {
 .orb-1 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
   top: -200px;
   left: -200px;
   animation-delay: 0s;
@@ -88,7 +88,7 @@ body {
 .orb-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+  background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
   bottom: -150px;
   right: -150px;
   animation-delay: -7s;
@@ -154,8 +154,25 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
+  border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+}
+
+/* Glassmorphism Container */
+.glass-container {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
 }
 
 /* Premium Button Styles */
@@ -191,19 +208,20 @@ body {
 }
 
 .btn-primary-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
 .btn-primary-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.6), 0 0 40px rgba(124, 58, 237, 0.3);
 }
 
 .btn-secondary-glass {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -232,9 +250,9 @@ body {
 }
 
 .input-premium:focus {
-  border-color: #6366f1;
+  border-color: #7c3aed;
   background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
 }
 
 /* Premium Typography */
@@ -265,10 +283,138 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* AI Assistant Widget */
+.ai-assistant-widget {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 380px;
+  max-height: 600px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.ai-assistant-header {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ai-assistant-header-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai-assistant-header-icon {
+  font-size: 1.25rem;
+}
+
+.ai-assistant-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 0.375rem 0.625rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-assistant-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ai-assistant-body {
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.ai-assistant-message {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-assistant-message-user {
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.3);
+  margin-left: 2rem;
+}
+
+.ai-assistant-message-ai {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  margin-right: 2rem;
+}
+
+.ai-assistant-message-text {
+  font-size: 0.9rem;
+  color: rgba(248, 250, 252, 0.9);
+  line-height: 1.5;
+}
+
+.ai-assistant-input-container {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ai-assistant-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.ai-assistant-input::placeholder {
+  color: rgba(248, 250, 252, 0.5);
+}
+
+.ai-assistant-input:focus {
+  border-color: #7c3aed;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ai-assistant-send {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+}
+
+.ai-assistant-send:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
 }
 
 /* Responsive */
@@ -285,6 +431,13 @@ body {
   .heading-2 {
     font-size: 1.5rem;
   }
+  
+  .ai-assistant-widget {
+    width: calc(100% - 2rem);
+    right: 1rem;
+    bottom: 1rem;
+    max-height: 500px;
+  }
 }
 
 /* Scrollbar */
@@ -297,16 +450,16 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.5);
+  background: rgba(124, 58, 237, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.7);
+  background: rgba(124, 58, 237, 0.7);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(99, 102, 241, 0.3);
+  background: rgba(124, 58, 237, 0.3);
   color: white;
 }

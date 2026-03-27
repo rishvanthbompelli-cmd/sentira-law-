@@ -4,7 +4,7 @@ import './Contact.css'
 
 export default function Contact({ onNavigate }) {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     phone: '',
     subject: '',
@@ -25,9 +25,33 @@ export default function Contact({ onNavigate }) {
     setLoading(true)
     
     try {
-      // Simulate successful API call
-      await new Promise(resolve => setTimeout(resolve, 800))
-      setSubmitted(true)
+      const response = await fetch('https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/Contact-us', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message
+        })
+      })
+
+      if (response.ok) {
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        })
+        setSubmitted(true)
+      } else {
+        throw new Error('Failed to send message')
+      }
     } catch (err) {
       console.error('Contact form error:', err)
       setError('Failed to send message. Please try again.')
@@ -41,8 +65,8 @@ export default function Contact({ onNavigate }) {
       <div className="contact-container">
         <div className="contact-success">
           <div className="success-icon">✓</div>
-          <h2>Message Sent Successfully!</h2>
-          <p>We'll get back to you within 24-48 hours.</p>
+          <h2>Thanks for your message!</h2>
+          <p>We will get back to you shortly.</p>
           <button onClick={() => onNavigate('case-submission')}>Back to Home</button>
         </div>
       </div>
@@ -60,12 +84,12 @@ export default function Contact({ onNavigate }) {
         <div className="contact-form-section">
           <form className="contact-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="fullName">Full Name</label>
+              <label htmlFor="name">Full Name</label>
               <input
                 type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 required
                 placeholder="Enter your full name"
@@ -146,21 +170,6 @@ export default function Contact({ onNavigate }) {
         </div>
 
         <div className="contact-info-section">
-          <div className="info-card">
-            <h3>Customer Support Email</h3>
-            <a href="mailto:support@sentira-law.com">support@sentira-law.com</a>
-          </div>
-
-          <div className="info-card">
-            <h3>Office Location</h3>
-            <p>New Delhi, India</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Working Hours</h3>
-            <p>Monday – Friday</p>
-            <p>9:00 AM – 6:00 PM</p>
-          </div>
         </div>
       </div>
     </div>

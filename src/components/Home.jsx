@@ -57,29 +57,51 @@ export default function Home({ onNavigate }) {
     setAiResponse('');
     setSuggestedLawyer(null);
     
-    // Simulate API Delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const { text, spokenText, lawyer } = generateMockResponse(caseText);
-    setAiResponse(text);
-    setSuggestedLawyer(lawyer);
-    setIsAnalyzing(false);
+    try {
+      // Make POST request to n8n webhook
+      const response = await fetch('https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/ai-voice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
+        },
+        body: JSON.stringify({ description: caseText })
+      });
 
-    // Start Speech Synthesis Phase
-    const utterance = new SpeechSynthesisUtterance(spokenText);
-    
-    // Optional: try to find a natural-sounding voice
-    const voices = synthRef.current.getVoices();
-    const preferredVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Natural')) || voices[0];
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
+      if (!response.ok) {
+        throw new Error('Webhook request failed');
+      }
+
+      const data = await response.json();
+      
+      // Extract response text and lawyer info from webhook response
+      const aiText = data.response || data.text || data.message || 'Analysis complete. Please consult with a legal expert.';
+      const lawyerInfo = data.lawyer || data.suggestedLawyer || null;
+      
+      setAiResponse(aiText);
+      setSuggestedLawyer(lawyerInfo);
+      setIsAnalyzing(false);
+
+      // Start Speech Synthesis Phase
+      const utterance = new SpeechSynthesisUtterance(aiText);
+      
+      // Optional: try to find a natural-sounding voice
+      const voices = synthRef.current.getVoices();
+      const preferredVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Natural')) || voices[0];
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onerror = () => setIsPlaying(false);
+      
+      setIsPlaying(true);
+      synthRef.current.speak(utterance);
+    } catch (error) {
+      console.error('Error calling webhook:', error);
+      setIsAnalyzing(false);
+      setAiResponse('An error occurred while analyzing your case. Please try again.');
     }
-
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = () => setIsPlaying(false);
-    
-    setIsPlaying(true);
-    synthRef.current.speak(utterance);
   };
 
   return (
@@ -120,6 +142,38 @@ export default function Home({ onNavigate }) {
               <p className="feature-desc">Track case progress, legal documents, and upcoming hearings.</p>
             </div>
             
+          </div>
+        </div>
+      </div>
+
+      {/* About Sentira Law Section */}
+      <div className="liquid-glass-card about-section">
+        <div className="glass-content">
+          <h2 className="about-title">
+            <span>🏛️</span> About Sentira Law
+          </h2>
+          <p className="about-description">
+            Sentira-Law is the world's first AI-Powered Emotional Legal Mediator, designed to bridge the gap between clinical legal processes and human empathy. Our platform combines cutting-edge artificial intelligence with deep legal expertise to provide compassionate, effective dispute resolution.
+          </p>
+          <p className="about-description">
+            We believe that legal disputes are not just about facts and laws—they're about people, emotions, and lives. Our AI mediator understands the emotional weight of your situation and guides you toward resolution with clarity and compassion.
+          </p>
+          <div className="about-features-grid">
+            <div className="about-feature-card">
+              <div className="about-feature-icon">🤝</div>
+              <h4 className="about-feature-title">Empathetic Mediation</h4>
+              <p className="about-feature-desc">AI that understands your emotional needs</p>
+            </div>
+            <div className="about-feature-card">
+              <div className="about-feature-icon">⚖️</div>
+              <h4 className="about-feature-title">Expert Network</h4>
+              <p className="about-feature-desc">Access to top legal professionals</p>
+            </div>
+            <div className="about-feature-card">
+              <div className="about-feature-icon">🔒</div>
+              <h4 className="about-feature-title">Confidential & Secure</h4>
+              <p className="about-feature-desc">Your privacy is our priority</p>
+            </div>
           </div>
         </div>
       </div>
