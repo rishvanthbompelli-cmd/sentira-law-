@@ -17,11 +17,13 @@
   "author": "Sentira-Law",
   "license": "MIT",
   "dependencies": {
+    "framer-motion": "^12.38.0",
     "leaflet": "^1.9.4",
     "qrcode": "^1.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-leaflet": "^4.2.1"
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^7.13.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",

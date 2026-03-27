@@ -1,16 +1,18 @@
 import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import './Navbar.css'
 
-export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
+export default function Navbar({ currentPage, user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'case-submission', label: 'Submit Case' },
-    { id: 'top-lawyers', label: 'Top Lawyers' },
-    { id: 'lawyer-locations', label: 'Locations' },
-    { id: 'case-dashboard', label: 'Dashboard' },
-    { id: 'contact', label: 'Contact Us' }
+    { id: 'home', label: 'Home', path: '/' },
+    { id: 'case-submission', label: 'Submit Case', path: '/submit' },
+    { id: 'top-lawyers', label: 'Top Lawyers', path: '/lawyers' },
+    { id: 'lawyer-locations', label: 'Locations', path: '/lawyer-locations' },
+    { id: 'case-dashboard', label: 'Dashboard', path: '/dashboard' },
+    { id: 'contact', label: 'Contact Us', path: '/contact' }
   ]
 
   const toggleMobileMenu = () => {
@@ -18,28 +20,24 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-100 ultra-glass border-b border-white/10 shadow-2xl">
+    <nav className="fixed top-0 left-0 w-full z-[100] ultra-glass border-b border-white/10 shadow-2xl">
       <div className="navbar-container">
         {/* Left Section - Logo */}
-        <a href="#" className="navbar-left" onClick={() => onNavigate('home')}>
+        <Link to="/" className="navbar-left">
           <div className="navbar-logo-icon">⚖️</div>
-          <span className="navbar-logo-text">Sentira-Law</span>
-        </a>
+          <span className="navbar-logo-text uppercase tracking-widest font-black">Sentira-Law</span>
+        </Link>
 
         {/* Center Section - Navigation Links */}
         <div className="navbar-center">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.id}
-              href="#"
+              to={item.path}
               className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
-              onClick={(e) => {
-                e.preventDefault()
-                onNavigate(item.id)
-              }}
             >
               <span>{item.label}</span>
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -50,20 +48,17 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
               Logout
             </button>
           ) : (
-            <button 
-              className="btn-login"
-              onClick={() => onNavigate('login')}
-            >
+            <Link to="/login" className="btn-login">
               <span>Login</span>
-            </button>
+            </Link>
           )}
-          <button 
-            className="btn-primary-premium flex items-center gap-2 px-6 py-2"
-            onClick={() => onNavigate('case-submission')}
+          <Link 
+            to="/submit"
+            className="btn-primary-premium flex items-center gap-2 px-6 py-2 no-underline"
           >
             <span className="text-xl">+</span>
             <span>New Case</span>
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -75,18 +70,14 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
       {/* Mobile Dropdown */}
       <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
         {navItems.map((item) => (
-          <a
+          <Link
             key={item.id}
-            href="#"
+            to={item.path}
             className={`mobile-nav-link ${currentPage === item.id ? 'active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault()
-              onNavigate(item.id)
-              setMobileMenuOpen(false)
-            }}
+            onClick={() => setMobileMenuOpen(false)}
           >
             <span>{item.label}</span>
-          </a>
+          </Link>
         ))}
       </div>
     </nav>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiUrl } from '../apiClient'
 import './TopLawyers.css'
+
 
 // Import images individually to ensure correct mapping
 import harishSalveImg from '../../assets/harish salve.jpg'
@@ -283,25 +285,15 @@ export const preloadLawyers = async () => {
   return fallbackLawyers
 }
 
-export default function TopLawyers({ onNavigate, lawyerId }) {
+export default function TopLawyers({ onNavigate }) {
+  const navigate = useNavigate()
   const [lawyers, setLawyers] = useState(getCachedLawyers)
   const [loading, setLoading] = useState(false) // Start with false since we have cached/fallback data
-  const [selectedLawyer, setSelectedLawyer] = useState(null)
 
   useEffect(() => {
     // Refresh data from server in background, but don't block rendering
     fetchLawyers()
   }, []) // Empty dependency - only run once on mount
-
-  // Auto-select lawyer if lawyerId is provided
-  useEffect(() => {
-    if (lawyerId && lawyers.length > 0) {
-      const lawyer = lawyers.find(l => l.id === parseInt(lawyerId))
-      if (lawyer) {
-        setSelectedLawyer(lawyer)
-      }
-    }
-  }, [lawyerId, lawyers])
 
   const fetchLawyers = async () => {
     try {
@@ -330,83 +322,21 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
   }
 
   const handleViewProfile = (lawyer) => {
-    setSelectedLawyer(lawyer)
+    navigate(`/lawyer/${lawyer.id}`)
   }
+
+
+
 
   const handleBack = () => {
-    setSelectedLawyer(null)
+    console.log('Returning to lawyers list')
+    if (onNavigate) {
+      onNavigate('top-lawyers')
+    }
   }
 
-  // Show lawyer detail profile
-  if (selectedLawyer) {
-    return (
-      <div className="lawyer-profile-container">
-        <button className="back-btn-premium ultra-glass" onClick={handleBack}>
-          ← Back to Network
-        </button>
-        
-        <div className="premium-card neon-border-primary vibrant-glow-primary">
-          <div className="profile-header">
-            <div className="profile-photo-wrapper">
-              <img 
-                src={selectedLawyer.photo} 
-                alt={selectedLawyer.name} 
-                className="profile-photo"
-              />
-              <div className="profile-photo-glow"></div>
-            </div>
-            <div className="profile-info">
-              <h2 className="text-grad-royal">{selectedLawyer.name}</h2>
-              <p className="specialization-large">{selectedLawyer.specialization}</p>
-              <div className="profile-stats-row">
-                 <p className="stat">📍 {selectedLawyer.location}</p>
-                 <p className="stat">💼 {selectedLawyer.experience} Years Exp</p>
-                 <p className="stat">⚖️ {selectedLawyer.cases}+ Cases</p>
-              </div>
-              <div className="rating-badge">⭐ {selectedLawyer.rating} / 5.0</div>
-            </div>
-          </div>
-          
-          <div className="profile-body">
-            <h3 className="text-grad-ocean">Biography</h3>
-            <p className="bio-text">{selectedLawyer.about || selectedLawyer.description}</p>
-            
-            <div className="contact-section ultra-glass">
-              <h3 className="text-grad-royal">Direct Contact</h3>
-              <div className="contact-grid">
-                <p><span>📧</span> {selectedLawyer.email}</p>
-                <p><span>📱</span> {selectedLawyer.phone}</p>
-                <p><span>💰</span> Fee: {selectedLawyer.consultationFee}</p>
-              </div>
-            </div>
 
-            <h3 className="text-grad-gold">Available Consultation Times</h3>
-            <div className="availability-schedule">
-              {selectedLawyer.availabilitySchedule && selectedLawyer.availabilitySchedule.length > 0 ? (
-                <div className="schedule-grid">
-                  {selectedLawyer.availabilitySchedule.map((slot, index) => (
-                    <div key={index} className="schedule-item-premium ultra-glass">
-                      <span className="day">{slot.day}</span>
-                      <span className="time">{slot.time}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="no-availability">Schedule to be announced</p>
-              )}
-            </div>
-            
-            <button 
-              className="btn-primary-premium mt-8"
-              onClick={() => onNavigate(`lawyer-locations-${selectedLawyer.id}`)}
-            >
-              📍 Find Office Location
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+
 
   // Skeleton loader
   if (loading) {
@@ -463,14 +393,16 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
               </div>
               <div className="lawyer-actions">
                 <button 
-                  className="btn-view-profile-premium"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleViewProfile(lawyer)
+                  className="btn-view-profile-flagship"
+                  onClick={() => {
+                    console.log('VIEW PROFILE CLICKED for:', lawyer.name);
+                    handleViewProfile(lawyer);
                   }}
                 >
                   View Full Profile
                 </button>
+
+
               </div>
             </div>
           </div>

@@ -27,25 +27,51 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     setIsLoading(true)
 
     try {
-      const endpoint = isLoginMode ? '/api/login' : '/api/register'
-      const response = await fetch(apiUrl(endpoint), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          ...(isLoginMode ? {} : { name: formData.name })
+      const isLogin = isLoginMode
+      const n8nUrl = `https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/webform`
+
+      let response
+      let data
+      let usedFallback = false
+
+      try {
+        console.log(`Attempting n8n ${isLogin ? 'login' : 'register'}...`)
+        response = await fetch(n8nUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            ...(isLogin ? {} : { name: formData.name }),
+            timestamp: new Date().toISOString()
+          })
         })
-      })
+        data = await response.json()
+      } catch (n8nErr) {
+        console.warn('n8n connection failed, falling back to local backend:', n8nErr)
+        usedFallback = true
 
-      const data = await response.json()
+        const endpoint = isLogin ? '/api/login' : '/api/register'
+        response = await fetch(apiUrl(endpoint), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            ...(isLogin ? {} : { name: formData.name })
+          })
+        })
+        data = await response.json()
+      }
 
-      if (data.success) {
+      if (data.success || data.status === 'success' || data.authenticated) {
         setSuccess(data.message || (isLoginMode ? 'Login successful!' : 'Registration successful!'))
-        
-        // Store user data if provided
+
         const userData = data.user || {
           name: formData.name || 'Sentira User',
           email: formData.email,
@@ -56,31 +82,21 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           localStorage.setItem('token', data.token)
         }
 
-        // Clear form
-        setFormData({
-          name: '',
-          email: '',
-          password: ''
-        })
-
-        // Call login success callback
-        if (onLoginSuccess) {
-          onLoginSuccess(userData)
-        }
-
-        // Navigate to home
-        if (onNavigate) {
-          onNavigate('home')
-        }
+        setFormData({ name: '', email: '', password: '' })
+        if (onLoginSuccess) onLoginSuccess(userData)
+        if (onNavigate) onNavigate('home')
       } else {
-        setError(data.message || 'Login failed. Please try again.')
+        setError(data.message || data.error || 'Authentication failed. Please check your credentials.')
       }
     } catch (err) {
       console.error('Login error:', err)
-      setError('Connection error. Please ensure the server is running and try again.')
+      setError('Both n8n and local fallback failed. Please check your network and server status.')
     } finally {
       setIsLoading(false)
     }
+
+
+
   }
 
   const toggleMode = () => {
@@ -91,99 +107,120 @@ export default function Login({ onNavigate, onLoginSuccess }) {
   }
 
   return (
-    <div className="glass-container flex items-center justify-center p-0">
-      <div className="login-card-premium premium-card neon-border-primary vibrant-glow-primary max-w-[500px] w-full mt-[10vh]">
-        <div className="login-header-p text-center mb-10">
-          <div className="login-logo-p text-5xl mb-6">⚖️</div>
-          <h1 className="text-grad-royal text-3xl font-black mb-2">{isLoginMode ? 'Vance Authenticator' : 'Neural Induction'}</h1>
-          <p className="text-slate-400">
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <div className="login-logo">⚖️</div>
+          <h1>{isLoginMode ? 'Welcome Back' : 'Create Account'}</h1>
+          <p>
             {isLoginMode
-              ? 'Access your secure legal command interface'
-              : 'Initialize your presence in the Sentira legal network'}
+              ? 'Sign in to access your Sentira-Law dashboard'
+              : 'Join Sentira-Law to submit cases and connect with lawyers'}
           </p>
         </div>
 
-        <form className="login-form-p" onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleSubmit}>
           {!isLoginMode && (
-            <div className="form-group mb-6">
-              <label className="form-label-premium">Legal Identity (Name)</label>
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
               <input
                 type="text"
+                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required={!isLoginMode}
-                className="form-input-premium"
-                placeholder="Full Legal Name"
+                className="relative z-10"
+                placeholder="Enter your full name"
                 disabled={isLoading}
               />
+
             </div>
           )}
 
-          <div className="form-group mb-6">
-            <label className="form-label-premium">Digital Key (Email)</label>
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
+              id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="form-input-premium"
-              placeholder="identity@sentira.law"
+              className="relative z-10"
+              placeholder="your.email@example.com"
               disabled={isLoading}
             />
+
           </div>
 
-          <div className="form-group mb-8">
-            <label className="form-label-premium">Security Cipher (Password)</label>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
+              id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
               required
-              className="form-input-premium"
-              placeholder="••••••••••••"
+              className="relative z-10"
+              placeholder="Enter your password"
               disabled={isLoading}
             />
+
           </div>
 
           {error && (
-            <div className="error-card-premium ultra-glass text-red-400 p-4 rounded-xl mb-8 border border-red-500/30 text-sm">
+            <div className="error-message" style={{
+              color: '#ef4444',
+              marginBottom: '1rem',
+              padding: '0.75rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              borderRadius: '0.5rem',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              fontSize: '0.875rem'
+            }}>
               {error}
             </div>
           )}
 
           {success && (
-            <div className="success-banner-p ultra-glass text-accent p-4 rounded-xl mb-8 border border-accent/30 text-sm">
+            <div className="success-message" style={{
+              color: '#10b981',
+              marginBottom: '1rem',
+              padding: '0.75rem',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderRadius: '0.5rem',
+              border: '1px solid rgba(16, 185, 129, 0.2)',
+              fontSize: '0.875rem'
+            }}>
               {success}
             </div>
           )}
 
-          <button 
-            type="submit" 
-            className="btn-primary-premium w-full py-4 text-lg font-black" 
+          <button
+            type="submit"
+            className="login-btn"
             disabled={isLoading}
+            style={{
+              opacity: isLoading ? 0.7 : 1,
+              cursor: isLoading ? 'not-allowed' : 'pointer'
+            }}
           >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="spinner-premium m-0 w-5 h-5 border-2"></span>
-                Processing...
-              </span>
-            ) : (isLoginMode ? 'Authorize Access' : 'Create Profile')}
+            {isLoading ? 'Please wait...' : (isLoginMode ? 'Login' : 'Create Account')}
           </button>
         </form>
 
-        <div className="login-footer-p mt-10 text-center">
-          <p className="text-slate-500 text-sm">
-            {isLoginMode ? "No security profile yet? " : "Already verified? "}
-            <button 
-              type="button" 
-              className="text-accent hover:text-white underline font-bold transition-colors" 
+        <div className="login-footer">
+          <p>
+            {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+            <button
+              type="button"
+              className="toggle-btn"
               onClick={toggleMode}
               disabled={isLoading}
             >
-              {isLoginMode ? 'Init Induction' : 'Authorize Now'}
+              {isLoginMode ? 'Create Account' : 'Login'}
             </button>
           </p>
         </div>

@@ -10,67 +10,52 @@ export default function Support({ onNavigate }) {
   }
 
   return (
-    <div className="support-container">
-      <div className="support-header">
-        <h1>Support Sentira-Law</h1>
-        <p>Help us continue our mission of making legal assistance accessible to everyone</p>
+    <div className="glass-container">
+      <div className="support-header-premium ultra-glass neon-border-primary mb-12">
+        <h1 className="text-grad-royal">Foundation Support</h1>
+        <p className="text-slate-300">Empower the mission of accessible, neural-assisted legal mediation.</p>
       </div>
 
-      <div className="support-content">
-        <section className="support-section">
-          <h2>Why Support Us?</h2>
-          <p>
-            Sentira-Law is dedicated to bridging the gap between legal services and those who need them most. 
-            Your support helps us maintain and improve our platform, ensuring that everyone has access to 
-            quality legal assistance regardless of their financial situation.
+      <div className="support-content-p grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <section className="support-card-p premium-card neon-border-accent p-8">
+          <h2 className="text-grad-ocean font-bold text-xl mb-6">Social Impact Ethos</h2>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Sentira-Law is dedicated to bridging the critical gap between elite legal services and the underserved. 
+            Your support facilitates the maintenance of our neural infrastructure, ensuring premium legal 
+            advocacy remains a universal right.
           </p>
         </section>
 
-        <section className="support-section">
-          <h2>Platform Development Support</h2>
-          <p>
-            Our platform uses cutting-edge AI technology to analyze emotional aspects of legal disputes, 
-            helping mediators and lawyers provide better support. Continuous development requires resources 
-            for server maintenance, AI model improvements, and feature enhancements.
+        <section className="support-card-p premium-card neon-border-accent p-8">
+          <h2 className="text-grad-ocean font-bold text-xl mb-6">Neural R&D Infrastructure</h2>
+          <p className="text-slate-400 text-sm leading-relaxed mb-6">
+            Our platform leverages sovereign AI systems to decode the emotional subtext of legal conflict. 
+            Sustained support ensures the integrity of our neural models and the security of our data vaults.
           </p>
-          <ul className="support-features">
-            <li>Server hosting and maintenance</li>
-            <li>AI model training and optimization</li>
-            <li>Security updates and data protection</li>
-            <li>Mobile app development</li>
+          <ul className="support-features-p space-y-3 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            <li className="flex items-center gap-3"><span className="text-accent">◈</span> Tier-1 Security Layering</li>
+            <li className="flex items-center gap-3"><span className="text-accent">◈</span> LLM Neural Optimization</li>
+            <li className="flex items-center gap-3"><span className="text-accent">◈</span> Sovereign Cloud Hosting</li>
           </ul>
         </section>
+      </div>
 
-        <section className="support-section">
-          <h2>Legal Tech Innovation</h2>
-          <p>
-            We are committed to innovating in the legal tech space. Your support enables us to:
-          </p>
-          <ul className="support-features">
-            <li>Develop new AI-powered features for case analysis</li>
-            <li>Improve emotion detection and conflict analysis</li>
-            <li>Expand our network of legal professionals</li>
-            <li>Provide free services to underprivileged communities</li>
-          </ul>
-        </section>
-
-        <div className="support-actions">
-          <button className="donate-btn" onClick={handleDonate}>
-            <span className="btn-icon">💝</span>
-            <span>Donate</span>
-          </button>
-          <button className="contact-btn" onClick={handleContactSupport}>
-            <span className="btn-icon">📧</span>
-            <span>Contact Support</span>
-          </button>
-        </div>
-
-        <div className="support-footer-note">
-          <p>
-            For partnership opportunities or institutional support, please contact us at 
-            <a href="mailto:partnerships@sentira-law.com"> partnerships@sentira-law.com</a>
-          </p>
-        </div>
+      <div className="support-actions-p ultra-glass p-12 text-center rounded-2xl">
+         <h2 className="text-white font-black text-2xl mb-8">Establish a Strategic Partnership</h2>
+         <div className="flex flex-wrap justify-center gap-6">
+            <button className="btn-primary-premium flex items-center gap-4 px-10 py-5 text-xl" onClick={handleDonate}>
+              <span className="text-2xl">💝</span>
+              <span>Contribute to Mission</span>
+            </button>
+            <button className="btn-secondary-premium flex items-center gap-4 px-10 py-5 text-xl border-white/10" onClick={handleContactSupport}>
+              <span className="text-2xl">📧</span>
+              <span>Liaison Support</span>
+            </button>
+         </div>
+         <p className="text-dim text-xs mt-10 italic">
+            For institutional synergy or sovereign partnerships: 
+            <a href="mailto:synergy@sentira.law" className="text-accent underline ml-2">synergy@sentira.law</a>
+         </p>
       </div>
     </div>
   )

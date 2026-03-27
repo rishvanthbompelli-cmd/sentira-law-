@@ -32,134 +32,122 @@ export default function LegalDocs({ onNavigate }) {
   }
 
   return (
-    <section className="legal-docs">
-      <div className="docs-container">
-        <h1>Legal Documents</h1>
-        <p className="subtitle">AI-Generated and AI-Analyzed Legal Documents</p>
-        
-        <div className="docs-grid">
-          <div className="doc-card">
-            <h3>📄 Settlement Agreement</h3>
-            <p>Generate legally compliant settlement agreements</p>
+    <section className="glass-container">
+      <div className="docs-header-premium ultra-glass neon-border-primary mb-12">
+        <h1 className="text-grad-royal">Document Intelligence</h1>
+        <p className="text-slate-300">Neural-synthesized and legally verified documentation center.</p>
+      </div>
+
+      <div className="docs-dashboard-p">
+        <div className="docs-grid-premium grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="doc-card-premium premium-card neon-border-accent hover-glow">
+            <h3 className="text-white font-bold mb-2">📄 Settlement Protocol</h3>
+            <p className="text-slate-400 text-sm">Neural-compliant settlement synthesis</p>
           </div>
-          <div className="doc-card">
-            <h3>📋 Case Summary</h3>
-            <p>Automated case analysis and summary documents</p>
+          <div className="doc-card-premium premium-card neon-border-accent hover-glow">
+            <h3 className="text-white font-bold mb-2">📋 Executive Summary</h3>
+            <p className="text-slate-400 text-sm">Automated legal narrative abstraction</p>
           </div>
-          <div className="doc-card">
-            <h3>⚖️ Legal Analysis</h3>
-            <p>Precedent-based legal analysis and recommendations</p>
+          <div className="doc-card-premium premium-card neon-border-accent hover-glow">
+            <h3 className="text-white font-bold mb-2">⚖️ Strategic Analysis</h3>
+            <p className="text-slate-400 text-sm">Precedent-driven risk vectors</p>
           </div>
-          <div className="doc-card">
-            <h3>📑 Motion Documents</h3>
-            <p>AI-assisted motion and petition generation</p>
+          <div className="doc-card-premium premium-card neon-border-accent hover-glow">
+            <h3 className="text-white font-bold mb-2">📑 Jurisdictional Motions</h3>
+            <p className="text-slate-400 text-sm">AI-assisted pleading generation</p>
           </div>
         </div>
 
-        <div className="docs-content">
-          <h2>Document Management</h2>
-          <div className="docs-list">
-            <div className="doc-item">
-              <span className="doc-icon">📄</span>
-              <div className="doc-info">
-                <h4>Contract Generated</h4>
-                <p>Automatically generated from case analysis</p>
+        <div className="docs-management-panel ultra-glass p-8 mb-12">
+          <h2 className="text-grad-ocean font-black text-xl mb-8">Asset Repository</h2>
+          <div className="docs-list-p space-y-6">
+            <div className="doc-item-p flex items-center gap-6 p-4 ultra-glass hover:bg-white/5 transition-colors rounded-xl border border-white/5">
+              <span className="text-3xl">📄</span>
+              <div className="doc-info-p">
+                <h4 className="text-white font-bold">Synthesized Contract #421</h4>
+                <p className="text-slate-400 text-sm">Generated via Case Protocol Alpha</p>
+              </div>
+              <div className="ml-auto flex gap-3">
+                 <button className="text-accent text-xs uppercase font-bold tracking-widest px-4 py-2 border border-accent/30 rounded-lg hover:bg-accent/10">Analyze</button>
+                 <button className="text-white text-xs uppercase font-bold tracking-widest px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20">Review</button>
               </div>
             </div>
-            <div className="doc-item">
-              <span className="doc-icon">✅</span>
-              <div className="doc-info">
-                <h4>Verified & Compliant</h4>
-                <p>Checked against legal standards and precedents</p>
-              </div>
-            </div>
-            <div className="doc-item">
-              <span className="doc-icon">🔗</span>
-              <div className="doc-info">
-                <h4>Easy Sharing</h4>
-                <p>Share securely with all parties</p>
+            <div className="doc-item-p flex items-center gap-6 p-4 ultra-glass hover:bg-white/5 transition-colors rounded-xl border border-white/5">
+              <span className="text-3xl text-accent">✓</span>
+              <div className="doc-info-p">
+                <h4 className="text-white font-bold">Compliance Verification</h4>
+                <p className="text-slate-400 text-sm">Validated against active legal standards</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* AI Bot Section */}
-        <div className="ai-bot-section">
-          <h2>🤖 AI Legal Assistant</h2>
-          <p className="bot-subtitle">Ask me anything about your legal documents</p>
+        <div className="ai-assistant-panel premium-card neon-border-primary p-8 mb-12">
+          <div className="assistant-header-p flex items-center gap-4 mb-8">
+             <div className="assistant-icon text-4xl">🤖</div>
+             <div>
+               <h2 className="text-grad-royal font-black text-2xl">Neural Legal Strategist</h2>
+               <p className="text-slate-400">Interrogate your document repository</p>
+             </div>
+          </div>
           
-          <div className="ai-bot-container">
-            <div className="chat-messages">
+          <div className="ai-chat-interface-p ultra-glass p-6 rounded-2xl mb-8">
+            <div className="chat-viewport space-y-6 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
               {chatMessages.map((msg, index) => (
-                <div key={index} className={`message ${msg.type}`}>
-                  {msg.type === 'bot' && <span className="bot-avatar">🤖</span>}
-                  <div className="message-content">
+                <div key={index} className={`message-p flex gap-4 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  {msg.type === 'bot' && <div className="msg-avatar text-xl">🤖</div>}
+                  <div className={`msg-bubble p-4 rounded-2xl text-sm max-w-[80%] ${
+                    msg.type === 'bot' ? 'bg-white/5 text-slate-200 rounded-tl-none border border-white/10' : 'bg-accent/20 text-white rounded-tr-none border border-accent/30'
+                  }`}>
                     {msg.text}
                   </div>
-                  {msg.type === 'user' && <span className="user-avatar">👤</span>}
+                  {msg.type === 'user' && <div className="msg-avatar text-xl">👤</div>}
                 </div>
               ))}
             </div>
 
-            <form className="chat-form" onSubmit={handleSendMessage}>
+            <form className="chat-input-wrapper-p mt-8 flex gap-3" onSubmit={handleSendMessage}>
               <input
                 type="text"
-                placeholder="Ask me about documents, agreements, legal analysis..."
+                placeholder="Query neural database (e.g. Verify compliance vectors...)"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                className="chat-input"
+                className="form-input-premium m-0 text-sm"
               />
-              <button type="submit" className="chat-send-btn">
-                Send
+              <button type="submit" className="btn-primary-premium py-0 px-8 h-[50px] whitespace-nowrap">
+                Query
               </button>
             </form>
 
-            <div className="bot-suggestions">
-              <p className="suggestions-label">Quick Actions:</p>
-              <div className="suggestion-buttons">
-                <button 
-                  className="suggestion-btn"
-                  onClick={() => setInputValue('Generate settlement agreement')}
-                >
-                  📝 Generate Agreement
-                </button>
-                <button 
-                  className="suggestion-btn"
-                  onClick={() => setInputValue('Verify document compliance')}
-                >
-                  ✅ Verify Compliance
-                </button>
-                <button 
-                  className="suggestion-btn"
-                  onClick={() => setInputValue('Summarize my case')}
-                >
-                  📋 Summarize Case
-                </button>
-              </div>
+            <div className="quick-actions-p mt-8 flex flex-wrap gap-3">
+                <button className="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors" onClick={() => setInputValue('Synthesize Settlement')}>📝 Synthesize</button>
+                <button className="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors" onClick={() => setInputValue('Verify Compliance')}>✅ Verify</button>
+                <button className="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors" onClick={() => setInputValue('Summarize Protocol')}>📋 Summarize</button>
             </div>
           </div>
         </div>
 
-        <div className="page-cta">
-          <h2>Continue Your Journey</h2>
-          <div className="cta-buttons">
+        <div className="navigation-hub-p text-center py-12 ultra-glass rounded-2xl">
+          <h2 className="text-white font-black text-2xl mb-8">Sequence Control Hub</h2>
+          <div className="flex flex-wrap justify-center gap-6">
             <button 
-              className="btn-primary btn-large"
+              className="btn-primary-premium flex items-center gap-3 px-8 text-lg"
               onClick={() => onNavigate('ai-hub')}
             >
-              ✨ Use Legal AI Assistant
+              <span>✨</span> Legal AI Hub
             </button>
             <button 
-              className="btn-secondary btn-large"
+              className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-accent/30 text-accent hover:bg-accent/10"
               onClick={() => onNavigate('mediation-bridge')}
             >
-              🤝 Back to Mediation
+              <span>🤝</span> Mediation Interface
             </button>
             <button 
-              className="btn-secondary btn-large"
+              className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-white/10"
               onClick={() => onNavigate('home')}
             >
-              🏠 Back to Home
+              <span>🏠</span> Access Base
             </button>
           </div>
         </div>
