@@ -1,4 +1,5 @@
 import React, { useState, useCallback, memo, useMemo, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCases } from '../context/CasesContext'
 import { apiUrl } from '../apiClient'
 import './CaseDashboard.css'
@@ -17,7 +18,8 @@ const SkeletonRow = memo(function SkeletonRow() {
 })
 
 // Memoized recommended lawyer item
-const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer, onNavigate }) {
+const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer }) {
+  const navigate = useNavigate()
   return (
     <div className="lawyer-item">
       <div className="lawyer-info">
@@ -25,12 +27,13 @@ const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer, onNavigate }
         <p>{lawyer.specialization}</p>
         <p className="location">📍 {lawyer.location}</p>
       </div>
-      <button onClick={() => onNavigate(`top-lawyers-${lawyer.id}`)}>View Profile</button>
+      <button onClick={() => navigate(`/lawyer/${lawyer.id}`)}>View Profile</button>
     </div>
   )
 })
 
-function CaseDashboard({ onNavigate }) {
+function CaseDashboard() {
+  const navigate = useNavigate()
   const { cases, isLoading, refreshCases } = useCases()
   const [similarCases, setSimilarCases] = useState({})
   const [loadingSimilar, setLoadingSimilar] = useState({})
@@ -198,7 +201,7 @@ function CaseDashboard({ onNavigate }) {
       {cases.length === 0 ? (
         <div className="no-case-premium premium-card neon-border-accent">
           <p className="text-slate-300 text-lg mb-6">Your legal portfolio is currently empty.</p>
-          <button className="btn-primary-premium" onClick={() => onNavigate('case-submission')}>Initiate New Case</button>
+          <button className="btn-primary-premium" onClick={() => navigate('/submit')}>Initiate New Case</button>
         </div>
       ) : (
         <div className="cases-table-section-premium ultra-glass">
@@ -295,7 +298,7 @@ function CaseDashboard({ onNavigate }) {
                                        </div>
                                        <button 
                                          className="btn-match-view"
-                                         onClick={() => onNavigate(`top-lawyers-${lawyer.id}`)}
+                                         onClick={() => navigate(`/lawyer/${lawyer.id}`)}
                                        >
                                          View Profile
                                        </button>

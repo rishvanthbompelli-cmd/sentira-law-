@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import './EmotionHeatMap.css'
 
-export default function EmotionHeatMap({ onNavigate }) {
+export default function EmotionHeatMap() {
+  const navigate = useNavigate()
   return (
     <section className="emotion-heatmap">
       <div className="heatmap-container">
@@ -38,19 +40,19 @@ export default function EmotionHeatMap({ onNavigate }) {
           <div className="cta-buttons">
             <button 
               className="btn-primary btn-large"
-              onClick={() => onNavigate('ai-hub')}
+              onClick={() => navigate('/ai-hub')}
             >
               ✨ Talk to Emotional Support AI
             </button>
             <button 
               className="btn-secondary btn-large"
-              onClick={() => onNavigate('mediation-bridge')}
+              onClick={() => navigate('/mediation-bridge')}
             >
               🤝 Start Guided Mediation
             </button>
             <button 
               className="btn-secondary btn-large"
-              onClick={() => onNavigate('legal-docs')}
+              onClick={() => navigate('/legal-docs')}
             >
               📝 Generate Agreement
             </button>

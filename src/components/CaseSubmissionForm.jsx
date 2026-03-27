@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCases } from '../context/CasesContext'
 import { apiUrl } from '../apiClient'
 import './CaseSubmissionForm.css'
 import CaseAIAnalyzer from './CaseAIAnalyzer'
 
-export default function CaseSubmissionForm({ onNavigate }) {
+export default function CaseSubmissionForm({ onLoginSuccess }) {
+  const navigate = useNavigate()
   const { addCase } = useCases()
   const [formData, setFormData] = useState({
     fullName: '',
@@ -214,7 +216,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
                 </div>
                 <button
                   className="btn-primary-premium mt-6"
-                  onClick={() => onNavigate('top-lawyers')}
+                  onClick={() => navigate('/top-lawyers')}
                 >
                   Secure Strategy Session
                 </button>
@@ -223,7 +225,7 @@ export default function CaseSubmissionForm({ onNavigate }) {
               <div className="dashboard-link-wrapper mt-8">
                 <button
                   className="text-dim hover:text-white transition-colors underline text-sm"
-                  onClick={() => onNavigate('case-dashboard')}
+                  onClick={() => navigate('/dashboard')}
                 >
                   Proceed to Case Command Center
                 </button>

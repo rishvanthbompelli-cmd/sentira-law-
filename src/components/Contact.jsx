@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { apiUrl } from '../apiClient'
 import './Contact.css'
 
-export default function Contact({ onNavigate }) {
+export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -28,10 +28,7 @@ export default function Contact({ onNavigate }) {
     setIsLoading(true)
 
     try {
-      const pythonUrl = 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/Contact-us'
-      console.log('Attempting to transmit message to Python backend...')
-      
-      const response = await fetch(pythonUrl, {
+      const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -39,20 +36,18 @@ export default function Contact({ onNavigate }) {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          phone: formData.phone,
           subject: formData.subject,
-          message: formData.message,
-          timestamp: new Date().toISOString()
+          message: formData.message
         })
       })
 
       const data = await response.json()
 
       if (data.status === 'success' || data.success) {
-        const submittedEmail = formData.email
-        setSuccess(`Message sent successfully to ${submittedEmail}!`)
+        setSuccess('Successfully saved to Database and Email Sent!')
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
         
-        // Auto-hide success message after 5 seconds
         setTimeout(() => {
           setSuccess('')
         }, 5000)
@@ -61,14 +56,10 @@ export default function Contact({ onNavigate }) {
       }
     } catch (err) {
       console.error('Contact form error:', err)
-      setError('Server is offline. Please try again later.')
+      setError('Backend server is offline. Please start the Node.js server.')
     } finally {
       setIsLoading(false)
     }
-
-
-
-
   }
 
   return (

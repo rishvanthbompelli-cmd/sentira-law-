@@ -1,7 +1,9 @@
 import './LegalDocs.css'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export default function LegalDocs({ onNavigate }) {
+export default function LegalDocs() {
+  const navigate = useNavigate()
   const [chatMessages, setChatMessages] = useState([
     { type: 'bot', text: 'Hello! I\'m your AI Legal Assistant. I can help you generate and manage legal documents. What would you like help with today?' }
   ])
@@ -133,19 +135,19 @@ export default function LegalDocs({ onNavigate }) {
           <div className="flex flex-wrap justify-center gap-6">
             <button 
               className="btn-primary-premium flex items-center gap-3 px-8 text-lg"
-              onClick={() => onNavigate('ai-hub')}
+              onClick={() => navigate('/ai-hub')}
             >
               <span>✨</span> Legal AI Hub
             </button>
             <button 
               className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-accent/30 text-accent hover:bg-accent/10"
-              onClick={() => onNavigate('mediation-bridge')}
+              onClick={() => navigate('/mediation-bridge')}
             >
               <span>🤝</span> Mediation Interface
             </button>
             <button 
               className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-white/10"
-              onClick={() => onNavigate('home')}
+              onClick={() => navigate('/')}
             >
               <span>🏠</span> Access Base
             </button>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/glass.css';
 import './AIResponseBox.css';
 
-export default function Home({ onNavigate }) {
+export default function Home() {
+  const navigate = useNavigate();
   const [caseText, setCaseText] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -137,19 +139,19 @@ export default function Home({ onNavigate }) {
           </p>
           
           <div className="features-grid">
-            <div className="feature-item cursor-pointer" onClick={() => onNavigate('case-submission')}>
+            <div className="feature-item cursor-pointer" onClick={() => navigate('/submit')}>
               <div className="feature-icon-wrapper">📝</div>
               <h3 className="feature-title">Submit a Case</h3>
               <p className="feature-desc">Start your mediation journey with our empathic AI intake system.</p>
             </div>
             
-            <div className="feature-item cursor-pointer" onClick={() => onNavigate('top-lawyers')}>
+            <div className="feature-item cursor-pointer" onClick={() => navigate('/top-lawyers')}>
               <div className="feature-icon-wrapper">⚖️</div>
               <h3 className="feature-title">Top Lawyers</h3>
               <p className="feature-desc">Connect with specialized legal professionals matched to your needs.</p>
             </div>
             
-            <div className="feature-item cursor-pointer" onClick={() => onNavigate('case-dashboard')}>
+            <div className="feature-item cursor-pointer" onClick={() => navigate('/dashboard')}>
               <div className="feature-icon-wrapper">📊</div>
               <h3 className="feature-title">Dashboard</h3>
               <p className="feature-desc">Track case progress, legal documents, and upcoming hearings.</p>
@@ -260,7 +262,7 @@ export default function Home({ onNavigate }) {
                           </div>
                           <button 
                             className="consult-btn"
-                            onClick={() => onNavigate('top-lawyers')}
+                            onClick={() => navigate('/top-lawyers')}
                           >
                             View & Book Consult
                           </button>

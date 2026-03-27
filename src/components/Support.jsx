@@ -1,6 +1,6 @@
 import './Support.css'
 
-export default function Support({ onNavigate }) {
+export default function Support() {
   const handleDonate = () => {
     alert('Thank you for your interest in donating! This feature will be available soon.')
   }

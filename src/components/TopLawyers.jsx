@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { apiUrl } from '../apiClient'
 import './TopLawyers.css'
 
@@ -285,7 +285,7 @@ export const preloadLawyers = async () => {
   return fallbackLawyers
 }
 
-export default function TopLawyers({ onNavigate }) {
+export default function TopLawyers() {
   const navigate = useNavigate()
   const [lawyers, setLawyers] = useState(getCachedLawyers)
   const [loading, setLoading] = useState(false) // Start with false since we have cached/fallback data
@@ -321,19 +321,12 @@ export default function TopLawyers({ onNavigate }) {
     setLoading(false)
   }
 
-  const handleViewProfile = (lawyer) => {
-    navigate(`/lawyer/${lawyer.id}`)
-  }
 
 
 
 
-  const handleBack = () => {
-    console.log('Returning to lawyers list')
-    if (onNavigate) {
-      onNavigate('top-lawyers')
-    }
-  }
+
+
 
 
 
@@ -392,15 +385,11 @@ export default function TopLawyers({ onNavigate }) {
                 <p className="lawyer-cases">⚖️ {lawyer.cases}+ Cases</p>
               </div>
               <div className="lawyer-actions">
-                <button 
-                  className="btn-view-profile-flagship"
-                  onClick={() => {
-                    console.log('VIEW PROFILE CLICKED for:', lawyer.name);
-                    handleViewProfile(lawyer);
-                  }}
-                >
-                  View Full Profile
-                </button>
+                <Link to={`/lawyer/${lawyer.id}`}>
+                  <button className="btn-view-profile-flagship">
+                    View profile
+                  </button>
+                </Link>
 
 
               </div>

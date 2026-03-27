@@ -1,197 +1,226 @@
 import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import './LawyerProfile.css'
 
-// Mock lawyer data - same as TopLawyers
+// Import images
+import harishSalveImg from '../../assets/harish salve.jpg'
+import kapilSibalImg from '../../assets/Kapil Sibal.jpg'
+import abhishekSinghviImg from '../../assets/Abhishek Manu Singhvi.jpg'
+import mukulRohatgiImg from '../../assets/Mukul Rohatgi.jpg'
+import gopalSubramaniumImg from '../../assets/Gopal Subramanium.jpg'
+import pinkyAnandImg from '../../assets/Pinky Anand.jpg'
+import arvindDatarImg from '../../assets/Arvind Datar.jpg'
+import salmanKhurshidImg from '../../assets/Salman Khurshid.jpg'
+import kParasaranImg from '../../assets/K. Parasaran.jpg'
+import indiraJaisingImg from '../../assets/Indira Jaising.jpg'
+
+// Lawyers data - same as TopLawyers
 const lawyersData = [
-  {
-    id: 1,
-    name: 'Adv. Priya Sharma',
-    specialization: 'Criminal Law',
-    experience: 15,
-    casesHandled: 1250,
+  { 
+    id: 1, 
+    name: "Harish Salve", 
+    photo: harishSalveImg,
+    specialization: "Constitutional Law, Corporate Law", 
+    experience: 25,
+    location: "New Delhi, India", 
+    cases: 2500,
+    description: "Senior advocate with extensive experience in constitutional matters and corporate litigation.",
+    about: "Senior advocate with extensive experience in constitutional matters and corporate litigation. Former Additional Solicitor General of India.",
+    email: "harish.salve@sentiralaw.com",
+    phone: "+91 98765 43210",
     rating: 4.9,
-    phone: '+91 98765 43210',
-    email: 'priya.sharma@lawfirm.com',
-    address: '123 Legal Avenue, Connaught Place, New Delhi',
-    bio: 'Senior criminal defense attorney with extensive experience in handling complex criminal cases. Known for strategic litigation and client-focused approach. Specializes in bail matters, criminal appeals, and white-collar crime. Has successfully defended over 1000 clients in various criminal proceedings.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400',
-    languages: ['English', 'Hindi', 'Punjabi'],
-    education: 'LLM, Harvard Law School',
-    barCouncilId: 'DL/2010/12345',
-    officeHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
-    consultationFee: '₹5,000',
-    achievements: ['Best Criminal Lawyer 2023', '1000+ Cases Won', 'High Court Bar Association Member']
+    consultationFee: "₹50,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "10:00 AM - 1:00 PM" },
+      { day: "Tuesday", time: "2:00 PM - 5:00 PM" },
+      { day: "Wednesday", time: "11:00 AM - 3:00 PM" },
+      { day: "Friday", time: "9:00 AM - 12:00 PM" }
+    ]
   },
-  {
-    id: 2,
-    name: 'Adv. Raj Khanna',
-    specialization: 'Property Law',
-    experience: 20,
-    casesHandled: 2100,
+  { 
+    id: 2, 
+    name: "Kapil Sibal", 
+    photo: kapilSibalImg,
+    specialization: "Constitutional Law, Civil Law", 
+    experience: 30,
+    location: "New Delhi, India", 
+    cases: 3200,
+    description: "Former Minister and senior counsel known for his expertise in constitutional and civil law.",
+    about: "Former Minister and senior counsel known for his expertise in constitutional and civil law. One of India's most distinguished lawyers.",
+    email: "kapil.sibal@sentiralaw.com",
+    phone: "+91 98765 43211",
     rating: 4.8,
-    phone: '+91 98765 43211',
-    email: 'raj.khanna@lawfirm.com',
-    address: '456 Justice Road, Bandra West, Mumbai',
-    bio: 'Expert property lawyer specializing in real estate disputes, title verification, and property documentation. Successfully handled 2000+ cases. Known for thorough research and attention to detail. Expert in RERA matters and builder disputes.',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400',
-    languages: ['English', 'Hindi', 'Marathi'],
-    education: 'LLB, Mumbai University',
-    barCouncilId: 'MH/2005/67890',
-    officeHours: 'Mon-Fri: 10:00 AM - 6:00 PM',
-    consultationFee: '₹7,500',
-    achievements: ['Property Law Expert', '2000+ Cases Resolved', 'RERA Certified']
+    consultationFee: "₹75,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "2:00 PM - 5:00 PM" },
+      { day: "Wednesday", time: "10:00 AM - 1:00 PM" },
+      { day: "Thursday", time: "11:00 AM - 2:00 PM" },
+      { day: "Friday", time: "3:00 PM - 6:00 PM" }
+    ]
   },
-  {
-    id: 3,
-    name: 'Adv. Anjali Menon',
-    specialization: 'Family Law',
-    experience: 12,
-    casesHandled: 890,
-    rating: 4.9,
-    phone: '+91 98765 43212',
-    email: 'anjali.menon@lawfirm.com',
-    address: '789 Family Court Lane, Richmond Road, Bangalore',
-    bio: 'Compassionate family law attorney specializing in divorce, child custody, and domestic violence cases. Known for sensitive handling of family matters. Provides emotional support alongside legal guidance.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
-    languages: ['English', 'Hindi', 'Kannada', 'Malayalam'],
-    education: 'LLM, National Law School of India University',
-    barCouncilId: 'KA/2013/45678',
-    officeHours: 'Mon-Sat: 9:00 AM - 6:00 PM',
-    consultationFee: '₹4,500',
-    achievements: ['Family Law Specialist', 'Certified Mediator', 'Women Rights Advocate']
-  },
-  {
-    id: 4,
-    name: 'Adv. Vikram Singh',
-    specialization: 'Corporate Law',
-    experience: 18,
-    casesHandled: 1560,
-    rating: 4.7,
-    phone: '+91 98765 43213',
-    email: 'vikram.singh@corporatelaw.com',
-    address: '101 Business Park, Salt Lake, Kolkata',
-    bio: 'Corporate law expert handling mergers, acquisitions, and commercial disputes. Former legal head of Fortune 500 companies. Specializes in contract law and business compliance.',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
-    languages: ['English', 'Hindi', 'Bengali'],
-    education: 'LLM, London School of Economics',
-    barCouncilId: 'WB/2007/23456',
-    officeHours: 'Mon-Fri: 10:00 AM - 7:00 PM',
-    consultationFee: '₹10,000',
-    achievements: ['Corporate Law Expert', 'Former Legal Head - MNC', 'M&A Specialist']
-  },
-  {
-    id: 5,
-    name: 'Adv. Sarah Johnson',
-    specialization: 'Criminal Law',
-    experience: 10,
-    casesHandled: 650,
-    rating: 4.8,
-    phone: '+91 98765 43214',
-    email: 'sarah.johnson@lawfirm.com',
-    address: '202 Defense Colony, Ameerpet, Hyderabad',
-    bio: 'Dynamic criminal lawyer with expertise in white-collar crime and cyber law. Specializes in corporate fraud and digital forensics. Tech-savvy attorney with modern approach.',
-    image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400',
-    languages: ['English', 'Hindi', 'Telugu'],
-    education: 'LLM, NALSAR University of Law',
-    barCouncilId: 'TS/2015/78901',
-    officeHours: 'Mon-Sat: 9:00 AM - 8:00 PM',
-    consultationFee: '₹6,000',
-    achievements: ['Cyber Law Expert', 'White Collar Crime Specialist', 'Digital Forensics Certified']
-  },
-  {
-    id: 6,
-    name: 'Adv. Amit Patel',
-    specialization: 'Property Law',
-    experience: 14,
-    casesHandled: 1100,
-    rating: 4.6,
-    phone: '+91 98765 43215',
-    email: 'amit.patel@proplaw.com',
-    address: '303 Real Estate Plaza, SG Highway, Ahmedabad',
-    bio: 'Property law specialist with deep expertise in land acquisition, builder disputes, and RERA matters. Trusted by major developers. Expert in property tax and conversion.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-    languages: ['English', 'Hindi', 'Gujarati'],
-    education: 'LLB, Gujarat National Law University',
-    barCouncilId: 'GJ/2011/34567',
-    officeHours: 'Mon-Fri: 9:00 AM - 6:00 PM',
-    consultationFee: '₹5,500',
-    achievements: ['RERA Expert', 'Developer Legal Advisor', 'Land Acquisition Specialist']
-  },
-  {
-    id: 7,
-    name: 'Adv. Meera Kapoor',
-    specialization: 'Family Law',
-    experience: 16,
-    casesHandled: 1450,
-    rating: 4.9,
-    phone: '+91 98765 43216',
-    email: 'meera.kapoor@familylaw.com',
-    address: '404 Harmony Street, Kormanagala, Chennai',
-    bio: 'Veteran family law practitioner with special focus on international divorces, inter-caste marriages, and adoption cases. Compassionate and client-focused approach.',
-    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400',
-    languages: ['English', 'Hindi', 'Tamil'],
-    education: 'LLM, Tamil Nadu Dr. Ambedkar Law University',
-    barCouncilId: 'TN/2009/56789',
-    officeHours: 'Mon-Sat: 10:00 AM - 6:00 PM',
-    consultationFee: '₹4,000',
-    achievements: ['International Family Law', 'Adoption Law Expert', 'Mediation Certified']
-  },
-  {
-    id: 8,
-    name: 'Adv. Rohit Verma',
-    specialization: 'Corporate Law',
-    experience: 11,
-    casesHandled: 780,
-    rating: 4.7,
-    phone: '+91 98765 43217',
-    email: 'rohit.verma@corplaw.in',
-    address: '505 Corporate Tower, Golf Course Road, Gurgaon',
-    bio: 'Corporate litigation expert specializing in contract disputes, intellectual property, and startup law. Advisor to 50+ startups. Focuses on practical business solutions.',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400',
-    languages: ['English', 'Hindi'],
-    education: 'LLB, Symbiosis International University',
-    barCouncilId: 'HR/2014/89012',
-    officeHours: 'Mon-Fri: 9:00 AM - 7:00 PM',
-    consultationFee: '₹8,000',
-    achievements: ['Startup Legal Advisor', 'IPR Specialist', 'Contract Expert']
-  },
-  {
-    id: 9,
-    name: 'Adv. Jennifer Dsouza',
-    specialization: 'Criminal Law',
-    experience: 8,
-    casesHandled: 420,
-    rating: 4.8,
-    phone: '+91 98765 43218',
-    email: 'jennifer.dsouza@defenselaw.com',
-    address: '606 Justice Lane, FC Road, Pune',
-    bio: 'Passionate criminal defense lawyer with expertise in bail matters, criminal appeals, and human rights law. Known for aggressive defense strategies.',
-    image: 'https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=400',
-    languages: ['English', 'Hindi', 'Marathi', 'Konkani'],
-    education: 'LLB, Maharashtra Law College',
-    barCouncilId: 'MH/2017/90123',
-    officeHours: 'Mon-Sat: 10:00 AM - 7:00 PM',
-    consultationFee: '₹3,500',
-    achievements: ['Human Rights Advocate', 'Bail Specialist', 'Criminal Appeals Expert']
-  },
-  {
-    id: 10,
-    name: 'Adv. Sanjay Gupta',
-    specialization: 'Property Law',
+  { 
+    id: 3, 
+    name: "Abhishek Manu Singhvi", 
+    photo: abhishekSinghviImg,
+    specialization: "Constitutional Law, Corporate Law", 
     experience: 22,
-    casesHandled: 2800,
+    location: "New Delhi, India", 
+    cases: 1800,
+    description: "Eminent jurist specializing in constitutional law and corporate matters.",
+    about: "Eminent jurist specializing in constitutional law and corporate matters. Senior Advocate at Supreme Court.",
+    email: "abhishek.singhvi@sentiralaw.com",
+    phone: "+91 98765 43212",
+    rating: 4.7,
+    consultationFee: "₹45,000",
+    availabilitySchedule: [
+      { day: "Tuesday", time: "9:00 AM - 12:00 PM" },
+      { day: "Wednesday", time: "2:00 PM - 5:00 PM" },
+      { day: "Thursday", time: "10:00 AM - 1:00 PM" },
+      { day: "Saturday", time: "11:00 AM - 2:00 PM" }
+    ]
+  },
+  { 
+    id: 4, 
+    name: "Mukul Rohatgi", 
+    photo: mukulRohatgiImg,
+    specialization: "Corporate Law, Constitutional Law", 
+    experience: 28,
+    location: "New Delhi, India", 
+    cases: 2100,
+    description: "Former Attorney General with vast experience in corporate and constitutional law.",
+    about: "Former Attorney General of India with vast experience in corporate and constitutional law.",
+    email: "mukul.rohatgi@sentiralaw.com",
+    phone: "+91 98765 43213",
     rating: 4.9,
-    phone: '+91 98765 43219',
-    email: 'sanjay.gupta@propertyspecialist.com',
-    address: '707 Land Registry Road, Civil Lines, Jaipur',
-    bio: 'Veteran property lawyer with unmatched expertise in title disputes, land conversion, and heritage property matters. Decades of experience in property law.',
-    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400',
-    languages: ['English', 'Hindi', 'Rajasthani'],
-    education: 'LLM, University of Rajasthan',
-    barCouncilId: 'RJ/2003/11223',
-    officeHours: 'Mon-Fri: 9:00 AM - 5:00 PM',
-    consultationFee: '₹6,500',
-    achievements: ['Senior Property Lawyer', 'Title Dispute Expert', 'Heritage Property Specialist']
+    consultationFee: "₹60,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "11:00 AM - 2:00 PM" },
+      { day: "Tuesday", time: "10:00 AM - 1:00 PM" },
+      { day: "Thursday", time: "2:00 PM - 5:00 PM" },
+      { day: "Friday", time: "10:00 AM - 1:00 PM" }
+    ]
+  },
+  { 
+    id: 5, 
+    name: "Gopal Subramanium", 
+    photo: gopalSubramaniumImg,
+    specialization: "Criminal Law, Constitutional Law", 
+    experience: 20,
+    location: "New Delhi, India", 
+    cases: 1500,
+    description: "Senior advocate known for his expertise in criminal and constitutional matters.",
+    about: "Senior advocate known for his expertise in criminal and constitutional matters. Former Solicitor General of India.",
+    email: "gopal.subramanium@sentiralaw.com",
+    phone: "+91 98765 43214",
+    rating: 4.8,
+    consultationFee: "₹40,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "2:00 PM - 5:00 PM" },
+      { day: "Wednesday", time: "9:00 AM - 12:00 PM" },
+      { day: "Friday", time: "11:00 AM - 2:00 PM" }
+    ]
+  },
+  { 
+    id: 6, 
+    name: "Pinky Anand", 
+    photo: pinkyAnandImg,
+    specialization: "Corporate Law, Civil Law", 
+    experience: 18,
+    location: "New Delhi, India", 
+    cases: 1200,
+    description: "Senior advocate with expertise in corporate law and civil litigation.",
+    about: "Senior advocate with expertise in corporate law and civil litigation. Known for her meticulous approach.",
+    email: "pinky.anand@sentiralaw.com",
+    phone: "+91 98765 43215",
+    rating: 4.7,
+    consultationFee: "₹35,000",
+    availabilitySchedule: [
+      { day: "Tuesday", time: "10:00 AM - 1:00 PM" },
+      { day: "Wednesday", time: "2:00 PM - 5:00 PM" },
+      { day: "Thursday", time: "11:00 AM - 2:00 PM" },
+      { day: "Saturday", time: "9:00 AM - 12:00 PM" }
+    ]
+  },
+  { 
+    id: 7, 
+    name: "Arvind Datar", 
+    photo: arvindDatarImg,
+    specialization: "Tax Law, Constitutional Law", 
+    experience: 32,
+    location: "Chennai, India", 
+    cases: 900,
+    description: "Renowned tax counsel with extensive experience in tax and constitutional matters.",
+    about: "Renowned tax counsel with extensive experience in tax and constitutional matters.",
+    email: "arvind.datar@sentiralaw.com",
+    phone: "+91 98765 43216",
+    rating: 4.9,
+    consultationFee: "₹55,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "10:00 AM - 1:00 PM" },
+      { day: "Wednesday", time: "11:00 AM - 2:00 PM" },
+      { day: "Friday", time: "10:00 AM - 1:00 PM" }
+    ]
+  },
+  { 
+    id: 8, 
+    name: "Salman Khurshid", 
+    photo: salmanKhurshidImg,
+    specialization: "Constitutional Law, Civil Law", 
+    experience: 35,
+    location: "New Delhi, India", 
+    cases: 2800,
+    description: "Former Law Minister with vast experience in constitutional and civil law.",
+    about: "Former Law Minister with vast experience in constitutional and civil law.",
+    email: "salman.khurshid@sentiralaw.com",
+    phone: "+91 98765 43217",
+    rating: 4.6,
+    consultationFee: "₹65,000",
+    availabilitySchedule: [
+      { day: "Tuesday", time: "2:00 PM - 5:00 PM" },
+      { day: "Thursday", time: "10:00 AM - 1:00 PM" },
+      { day: "Friday", time: "2:00 PM - 5:00 PM" }
+    ]
+  },
+  { 
+    id: 9, 
+    name: "K. Parasaran", 
+    photo: kParasaranImg,
+    specialization: "Constitutional Law, Religious Law", 
+    experience: 40,
+    location: "Chennai, India", 
+    cases: 3500,
+    description: "Former Attorney General with expertise in constitutional and religious law.",
+    about: "Former Attorney General with expertise in constitutional and religious law.",
+    email: "k.parasaran@sentiralaw.com",
+    phone: "+91 98765 43218",
+    rating: 4.9,
+    consultationFee: "₹70,000",
+    availabilitySchedule: [
+      { day: "Monday", time: "11:00 AM - 2:00 PM" },
+      { day: "Wednesday", time: "10:00 AM - 1:00 PM" },
+      { day: "Saturday", time: "10:00 AM - 1:00 PM" }
+    ]
+  },
+  { 
+    id: 10, 
+    name: "Indira Jaising", 
+    photo: indiraJaisingImg,
+    specialization: "Human Rights Law, Constitutional Law", 
+    experience: 38,
+    location: "Mumbai, India", 
+    cases: 1600,
+    description: "Leading human rights lawyer with expertise in constitutional law.",
+    about: "Leading human rights lawyer with expertise in constitutional law. First woman to become Senior Advocate in Supreme Court.",
+    email: "indira.jaising@sentiralaw.com",
+    phone: "+91 98765 43219",
+    rating: 4.8,
+    consultationFee: "₹55,000",
+    availabilitySchedule: [
+      { day: "Tuesday", time: "11:00 AM - 2:00 PM" },
+      { day: "Wednesday", time: "2:00 PM - 5:00 PM" },
+      { day: "Thursday", time: "10:00 AM - 1:00 PM" },
+      { day: "Friday", time: "11:00 AM - 2:00 PM" }
+    ]
   }
 ]
 
@@ -209,21 +238,50 @@ const cityCoordinates = {
   'Jaipur': { lat: 26.9124, lng: 75.7873 }
 }
 
-export default function LawyerProfile({ lawyerId, onNavigate }) {
+export default function LawyerProfile() {
+  const { id: lawyerId } = useParams()
+  const navigate = useNavigate()
   const [lawyer, setLawyer] = useState(null)
   const [showMap, setShowMap] = useState(false)
 
   useEffect(() => {
-    const foundLawyer = lawyersData.find(l => l.id === parseInt(lawyerId))
-    setLawyer(foundLawyer)
+    console.log('Looking for lawyer with ID:', lawyerId)
+    
+    // First try to find in hardcoded data
+    let foundLawyer = lawyersData.find(l => l.id === parseInt(lawyerId))
+    
+    // If not found, try to fetch from API
+    if (!foundLawyer) {
+      console.log('Lawyer not in hardcoded data, trying API...')
+      fetch(apiUrl('/api/lawyers'))
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.lawyers) {
+            const apiLawyer = data.lawyers.find(l => l.id === parseInt(lawyerId))
+            if (apiLawyer) {
+              console.log('Found lawyer in API:', apiLawyer)
+              setLawyer(apiLawyer)
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching lawyer from API:', error)
+        })
+    } else {
+      console.log('Found lawyer in hardcoded data:', foundLawyer)
+      setLawyer(foundLawyer)
+    }
   }, [lawyerId])
 
   if (!lawyer) {
     return (
       <div className="lawyer-profile-container">
+        <button className="back-button" onClick={() => navigate('/top-lawyers')}>
+          ← Back to Lawyers
+        </button>
         <div className="loading-state">
           <span className="loading-spinner"></span>
-          <p>Loading lawyer profile...</p>
+          <p>Lawyer not found. Please try again.</p>
         </div>
       </div>
     )
@@ -231,7 +289,7 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
 
   const getCoordinates = () => {
     for (const [city, coords] of Object.entries(cityCoordinates)) {
-      if (lawyer.address.toLowerCase().includes(city.toLowerCase())) {
+      if (lawyer.location.toLowerCase().includes(city.toLowerCase())) {
         return coords
       }
     }
@@ -255,15 +313,15 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
 
   return (
     <div className="lawyer-profile-container">
-      <button className="back-button" onClick={() => onNavigate('top-lawyers')}>
+      <button className="back-button" onClick={() => navigate('/top-lawyers')}>
         ← Back to Lawyers
       </button>
 
       <div className="profile-header">
         <div className="profile-photo">
-          <img src={lawyer.image} alt={lawyer.name} />
+          <img src={lawyer.photo} alt={lawyer.name} />
           <div className="rating-badge">
-            <span>⭐ {lawyer.rating}</span>
+            <span>⭐ {lawyer.rating}/5.0</span>
           </div>
         </div>
         
@@ -277,7 +335,7 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
               <span className="stat-text">Years Experience</span>
             </div>
             <div className="quick-stat">
-              <span className="stat-number">{lawyer.casesHandled}</span>
+              <span className="stat-number">{lawyer.cases}+</span>
               <span className="stat-text">Cases Handled</span>
             </div>
             <div className="quick-stat">
@@ -293,45 +351,42 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
           {/* Biography */}
           <section className="profile-section">
             <h2>📋 Biography</h2>
-            <p>{lawyer.bio}</p>
+            <p>{lawyer.about}</p>
+          </section>
+
+          {/* Description */}
+          <section className="profile-section">
+            <h2>📝 Professional Summary</h2>
+            <p>{lawyer.description}</p>
           </section>
 
           {/* Specialization Areas */}
           <section className="profile-section">
             <h2>⚖️ Specialization Areas</h2>
             <div className="specialization-tags">
-              <span className="spec-tag">{lawyer.specialization}</span>
-              <span className="spec-tag">Litigation</span>
-              <span className="spec-tag">Legal Consultation</span>
-              <span className="spec-tag">Case Strategy</span>
-            </div>
-          </section>
-
-          {/* Achievements */}
-          <section className="profile-section">
-            <h2>🏆 Achievements</h2>
-            <ul className="achievements-list">
-              {lawyer.achievements.map((achievement, index) => (
-                <li key={index}>{achievement}</li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Languages */}
-          <section className="profile-section">
-            <h2>🗣️ Languages</h2>
-            <div className="language-tags">
-              {lawyer.languages.map((lang, index) => (
-                <span key={index} className="language-tag">{lang}</span>
+              {lawyer.specialization.split(', ').map((spec, index) => (
+                <span key={index} className="spec-tag">{spec}</span>
               ))}
             </div>
           </section>
 
-          {/* Education */}
+          {/* Availability Schedule */}
           <section className="profile-section">
-            <h2>🎓 Education</h2>
-            <p className="education-text">{lawyer.education}</p>
-            <p className="bar-council-id">Bar Council ID: {lawyer.barCouncilId}</p>
+            <h2>📅 Availability Schedule</h2>
+            <div className="availability-list">
+              {lawyer.availabilitySchedule.map((schedule, index) => (
+                <div key={index} className="availability-item">
+                  <span className="day">{schedule.day}</span>
+                  <span className="time">{schedule.time}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Location */}
+          <section className="profile-section">
+            <h2>📍 Location</h2>
+            <p className="location-text">{lawyer.location}</p>
           </section>
         </div>
 
@@ -346,10 +401,6 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
             <div className="contact-item">
               <span className="contact-label">Email:</span>
               <span className="contact-value">{lawyer.email}</span>
-            </div>
-            <div className="contact-item">
-              <span className="contact-label">Office Hours:</span>
-              <span className="contact-value">{lawyer.officeHours}</span>
             </div>
             
             <div className="contact-buttons">
@@ -369,7 +420,7 @@ export default function LawyerProfile({ lawyerId, onNavigate }) {
           {/* Office Location */}
           <div className="location-card">
             <h3>📍 Office Location</h3>
-            <p className="office-address">{lawyer.address}</p>
+            <p className="office-address">{lawyer.location}</p>
             
             <button 
               className="btn-toggle-map"

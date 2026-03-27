@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import './HeroSection.css'
 
-export default function HeroSection({ onNavigate }) {
+export default function HeroSection() {
+  const navigate = useNavigate()
   return (
     <section className="hero-section">
       <div className="hero-content">
@@ -20,14 +22,14 @@ export default function HeroSection({ onNavigate }) {
           <div className="hero-buttons">
             <button 
               className="btn-primary btn-large"
-              onClick={() => onNavigate('sentira-ai')}
+              onClick={() => navigate('/ai-hub')}
             >
               <span className="btn-icon">🙏</span>
               Talk to Sentira
             </button>
             <button 
               className="btn-secondary btn-large"
-              onClick={() => onNavigate('conflict-analysis')}
+              onClick={() => navigate('/conflict-analysis')}
             >
               <span className="btn-icon">📚</span>
               Learn More

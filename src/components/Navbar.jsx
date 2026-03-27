@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
-export default function Navbar({ currentPage, user, onLogout }) {
+export default function Navbar({ user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const navItems = [
     { id: 'home', label: 'Home', path: '/' },
     { id: 'case-submission', label: 'Submit Case', path: '/submit' },
-    { id: 'top-lawyers', label: 'Top Lawyers', path: '/lawyers' },
+    { id: 'top-lawyers', label: 'Top Lawyers', path: '/top-lawyers' },
     { id: 'lawyer-locations', label: 'Locations', path: '/lawyer-locations' },
     { id: 'case-dashboard', label: 'Dashboard', path: '/dashboard' },
     { id: 'contact', label: 'Contact Us', path: '/contact' }
@@ -17,6 +18,12 @@ export default function Navbar({ currentPage, user, onLogout }) {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const isActive = (path) => {
+    if (path === '/' && location.pathname === '/') return true
+    if (path !== '/' && location.pathname.startsWith(path)) return true
+    return false
   }
 
   return (
@@ -34,7 +41,7 @@ export default function Navbar({ currentPage, user, onLogout }) {
             <Link
               key={item.id}
               to={item.path}
-              className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
+              className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
             >
               <span>{item.label}</span>
             </Link>
@@ -73,7 +80,7 @@ export default function Navbar({ currentPage, user, onLogout }) {
           <Link
             key={item.id}
             to={item.path}
-            className={`mobile-nav-link ${currentPage === item.id ? 'active' : ''}`}
+            className={`mobile-nav-link ${isActive(item.path) ? 'active' : ''}`}
             onClick={() => setMobileMenuOpen(false)}
           >
             <span>{item.label}</span>

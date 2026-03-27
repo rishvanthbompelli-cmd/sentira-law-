@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import QRCode from 'qrcode'
 import './QRCaseAccess.css'
 
-export default function QRCaseAccess({ caseId, onNavigate }) {
+export default function QRCaseAccess({ caseId }) {
   const [qrCode, setQrCode] = useState('')
   const [loading, setLoading] = useState(true)
 

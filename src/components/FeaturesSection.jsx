@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import './FeaturesSection.css'
 
-export default function FeaturesSection({ onNavigate }) {
+export default function FeaturesSection() {
+  const navigate = useNavigate()
   const features = [
     {
       icon: '🧠',
@@ -60,7 +62,7 @@ export default function FeaturesSection({ onNavigate }) {
             <p>Join thousands of users who have found fair, empathetic solutions through Sentira-Law.</p>
             <button 
               className="btn-primary btn-large"
-              onClick={() => onNavigate('ai-hub')}
+              onClick={() => navigate('/ai-hub')}
             >
               ✨ Start with AI Assistant
             </button>

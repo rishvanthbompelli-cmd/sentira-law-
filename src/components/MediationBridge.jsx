@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import './MediationBridge.css'
 
-export default function MediationBridge({ onNavigate }) {
+export default function MediationBridge() {
+  const navigate = useNavigate()
   return (
     <section className="glass-container">
       <div className="bridge-header-premium ultra-glass neon-border-primary mb-12">
@@ -58,19 +60,19 @@ export default function MediationBridge({ onNavigate }) {
           <div className="flex flex-wrap justify-center gap-6">
             <button 
               className="btn-primary-premium flex items-center gap-3 px-8 text-lg"
-              onClick={() => onNavigate('ai-hub')}
+              onClick={() => navigate('/ai-hub')}
             >
               <span>✨</span> Neural Coaching
             </button>
             <button 
               className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-accent/30 text-accent hover:bg-accent/10"
-              onClick={() => onNavigate('legal-docs')}
+              onClick={() => navigate('/legal-docs')}
             >
               <span>📄</span> Access Documents
             </button>
             <button 
               className="btn-secondary-premium flex items-center gap-3 px-8 text-lg border-white/10"
-              onClick={() => onNavigate('emotion-heatmap')}
+              onClick={() => navigate('/emotion-heatmap')}
             >
               <span>📊</span> Emotion Analytics
             </button>

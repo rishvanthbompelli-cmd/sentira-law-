@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import './ConflictAnalysis.css'
 
-export default function ConflictAnalysis({ onNavigate }) {
+export default function ConflictAnalysis() {
+  const navigate = useNavigate()
   return (
     <section className="conflict-analysis">
       <div className="conflict-container">
@@ -38,19 +40,19 @@ export default function ConflictAnalysis({ onNavigate }) {
           <div className="cta-buttons">
             <button 
               className="btn-primary btn-large"
-              onClick={() => onNavigate('ai-hub')}
+              onClick={() => navigate('/ai-hub')}
             >
               ✨ Ask AI Assistant
             </button>
             <button 
               className="btn-secondary btn-large"
-              onClick={() => onNavigate('emotion-heatmap')}
+              onClick={() => navigate('/emotion-heatmap')}
             >
               📊 View Emotion Patterns
             </button>
             <button 
               className="btn-secondary btn-large"
-              onClick={() => onNavigate('legal-docs')}
+              onClick={() => navigate('/legal-docs')}
             >
               📄 Review Legal Documents
             </button>

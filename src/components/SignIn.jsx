@@ -1,6 +1,6 @@
 import './SignIn.css'
 
-export default function SignIn({ onNavigate }) {
+export default function SignIn() {
   const handleSignIn = (e) => {
     e.preventDefault()
     // Add sign-in logic here

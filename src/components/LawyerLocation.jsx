@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './LawyerLocation.css'
@@ -78,7 +79,8 @@ function MapUpdater({ center, zoom }) {
   return null
 }
 
-export default function LawyerLocation({ lawyerId, onNavigate }) {
+export default function LawyerLocation({ lawyerId }) {
+  const navigate = useNavigate()
   const [selectedLawyer, setSelectedLawyer] = useState(null)
   const [mapCenter, setMapCenter] = useState([20.5937, 78.9629])
   const [zoom, setZoom] = useState(5)
@@ -124,7 +126,7 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
       return (
         <div className="glass-container">
           <div className="location-header ultra-glass neon-border-primary mb-12">
-            <button className="back-btn-premium ultra-glass mb-4" onClick={() => onNavigate('lawyer-locations')}>
+            <button className="back-btn-premium ultra-glass mb-4" onClick={() => navigate('/lawyer-locations')}>
               ← Back to Locations
             </button>
             <h1 className="text-grad-ocean">Office of {lawyer.name}</h1>
@@ -257,7 +259,7 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
               <p className="address-text">📍 {selectedLawyer.address}</p>
               <button 
                 className="consult-btn-overlay"
-                onClick={() => onNavigate(`top-lawyers-${selectedLawyer.id}`)}
+                onClick={() => navigate(`/lawyer/${selectedLawyer.id}`)}
               >
                 View Profile & Contact
               </button>

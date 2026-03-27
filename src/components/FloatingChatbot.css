@@ -80,9 +80,9 @@
   right: 0;
   width: 400px;
   height: 600px;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
@@ -106,6 +106,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .chatbot-header::before {
@@ -176,211 +177,153 @@
 }
 
 /* ============================================
-   MESSAGES AREA
+   N8N CHATBOT CONTAINER
    ============================================ */
-.chatbot-messages {
+.chatbot-n8n-container {
   flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
+  position: relative;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Override n8n chat styles for better integration */
+.chatbot-n8n-container [class*="chat"] {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.chatbot-n8n-container .n8n-chat {
+  height: 100% !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
+.chatbot-n8n-container .n8n-chat-container {
+  height: 100% !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
+/* Style the n8n chat messages area */
+.chatbot-n8n-container [class*="messages"] {
+  background: transparent !important;
+}
+
+/* Style the n8n chat input area */
+.chatbot-n8n-container [class*="input"] {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.chatbot-n8n-container [class*="input"] input {
+  background: transparent !important;
+  color: white !important;
+  border: none !important;
+}
+
+.chatbot-n8n-container [class*="input"] input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Style the n8n chat send button */
+.chatbot-n8n-container [class*="send"],
+.chatbot-n8n-container [class*="button"] {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.chatbot-n8n-container [class*="send"]:hover,
+.chatbot-n8n-container [class*="button"]:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%) !important;
+  transform: scale(1.05);
+}
+
+/* Style the n8n chat message bubbles */
+.chatbot-n8n-container [class*="message"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+  border-radius: 18px !important;
+}
+
+.chatbot-n8n-container [class*="message"][class*="user"],
+.chatbot-n8n-container [class*="message"][class*="sent"] {
+  background: linear-gradient(135deg, #312e81 0%, #4338ca 100%) !important;
+  color: white !important;
+}
+
+/* Style the n8n chat header/title */
+.chatbot-n8n-container [class*="header"],
+.chatbot-n8n-container [class*="title"] {
+  display: none !important;
+}
+
+/* Style the n8n chat welcome screen */
+.chatbot-n8n-container [class*="welcome"] {
+  background: transparent !important;
+  color: white !important;
+}
+
+.chatbot-n8n-container [class*="welcome"] h2,
+.chatbot-n8n-container [class*="welcome"] h3,
+.chatbot-n8n-container [class*="welcome"] p {
+  color: white !important;
+}
+
+/* Style the n8n chat get started button */
+.chatbot-n8n-container [class*="get-started"],
+.chatbot-n8n-container [class*="start"] {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+}
+
+.chatbot-n8n-container [class*="get-started"]:hover,
+.chatbot-n8n-container [class*="start"]:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%) !important;
+  transform: scale(1.02);
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.chatbot-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.95);
   gap: 1rem;
-  background: rgba(0, 0, 0, 0.1);
 }
 
-/* Custom Scrollbar */
-.chatbot-messages::-webkit-scrollbar {
-  width: 6px;
-}
-.chatbot-messages::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-}
-.chatbot-messages::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.4);
-  border-radius: 10px;
-}
-.chatbot-messages::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.6);
-}
-
-/* ============================================
-   CHAT MESSAGES - Glass Bubbles
-   ============================================ */
-.chat-message {
-  display: flex;
-  gap: 10px;
-  max-width: 85%;
-  animation: messageSlideIn 0.3s ease-out;
-}
-
-@keyframes messageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chat-message.user {
-  align-self: flex-end;
-  flex-direction: row-reverse;
-}
-
-/* Bot Avatar */
-.bot-avatar-s {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 800;
-  font-size: 0.85rem;
-  box-shadow: 
-    0 4px 12px rgba(99, 102, 241, 0.4),
-    0 0 20px rgba(168, 85, 247, 0.2);
-  flex-shrink: 0;
-}
-
-/* Message Bubbles */
-.message-bubble {
-  padding: 0.875rem 1.125rem;
-  border-radius: 18px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  position: relative;
-}
-
-/* AI Messages - Soft Gray/Transparent Glass */
-.chat-message.bot .message-bubble {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e2e8f0;
-  border-bottom-left-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-/* User Messages - Solid Deep Indigo */
-.chat-message.user .message-bubble {
-  background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
-  color: white;
-  border-bottom-right-radius: 6px;
-  box-shadow: 
-    0 4px 16px rgba(49, 46, 129, 0.4),
-    0 0 0 1px rgba(99, 102, 241, 0.2);
-}
-
-/* ============================================
-   INPUT AREA - Invisible with Glowing Border
-   ============================================ */
-.chatbot-input-area {
-  padding: 1rem 1.5rem;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.chatbot-input-area input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-  color: white;
-  font-size: 0.95rem;
-  padding: 0.75rem 0.5rem;
-  outline: none;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.chatbot-input-area input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.chatbot-input-area input:focus {
-  border-bottom-color: #a855f7;
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
-}
-
-/* Send Button */
-.send-btn {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border: none;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.5;
-  transform: scale(0.9);
-}
-
-.send-btn.active {
-  opacity: 1;
-  transform: scale(1);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
-}
-
-.send-btn.active:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-}
-
-.send-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ============================================
-   TYPING INDICATOR
-   ============================================ */
-.message-bubble.typing {
-  display: flex;
-  gap: 5px;
-  padding: 12px 18px;
-  align-items: center;
-}
-
-.message-bubble.typing span {
-  width: 8px;
-  height: 8px;
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #6366f1;
   border-radius: 50%;
-  animation: bounce 1.4s infinite ease-in-out;
+  animation: spin 1s linear infinite;
 }
 
-.message-bubble.typing span:nth-child(2) { 
-  animation-delay: 0.2s; 
-}
-.message-bubble.typing span:nth-child(3) { 
-  animation-delay: 0.4s; 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-@keyframes bounce {
-  0%, 80%, 100% { 
-    transform: scale(0.6);
-    opacity: 0.5;
-  }
-  40% { 
-    transform: scale(1);
-    opacity: 1;
-  }
+.chatbot-loading p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 /* ============================================
@@ -399,4 +342,44 @@
     height: 60px;
     font-size: 1.5rem;
   }
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+.chatbot-n8n-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-n8n-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.chatbot-n8n-container::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 10px;
+}
+
+.chatbot-n8n-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to n8n messages */
+.chatbot-n8n-container [class*="message"] {
+  animation: messageSlideIn 0.3s ease-out;
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiUrl } from '../apiClient'
 import './Login.css'
 
-export default function Login({ onNavigate, onLoginSuccess }) {
+export default function Login({ onLoginSuccess }) {
+  const navigate = useNavigate()
   const [isLoginMode, setIsLoginMode] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
@@ -27,50 +29,24 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     setIsLoading(true)
 
     try {
-      const isLogin = isLoginMode
-      const n8nUrl = `https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/webform`
-
-      let response
-      let data
-      let usedFallback = false
-
-      try {
-        console.log(`Attempting n8n ${isLogin ? 'login' : 'register'}...`)
-        response = await fetch(n8nUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            ...(isLogin ? {} : { name: formData.name }),
-            timestamp: new Date().toISOString()
-          })
+      const endpoint = isLoginMode ? '/api/login' : '/api/register'
+      
+      const response = await fetch(apiUrl(endpoint), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          ...(isLoginMode ? {} : { name: formData.name })
         })
-        data = await response.json()
-      } catch (n8nErr) {
-        console.warn('n8n connection failed, falling back to local backend:', n8nErr)
-        usedFallback = true
+      })
 
-        const endpoint = isLogin ? '/api/login' : '/api/register'
-        response = await fetch(apiUrl(endpoint), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            ...(isLogin ? {} : { name: formData.name })
-          })
-        })
-        data = await response.json()
-      }
+      const data = await response.json()
 
       if (data.success || data.status === 'success' || data.authenticated) {
-        setSuccess(data.message || (isLoginMode ? 'Login successful!' : 'Registration successful!'))
+        setSuccess('Successfully saved to Database and Email Sent!')
 
         const userData = data.user || {
           name: formData.name || 'Sentira User',
@@ -84,19 +60,19 @@ export default function Login({ onNavigate, onLoginSuccess }) {
 
         setFormData({ name: '', email: '', password: '' })
         if (onLoginSuccess) onLoginSuccess(userData)
-        if (onNavigate) onNavigate('home')
+        
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 1500)
       } else {
         setError(data.message || data.error || 'Authentication failed. Please check your credentials.')
       }
     } catch (err) {
       console.error('Login error:', err)
-      setError('Both n8n and local fallback failed. Please check your network and server status.')
+      setError('Backend server is offline. Please start the Node.js server.')
     } finally {
       setIsLoading(false)
     }
-
-
-
   }
 
   const toggleMode = () => {

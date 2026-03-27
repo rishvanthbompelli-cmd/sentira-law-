@@ -3,7 +3,7 @@ import { useCases } from '../context/CasesContext'
 import { apiUrl } from '../apiClient'
 import './CaseSubmissionForm.css'
 
-export default function SubmitCase({ onNavigate }) {
+export default function SubmitCase() {
   const { addCase } = useCases()
   const [formData, setFormData] = useState({
     fullName: '',
@@ -45,7 +45,6 @@ export default function SubmitCase({ onNavigate }) {
     setIsLoading(true)
 
     try {
-      // Generate unique case ID
       const newCaseId = 'CASE-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase()
 
       const response = await fetch(apiUrl('/api/cases'), {
@@ -67,14 +66,12 @@ export default function SubmitCase({ onNavigate }) {
       const data = await response.json()
 
       if (data.success) {
-        setSuccess(data.message || 'Case submitted successfully!')
+        setSuccess('Successfully saved to Database and Email Sent!')
         
-        // Store case ID if provided, otherwise use generated one
         const finalCaseId = data.caseId || newCaseId
         setCaseId(finalCaseId)
         localStorage.setItem('recentCaseId', finalCaseId)
 
-        // Add to global context so dashboard syncs
         addCase({
           caseId: finalCaseId,
           fullName: formData.fullName,
@@ -86,7 +83,6 @@ export default function SubmitCase({ onNavigate }) {
           status: 'Pending'
         })
 
-        // Clear form on success
         setFormData({
           fullName: '',
           address: '',
@@ -100,7 +96,7 @@ export default function SubmitCase({ onNavigate }) {
       }
     } catch (err) {
       console.error('Submit case error:', err)
-      setError('Connection error. Please ensure the server is running and try again.')
+      setError('Backend server is offline. Please start the Node.js server.')
     } finally {
       setIsLoading(false)
     }
@@ -134,7 +130,6 @@ export default function SubmitCase({ onNavigate }) {
       if (data.error) throw new Error(data.error)
       
       setAnalysisResult(data)
-      // Results are now displayed in the UI card below the textarea
       console.log('AI Analysis result:', data)
     } catch (err) {
       console.error('AI Analysis error:', err)

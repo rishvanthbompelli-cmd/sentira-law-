@@ -1,49 +1,70 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './FloatingChatbot.css'
 
 export default function FloatingChatbot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Namaste! I am Sentira AI. How can I help you with your legal journey today?' }
-  ])
-  const [input, setInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef(null)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const chatContainerRef = useRef(null)
+  const chatInstanceRef = useRef(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
+  // Initialize n8n chatbot when component mounts
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    const loadN8nChat = async () => {
+      try {
+        // Load n8n chat CSS
+        if (!document.querySelector('link[href*="@n8n/chat"]')) {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css'
+          document.head.appendChild(link)
+        }
 
-  const handleSend = (e) => {
-    e.preventDefault()
-    if (!input.trim()) return
-
-    const userMsg = input
-    setMessages(prev => [...prev, { type: 'user', text: userMsg }])
-    setInput('')
-    setIsTyping(true)
-
-    // Simulate AI Response
-    setTimeout(() => {
-      let botResponse = "I'm analyzing your request from a legal and emotional perspective..."
-      
-      if (userMsg.toLowerCase().includes('hello') || userMsg.toLowerCase().includes('hi')) {
-        botResponse = "Hello! I'm here to provide empathetic legal guidance. What's on your mind?"
-      } else if (userMsg.toLowerCase().includes('divorce') || userMsg.toLowerCase().includes('marriage')) {
-        botResponse = "I understand this is a sensitive situation. Under Indian law, we can explore mediation as a first step. How are you feeling?"
+        // Load n8n chat JS
+        const { createChat } = await import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js')
+        
+        if (chatContainerRef.current && !chatInstanceRef.current) {
+          chatInstanceRef.current = createChat({
+            webhookUrl: 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/e8337304-9fe3-46f0-9283-69954e4700ba/chat',
+            target: chatContainerRef.current,
+            mode: 'fullscreen',
+            loadPreviousSession: true,
+            chatInputKey: 'chatInput',
+            chatSessionKey: 'sessionId',
+            metadata: {},
+            showWelcomeScreen: false,
+            defaultLanguage: 'en',
+            initialMessages: [
+              'Namaste! I am Sentira AI, your Neural Legal Mediator. How can I assist you with your legal journey today?'
+            ],
+            i18n: {
+              en: {
+                title: 'Sentira AI',
+                subtitle: 'Neural Legal Mediator - Your empathetic legal companion',
+                footer: 'Sentira Law',
+                getStarted: 'New Conversation',
+                inputPlaceholder: 'Type your legal question...',
+              },
+            },
+          })
+          setIsLoaded(true)
+        }
+      } catch (error) {
+        console.error('Failed to load n8n chatbot:', error)
       }
-      
-      setMessages(prev => [...prev, { type: 'bot', text: botResponse }])
-      setIsTyping(false)
-    }, 1500)
-  }
+    }
 
-  // Enhanced spring animation configuration
+    loadN8nChat()
+
+    return () => {
+      // Cleanup
+      if (chatInstanceRef.current) {
+        chatInstanceRef.current = null
+      }
+    }
+  }, [])
+
+  // Spring animation configuration
   const springConfig = {
     type: "spring",
     damping: 25,
@@ -98,25 +119,6 @@ export default function FloatingChatbot() {
     }
   }
 
-  // Message animation variants
-  const messageVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 15,
-      scale: 0.95
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 300
-      }
-    }
-  }
-
   return (
     <div className="floating-chatbot-wrapper">
       <AnimatePresence mode="wait">
@@ -148,77 +150,14 @@ export default function FloatingChatbot() {
               </motion.button>
             </div>
 
-            <div className="chatbot-messages">
-              <AnimatePresence>
-                {messages.map((msg, idx) => (
-                  <motion.div 
-                    key={idx} 
-                    className={`chat-message ${msg.type}`}
-                    variants={messageVariants}
-                    initial="hidden"
-                    animate="visible"
-                    layout
-                  >
-                    {msg.type === 'bot' && (
-                      <motion.div 
-                        className="bot-avatar-s"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
-                      >
-                        S
-                      </motion.div>
-                    )}
-                    <motion.div 
-                      className="message-bubble"
-                      layout
-                    >
-                      {msg.text}
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              {isTyping && (
-                <motion.div 
-                  className="chat-message bot"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  <div className="bot-avatar-s">S</div>
-                  <div className="message-bubble typing">
-                    <span></span><span></span><span></span>
-                  </div>
-                </motion.div>
+            <div className="chatbot-n8n-container" ref={chatContainerRef}>
+              {!isLoaded && (
+                <div className="chatbot-loading">
+                  <div className="loading-spinner"></div>
+                  <p>Loading AI Assistant...</p>
+                </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
-
-            <form className="chatbot-input-area" onSubmit={handleSend}>
-              <motion.input 
-                type="text" 
-                placeholder="Type your message..." 
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                autoFocus
-                whileFocus={{ 
-                  borderBottomColor: "#a855f7",
-                  boxShadow: "0 4px 12px rgba(168, 85, 247, 0.3)"
-                }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.button 
-                type="submit" 
-                className={`send-btn ${input.trim() ? 'active' : ''}`}
-                whileHover={input.trim() ? { scale: 1.1 } : {}}
-                whileTap={input.trim() ? { scale: 0.95 } : {}}
-                disabled={!input.trim()}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </motion.button>
-            </form>
           </motion.div>
         )}
       </AnimatePresence>
