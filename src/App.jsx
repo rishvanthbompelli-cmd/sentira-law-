@@ -5,7 +5,7 @@ import './App.css'
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import CaseSubmissionForm from './components/CaseSubmissionForm'
+import SubmitCase from './components/SubmitCase'
 import TopLawyers, { preloadLawyers } from './components/TopLawyers'
 import QRCaseAccess from './components/QRCaseAccess'
 import CaseDashboard from './components/CaseDashboard'
@@ -185,7 +185,7 @@ function App() {
             <>
               {currentPage === 'home' && <Home onNavigate={handleNavigation} />}
               
-              {currentPage === 'case-submission' && <CaseSubmissionForm onNavigate={handleNavigation} />}
+              {currentPage === 'case-submission' && <SubmitCase onNavigate={handleNavigation} />}
               
               {(currentPage === 'top-lawyers' || currentPage.startsWith('top-lawyers-')) && (
                 <TopLawyers 

@@ -10,29 +10,31 @@ export default function Contact({ onNavigate }) {
     subject: '',
     message: ''
   })
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    setError('')
+    setSuccess('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
-    
+    setSuccess('')
+    setIsLoading(true)
+
     try {
-      const response = await fetch('https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/Contact-us', {
+      const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
+          fullName: formData.name,
           email: formData.email,
           phone: formData.phone,
           subject: formData.subject,
@@ -40,7 +42,12 @@ export default function Contact({ onNavigate }) {
         })
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccess(data.message || 'Message sent successfully!')
+        
+        // Clear form on success
         setFormData({
           name: '',
           email: '',
@@ -48,29 +55,15 @@ export default function Contact({ onNavigate }) {
           subject: '',
           message: ''
         })
-        setSubmitted(true)
       } else {
-        throw new Error('Failed to send message')
+        setError(data.message || 'Failed to send message. Please try again.')
       }
     } catch (err) {
       console.error('Contact form error:', err)
-      setError('Failed to send message. Please try again.')
+      setError('Connection error. Please ensure the server is running and try again.')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
-  }
-
-  if (submitted) {
-    return (
-      <div className="contact-container">
-        <div className="contact-success">
-          <div className="success-icon">✓</div>
-          <h2>Thanks for your message!</h2>
-          <p>We will get back to you shortly.</p>
-          <button onClick={() => onNavigate('case-submission')}>Back to Home</button>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -93,6 +86,7 @@ export default function Contact({ onNavigate }) {
                 onChange={handleInputChange}
                 required
                 placeholder="Enter your full name"
+                disabled={isLoading}
               />
             </div>
 
@@ -107,6 +101,7 @@ export default function Contact({ onNavigate }) {
                   onChange={handleInputChange}
                   required
                   placeholder="your.email@example.com"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -119,6 +114,7 @@ export default function Contact({ onNavigate }) {
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="+91 XXXXX XXXXX"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -133,6 +129,7 @@ export default function Contact({ onNavigate }) {
                 onChange={handleInputChange}
                 required
                 placeholder="What is this about?"
+                disabled={isLoading}
               />
             </div>
 
@@ -146,16 +143,17 @@ export default function Contact({ onNavigate }) {
                 required
                 placeholder="Describe your inquiry in detail..."
                 rows={5}
+                disabled={isLoading}
               />
             </div>
 
             {error && (
-              <div className="error-message" style={{ 
-                color: '#ef4444', 
-                marginBottom: '1rem', 
-                padding: '0.75rem', 
-                backgroundColor: 'rgba(239, 68, 68, 0.1)', 
-                borderRadius: '0.5rem', 
+              <div className="error-message" style={{
+                color: '#ef4444',
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderRadius: '0.5rem',
                 border: '1px solid rgba(239, 68, 68, 0.2)',
                 fontSize: '0.875rem'
               }}>
@@ -163,8 +161,30 @@ export default function Contact({ onNavigate }) {
               </div>
             )}
 
-            <button type="submit" className="submit-btn" disabled={loading} style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
-              {loading ? 'Sending...' : 'Send Message'}
+            {success && (
+              <div className="success-message" style={{
+                color: '#10b981',
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderRadius: '0.5rem',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                fontSize: '0.875rem'
+              }}>
+                {success}
+              </div>
+            )}
+
+            <button 
+              type="submit" 
+              className="submit-btn" 
+              disabled={isLoading}
+              style={{ 
+                opacity: isLoading ? 0.7 : 1, 
+                cursor: isLoading ? 'not-allowed' : 'pointer' 
+              }}
+            >
+              {isLoading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>

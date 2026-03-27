@@ -3,7 +3,6 @@ import cors from 'cors'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import mysql from 'mysql2/promise'
-import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -34,46 +33,6 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 })
-
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/sentira_law'
-
-// MongoDB Models
-const caseSchema = new mongoose.Schema({
-  caseId: { type: String, required: true, unique: true },
-  caseTitle: String,
-  caseType: { type: String, required: true },
-  caseDescription: { type: String, required: true },
-  uploadedDocuments: [String],
-  resolutionType: { 
-    type: String, 
-    enum: ['Mediation', 'Settlement', 'Court', 'Pending'],
-    default: 'Pending'
-  },
-  createdAt: { type: Date, default: Date.now }
-})
-
-const lawyerSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  photo: String,
-  specialization: { type: String, required: true },
-  experience: { type: Number, required: true },
-  location: { type: String, required: true },
-  about: String,
-  cases: { type: Number, default: 0 },
-  description: String,
-  email: String,
-  phone: String,
-  rating: { type: Number, default: 4.5 },
-  consultationFee: String,
-  availabilitySchedule: [{
-    day: String,
-    time: String
-  }]
-})
-
-const Case = mongoose.model('Case', caseSchema)
-const Lawyer = mongoose.model('Lawyer', lawyerSchema)
 
 // Initialize Database and Tables
 async function initDatabase() {
@@ -436,10 +395,13 @@ initMongoDB().catch(err => console.error('MongoDB init error:', err))
 
 // ============ AUTH ROUTES ============
 
-// Login Route
-app.post('/login', async (req, res) => {
+// Login Route (Original and API prefixed)
+app.post(['/login', '/api/login'], async (req, res) => {
   try {
     const { email, password } = req.body
+    
+    console.log('========== LOGIN REQUEST ==========')
+    console.log('email:', email)
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' })
@@ -482,10 +444,13 @@ app.post('/login', async (req, res) => {
   }
 })
 
-// Register Route
-app.post('/register', async (req, res) => {
+// Register Route (Original and API prefixed)
+app.post(['/register', '/api/register'], async (req, res) => {
   try {
     const { name, email, password } = req.body
+    
+    console.log('========== REGISTER REQUEST ==========')
+    console.log('name:', name, 'email:', email)
     
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' })
@@ -727,73 +692,74 @@ app.get('/api/lawyers/:id', async (req, res) => {
 app.post('/api/analyze-case', async (req, res) => {
   try {
     const { formData } = req.body
-    const apiKey = process.env.GEMINI_API_KEY
     
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Gemini API Key is missing in server/.env' })
+    console.log('========== AI ANALYSIS REQUEST (n8n) ==========')
+    console.log('Sending to n8n webhook...')
+
+    // Try both common n8n analysis endpoints if one fails
+    const n8nUrls = [
+      'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/analyze-case',
+      'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/ai-voice'
+    ]
+    
+    let n8nData = null
+    let lastError = null
+
+    for (const url of n8nUrls) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({ 
+            description: formData?.description || 'No description provided',
+            caseType: formData?.issueType || 'unknown',
+            fullName: formData?.fullName || 'Anonymous'
+          })
+        });
+
+        if (response.ok) {
+          n8nData = await response.json();
+          console.log(`Successfully received from n8n (${url}):`, n8nData)
+          break;
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`Failed to reach n8n at ${url}:`, err.message);
+      }
     }
 
-    const payload = {
-      contents: [{
-        parts: [{
-          text: `You are an expert legal AI assistant determining if a user needs a lawyer. Analyze this Indian legal scenario carefully.
-Name: ${formData?.fullName || 'Not provided'}
-Email: ${formData?.email || 'Not provided'}
-Phone: ${formData?.phone || 'Not provided'}
-Case Type: ${formData?.issueType || 'Unknown'}
-Location: ${formData?.address || 'Unknown'}
-Problem Description: "${formData?.description || ''}"
-
-Based on the details above, respond ONLY with a raw JSON object string having this exact structure (no markdown tags like \`\`\`json):
-{
-  "caseSeverity": 75,
-  "riskLevel": "High",
-  "urgencyScore": 80,
-  "toneDetection": { "aggressive": 60, "neutral": 20, "legalThreat": 20 },
-  "issuePredictions": [
-    { "category": "Criminal Defense", "confidence": 90 }
-  ],
-  "lawyerRecommendation": "Strongly Advise Lawyer - The situation involves criminal elements and requires immediate legal counsel.",
-  "insights": [
-    "Generate 3-4 professional legal insights here."
-  ]
-}
-Ensure 'lawyerRecommendation' explicitly states if a lawyer is useful or not based on the severity of their message/email.`
-        }]
-      }]
+    if (!n8nData) {
+      throw new Error(`All n8n webhook attempts failed. Last error: ${lastError?.message || 'Unknown network error'}`);
+    }
+    
+    // Normalize n8n response to match frontend expectations
+    const normalizedAnalysis = {
+      caseSeverity: n8nData.severity || n8nData.caseSeverity || 50,
+      riskLevel: n8nData.riskLevel || (n8nData.severity === 'High' ? 'High' : (n8nData.severity === 'Low' ? 'Low' : 'Medium')),
+      lawyerRecommendation: n8nData.advice || n8nData.lawyerRecommendation || n8nData.response || 'Please consult a lawyer for professional advice.',
+      insights: n8nData.steps || n8nData.insights || ['Analysis completed by AI mediator.'],
+      timestamp: new Date().toISOString()
     };
-
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
     
-    if (data.error) {
-      return res.status(500).json({ error: data.error.message || 'Error from Gemini API' });
-    }
-    
-    let textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
-    
-    const analysis = JSON.parse(textResult);
-    analysis.timestamp = new Date().toISOString();
-    
-    res.json(analysis);
+    res.json(normalizedAnalysis);
   } catch (error) {
-    console.error('AI Analysis error:', error);
-    res.status(500).json({ error: 'Failed to analyze case. Please try again.' });
+    console.error('AI Analysis error (n8n):', error.message);
+    res.status(500).json({ error: 'Failed to analyze case via n8n. ' + error.message });
   }
 })
 
 // ============ CONTACTS ROUTES ============
 
-// Submit Contact
-app.post('/api/contacts', async (req, res) => {
+// Submit Contact (Original and API prefixed alias)
+app.post(['/api/contacts', '/api/contact'], async (req, res) => {
   try {
     const { fullName, email, phone, subject, message } = req.body
+    
+    console.log('========== CONTACT SUBMISSION ==========')
+    console.log('fullName:', fullName, 'email:', email, 'subject:', subject)
     
     if (!fullName || !email || !message) {
       return res.status(400).json({ error: 'Full name, email and message are required' })
