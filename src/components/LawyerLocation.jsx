@@ -122,39 +122,47 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
     if (lawyerIndex >= 0 && lawyerIndex < lawyers.length) {
       const lawyer = lawyers[lawyerIndex]
       return (
-        <div className="lawyer-location-container">
-          <div className="location-header">
-            <button className="back-btn" onClick={() => onNavigate('lawyer-locations')}>
+        <div className="glass-container">
+          <div className="location-header ultra-glass neon-border-primary mb-12">
+            <button className="back-btn-premium ultra-glass mb-4" onClick={() => onNavigate('lawyer-locations')}>
               ← Back to Locations
             </button>
-            <h1>Office Location for {lawyer.name}</h1>
+            <h1 className="text-grad-ocean">Office of {lawyer.name}</h1>
           </div>
-          <div className="location-card">
-            <div className="location-lawyer-info">
-              <img src={lawyer.photo} alt={lawyer.name} className="location-lawyer-photo" />
-              <h2>{lawyer.name}</h2>
-              <p className="lawyer-specialization">{lawyer.specialization}</p>
-              <p className="lawyer-location">{lawyer.location}</p>
+          
+          <div className="premium-card neon-border-primary vibrant-glow-primary">
+            <div className="profile-header">
+              <div className="profile-photo-wrapper">
+                <img src={lawyer.photo} alt={lawyer.name} className="profile-photo" />
+                <div className="profile-photo-glow"></div>
+              </div>
+              <div className="profile-info">
+                <h2 className="text-grad-royal">{lawyer.name}</h2>
+                <p className="specialization-large">{lawyer.specialization}</p>
+                <div className="profile-stats-row">
+                   <p className="stat">📍 {lawyer.location}</p>
+                </div>
+              </div>
             </div>
             
-            <div className="location-address-nav">
-              <h3>Office Address</h3>
-              <p>{lawyer.address}</p>
+            <div className="contact-section ultra-glass mt-8">
+              <h3 className="text-grad-royal mb-4">Office Address</h3>
+              <p className="text-slate-200 text-lg mb-6">{lawyer.address}</p>
               
               <button 
-                className="navigate-btn mt-4"
+                className="btn-primary-premium"
                 onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${lawyer.lat},${lawyer.lng}`, '_blank')}
               >
                 🗺️ Navigate via Google Maps
               </button>
             </div>
             
-            <div className="individual-lawyer-map mt-8">
-              <div className="w-full h-full rounded-xl overflow-hidden shadow-2xl border border-slate-700" style={{ isolation: 'isolate' }}>
+            <div className="individual-lawyer-map mt-8 ultra-glass neon-border-accent p-2">
+              <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-2xl" style={{ isolation: 'isolate' }}>
                 <MapContainer 
                   center={[lawyer.lat, lawyer.lng]} 
                   zoom={14} 
-                  style={{ height: '350px', width: '100%' }}
+                  style={{ height: '100%', width: '100%' }}
                 >
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -171,17 +179,18 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
     }
   }
 
+
   return (
-    <div className="lawyer-location-container">
-      <div className="location-header">
-        <h1>Locations for Lawyers</h1>
-        <p>Find the office locations of top legal professionals in India</p>
+    <div className="glass-container">
+      <div className="location-header ultra-glass neon-border-accent vibrant-glow-accent mb-12">
+        <h1 className="text-grad-ocean">Legal Network Locations</h1>
+        <p className="text-slate-300">Explore the reach of India's most prestigious law firms and practitioners.</p>
       </div>
       
-      <div className="locations-grid max-w-7xl mx-auto px-6">
-        {/* Map Section - 70% width */}
-        <div className="locations-map-section">
-          <div className="w-full h-full">
+      <div className="locations-grid-premium">
+        {/* Map Section */}
+        <div className="locations-map-wrapper ultra-glass neon-border-primary">
+          <div className="w-full h-full relative">
             <MapContainer 
               center={mapCenter} 
               zoom={zoom} 
@@ -205,28 +214,31 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
             </MapContainer>
             
             {/* Zoom Controls */}
-            <div className="zoom-controls">
-              <button className="zoom-btn" onClick={handleZoomIn}>+</button>
-              <button className="zoom-btn" onClick={handleZoomOut}>−</button>
+            <div className="zoom-controls-premium">
+              <button className="zoom-btn-p" onClick={handleZoomIn}>+</button>
+              <button className="zoom-btn-p" onClick={handleZoomOut}>−</button>
             </div>
           </div>
         </div>
         
-        {/* Lawyer Addresses Section - 30% width */}
-        <div className="locations-list-section">
-          <h2 className="text-xl font-semibold mb-4 text-white border-b border-slate-600 pb-4">Lawyer Addresses</h2>
-          <div className="space-y-4">
+        {/* Lawyer Addresses Section */}
+        <div className="locations-list-wrapper ultra-glass">
+          <h2 className="text-xl font-bold mb-6 text-grad-ocean border-b border-white/10 pb-4">Our Offices</h2>
+          <div className="address-cards-container">
             {lawyers.map((lawyer) => (
               <div 
                 key={lawyer.id} 
-                className={`address-card ${selectedLawyer?.id === lawyer.id ? 'selected' : ''}`}
+                className={`address-card-premium ${selectedLawyer?.id === lawyer.id ? 'active' : ''}`}
                 onClick={() => handleLawyerClick(lawyer)}
               >
-                <img src={lawyer.photo} alt={lawyer.name} className="address-photo" />
-                <div className="address-info">
-                  <h4>{lawyer.name}</h4>
-                  <p className="address-location">{lawyer.address}</p>
-                  <p className="address-city">{lawyer.location}</p>
+                <div className="address-photo-wrapper">
+                  <img src={lawyer.photo} alt={lawyer.name} className="address-photo" />
+                  <div className="photo-pulse"></div>
+                </div>
+                <div className="address-details">
+                  <h4 className="text-grad-royal font-bold">{lawyer.name}</h4>
+                  <p className="addr text-slate-300">{lawyer.address}</p>
+                  <p className="city text-accent/80">{lawyer.location}</p>
                 </div>
               </div>
             ))}
@@ -235,14 +247,21 @@ export default function LawyerLocation({ lawyerId, onNavigate }) {
       </div>
 
       {selectedLawyer && (
-        <div className="selected-lawyer-card">
-          <button className="close-btn" onClick={handleBack}>×</button>
-          <img src={selectedLawyer.photo} alt={selectedLawyer.name} className="selected-photo" />
-          <div className="selected-info">
-            <h3>{selectedLawyer.name}</h3>
-            <p>{selectedLawyer.specialization}</p>
-            <p>{selectedLawyer.address}</p>
-            <p>{selectedLawyer.location}</p>
+        <div className="selected-lawyer-overlay-card premium-card neon-border-primary vibrant-glow-primary">
+          <button className="close-overlay-btn" onClick={handleBack}>×</button>
+          <div className="overlay-flex">
+            <img src={selectedLawyer.photo} alt={selectedLawyer.name} className="overlay-photo" />
+            <div className="overlay-info">
+              <h3 className="text-grad-royal font-bold">{selectedLawyer.name}</h3>
+              <p className="specialization-text">{selectedLawyer.specialization}</p>
+              <p className="address-text">📍 {selectedLawyer.address}</p>
+              <button 
+                className="consult-btn-overlay"
+                onClick={() => onNavigate(`top-lawyers-${selectedLawyer.id}`)}
+              >
+                View Profile & Contact
+              </button>
+            </div>
           </div>
         </div>
       )}

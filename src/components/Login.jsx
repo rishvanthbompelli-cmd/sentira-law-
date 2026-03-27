@@ -91,114 +91,99 @@ export default function Login({ onNavigate, onLoginSuccess }) {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="login-logo">⚖️</div>
-          <h1>{isLoginMode ? 'Welcome Back' : 'Create Account'}</h1>
-          <p>
+    <div className="glass-container flex items-center justify-center p-0">
+      <div className="login-card-premium premium-card neon-border-primary vibrant-glow-primary max-w-[500px] w-full mt-[10vh]">
+        <div className="login-header-p text-center mb-10">
+          <div className="login-logo-p text-5xl mb-6">⚖️</div>
+          <h1 className="text-grad-royal text-3xl font-black mb-2">{isLoginMode ? 'Vance Authenticator' : 'Neural Induction'}</h1>
+          <p className="text-slate-400">
             {isLoginMode
-              ? 'Sign in to access your Sentira-Law dashboard'
-              : 'Join Sentira-Law to submit cases and connect with lawyers'}
+              ? 'Access your secure legal command interface'
+              : 'Initialize your presence in the Sentira legal network'}
           </p>
         </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="login-form-p" onSubmit={handleSubmit}>
           {!isLoginMode && (
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+            <div className="form-group mb-6">
+              <label className="form-label-premium">Legal Identity (Name)</label>
               <input
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required={!isLoginMode}
-                placeholder="Enter your full name"
+                className="form-input-premium"
+                placeholder="Full Legal Name"
                 disabled={isLoading}
               />
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+          <div className="form-group mb-6">
+            <label className="form-label-premium">Digital Key (Email)</label>
             <input
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              placeholder="your.email@example.com"
+              className="form-input-premium"
+              placeholder="identity@sentira.law"
               disabled={isLoading}
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="form-group mb-8">
+            <label className="form-label-premium">Security Cipher (Password)</label>
             <input
               type="password"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
               required
-              placeholder="Enter your password"
+              className="form-input-premium"
+              placeholder="••••••••••••"
               disabled={isLoading}
             />
           </div>
 
           {error && (
-            <div className="error-message" style={{
-              color: '#ef4444',
-              marginBottom: '1rem',
-              padding: '0.75rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              borderRadius: '0.5rem',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              fontSize: '0.875rem'
-            }}>
+            <div className="error-card-premium ultra-glass text-red-400 p-4 rounded-xl mb-8 border border-red-500/30 text-sm">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="success-message" style={{
-              color: '#10b981',
-              marginBottom: '1rem',
-              padding: '0.75rem',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              borderRadius: '0.5rem',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              fontSize: '0.875rem'
-            }}>
+            <div className="success-banner-p ultra-glass text-accent p-4 rounded-xl mb-8 border border-accent/30 text-sm">
               {success}
             </div>
           )}
 
           <button 
             type="submit" 
-            className="login-btn" 
+            className="btn-primary-premium w-full py-4 text-lg font-black" 
             disabled={isLoading}
-            style={{ 
-              opacity: isLoading ? 0.7 : 1, 
-              cursor: isLoading ? 'not-allowed' : 'pointer' 
-            }}
           >
-            {isLoading ? 'Please wait...' : (isLoginMode ? 'Login' : 'Create Account')}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="spinner-premium m-0 w-5 h-5 border-2"></span>
+                Processing...
+              </span>
+            ) : (isLoginMode ? 'Authorize Access' : 'Create Profile')}
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>
-            {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+        <div className="login-footer-p mt-10 text-center">
+          <p className="text-slate-500 text-sm">
+            {isLoginMode ? "No security profile yet? " : "Already verified? "}
             <button 
               type="button" 
-              className="toggle-btn" 
+              className="text-accent hover:text-white underline font-bold transition-colors" 
               onClick={toggleMode}
               disabled={isLoading}
             >
-              {isLoginMode ? 'Create Account' : 'Login'}
+              {isLoginMode ? 'Init Induction' : 'Authorize Now'}
             </button>
           </p>
         </div>

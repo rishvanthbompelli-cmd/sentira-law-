@@ -341,41 +341,51 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
   if (selectedLawyer) {
     return (
       <div className="lawyer-profile-container">
-        <button className="back-btn" onClick={handleBack}>
-          ← Back to Lawyers
+        <button className="back-btn-premium ultra-glass" onClick={handleBack}>
+          ← Back to Network
         </button>
         
-        <div className="profile-card">
+        <div className="premium-card neon-border-primary vibrant-glow-primary">
           <div className="profile-header">
-            <img 
-              src={selectedLawyer.photo} 
-              alt={selectedLawyer.name} 
-              className="profile-photo"
-            />
+            <div className="profile-photo-wrapper">
+              <img 
+                src={selectedLawyer.photo} 
+                alt={selectedLawyer.name} 
+                className="profile-photo"
+              />
+              <div className="profile-photo-glow"></div>
+            </div>
             <div className="profile-info">
-              <h2>{selectedLawyer.name}</h2>
-              <p className="specialization">{selectedLawyer.specialization}</p>
-              <p className="location">📍 {selectedLawyer.location}</p>
-              <p className="experience">💼 {selectedLawyer.experience} Years Experience</p>
-              <p className="cases">⚖️ {selectedLawyer.cases}+ Cases Handled</p>
+              <h2 className="text-grad-royal">{selectedLawyer.name}</h2>
+              <p className="specialization-large">{selectedLawyer.specialization}</p>
+              <div className="profile-stats-row">
+                 <p className="stat">📍 {selectedLawyer.location}</p>
+                 <p className="stat">💼 {selectedLawyer.experience} Years Exp</p>
+                 <p className="stat">⚖️ {selectedLawyer.cases}+ Cases</p>
+              </div>
+              <div className="rating-badge">⭐ {selectedLawyer.rating} / 5.0</div>
             </div>
           </div>
           
           <div className="profile-body">
-            <h3>About</h3>
-            <p>{selectedLawyer.about || selectedLawyer.description}</p>
+            <h3 className="text-grad-ocean">Biography</h3>
+            <p className="bio-text">{selectedLawyer.about || selectedLawyer.description}</p>
             
-            <h3>Contact</h3>
-            <p>Email: {selectedLawyer.email}</p>
-            <p>Phone: {selectedLawyer.phone}</p>
+            <div className="contact-section ultra-glass">
+              <h3 className="text-grad-royal">Direct Contact</h3>
+              <div className="contact-grid">
+                <p><span>📧</span> {selectedLawyer.email}</p>
+                <p><span>📱</span> {selectedLawyer.phone}</p>
+                <p><span>💰</span> Fee: {selectedLawyer.consultationFee}</p>
+              </div>
+            </div>
 
-            {/* Availability Schedule */}
-            <h3>Available Consultation Times</h3>
+            <h3 className="text-grad-gold">Available Consultation Times</h3>
             <div className="availability-schedule">
               {selectedLawyer.availabilitySchedule && selectedLawyer.availabilitySchedule.length > 0 ? (
                 <div className="schedule-grid">
                   {selectedLawyer.availabilitySchedule.map((slot, index) => (
-                    <div key={index} className="schedule-item">
+                    <div key={index} className="schedule-item-premium ultra-glass">
                       <span className="day">{slot.day}</span>
                       <span className="time">{slot.time}</span>
                     </div>
@@ -387,10 +397,10 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
             </div>
             
             <button 
-              className="btn-view-location-profile"
+              className="btn-primary-premium mt-8"
               onClick={() => onNavigate(`lawyer-locations-${selectedLawyer.id}`)}
             >
-              📍 View Location on Map
+              📍 Find Office Location
             </button>
           </div>
         </div>
@@ -402,13 +412,13 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
   if (loading) {
     return (
       <div className="lawyers-container">
-        <div className="lawyers-header">
-          <h1>Top Indian Lawyers</h1>
-          <p>Expert legal professionals ready to help with your case</p>
+        <div className="lawyers-header ultra-glass neon-border-accent">
+          <h1 className="text-grad-ocean">Top Indian Lawyers</h1>
+          <p className="text-slate-300">Expert legal professionals ready to help with your case</p>
         </div>
         <div className="lawyers-grid">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="lawyer-card skeleton-card">
+            <div key={i} className="lawyer-card-premium premium-card skeleton-card">
               <div className="skeleton skeleton-photo"></div>
               <div className="skeleton skeleton-name"></div>
               <div className="skeleton skeleton-spec"></div>
@@ -423,38 +433,43 @@ export default function TopLawyers({ onNavigate, lawyerId }) {
 
   return (
     <div className="lawyers-container">
-      <div className="lawyers-header">
-        <h1>Top Indian Lawyers</h1>
-        <p>Expert legal professionals ready to help with your case</p>
+      <div className="lawyers-header ultra-glass neon-border-accent vibrant-glow-accent">
+        <h1 className="text-grad-ocean">Top Indian Lawyers</h1>
+        <p className="text-slate-300">Expert legal professionals ready to help with your case</p>
       </div>
 
       <div className="lawyers-grid">
         {lawyers.map((lawyer) => (
           <div 
             key={lawyer.id} 
-            className="lawyer-card w-full"
+            className="lawyer-card-premium premium-card"
           >
-            <img 
-              src={lawyer.photo} 
-              alt={lawyer.name} 
-              className="lawyer-photo"
-              loading="lazy"
-            />
+            <div className="lawyer-photo-wrapper">
+              <img 
+                src={lawyer.photo} 
+                alt={lawyer.name} 
+                className="lawyer-photo"
+                loading="lazy"
+              />
+              <div className="photo-glow"></div>
+            </div>
             <div className="lawyer-info">
-              <h3>{lawyer.name}</h3>
-              <p className="lawyer-specialization">{lawyer.specialization}</p>
-              <p className="lawyer-location">{lawyer.location}</p>
-              <p className="lawyer-experience">{lawyer.experience} Years Experience</p>
-              <p className="lawyer-cases">{lawyer.cases}+ Cases</p>
+              <h3 className="text-grad-royal">{lawyer.name}</h3>
+              <p className="lawyer-specialization-badge">{lawyer.specialization}</p>
+              <div className="lawyer-stats-grid">
+                <p className="lawyer-location">📍 {lawyer.location}</p>
+                <p className="lawyer-experience">💼 {lawyer.experience} Yrs Exp</p>
+                <p className="lawyer-cases">⚖️ {lawyer.cases}+ Cases</p>
+              </div>
               <div className="lawyer-actions">
                 <button 
-                  className="btn-view-profile"
+                  className="btn-view-profile-premium"
                   onClick={(e) => {
                     e.stopPropagation()
                     handleViewProfile(lawyer)
                   }}
                 >
-                  View Profile
+                  View Full Profile
                 </button>
               </div>
             </div>

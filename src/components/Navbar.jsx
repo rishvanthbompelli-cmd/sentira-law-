@@ -18,7 +18,7 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0f172a] shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-100 ultra-glass border-b border-white/10 shadow-2xl">
       <div className="navbar-container">
         {/* Left Section - Logo */}
         <a href="#" className="navbar-left" onClick={() => onNavigate('home')}>
@@ -58,10 +58,10 @@ export default function Navbar({ currentPage, onNavigate, user, onLogout }) {
             </button>
           )}
           <button 
-            className="btn-new-case"
+            className="btn-primary-premium flex items-center gap-2 px-6 py-2"
             onClick={() => onNavigate('case-submission')}
           >
-            <span className="btn-new-case-icon">+</span>
+            <span className="text-xl">+</span>
             <span>New Case</span>
           </button>
         </div>

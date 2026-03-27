@@ -191,36 +191,41 @@ export default function CaseSubmissionForm({ onNavigate }) {
 
   if (submitted) {
     return (
-      <div className="form-container">
-        <div className="success-message">
-          <div className="success-icon">✅</div>
-          <h2>Case Submitted Successfully!</h2>
-          <p className="case-id">Case ID: <strong>{caseId}</strong></p>
+      <div className="glass-container">
+        <div className="success-message-premium premium-card neon-border-primary vibrant-glow-primary">
+          <div className="success-icon-wrapper">
+             <div className="success-icon-p">✨</div>
+             <div className="success-ripple"></div>
+          </div>
+          <h2 className="text-grad-royal text-3xl font-black mb-4">Submission Captured</h2>
+          <p className="case-id-p text-slate-300 mb-8">
+            Your unique legal identifier: <span className="text-accent font-mono text-xl block mt-2">{caseId}</span>
+          </p>
 
           {suggestedLawyer && (
-            <div className="suggested-lawyer-submit-container">
-              <h3 className="lawyer-match-title">Case Analysis Complete</h3>
-              <p className="lawyer-match-desc">Based on your case details, we highly recommend consulting with:</p>
+            <div className="suggested-lawyer-panel ultra-glass mt-12">
+              <h3 className="text-grad-ocean font-bold text-xl mb-4">Immediate AI Recommendation</h3>
+              <p className="text-slate-400 mb-8">Our neural matching engine has identified an optimal legal strategist for your specific scenario.</p>
 
-              <div className="lawyer-details-card">
-                <div className="lawyer-info">
-                  <p className="lawyer-name">{suggestedLawyer.name}</p>
-                  <p className="lawyer-specialization">{suggestedLawyer.specialization}</p>
+              <div className="lawyer-match-p ultra-glass p-6">
+                <div className="l-details">
+                  <p className="l-name text-white font-black text-2xl">{suggestedLawyer.name}</p>
+                  <p className="l-spec text-accent font-bold">{suggestedLawyer.specialization}</p>
                 </div>
                 <button
-                  className="book-consult-btn"
+                  className="btn-primary-premium mt-6"
                   onClick={() => onNavigate('top-lawyers')}
                 >
-                  View Lawyer Profile & Book
+                  Secure Strategy Session
                 </button>
               </div>
 
-              <div className="skip-link-container">
+              <div className="dashboard-link-wrapper mt-8">
                 <button
-                  className="skip-link-btn"
+                  className="text-dim hover:text-white transition-colors underline text-sm"
                   onClick={() => onNavigate('case-dashboard')}
                 >
-                  Skip and go to Dashboard
+                  Proceed to Case Command Center
                 </button>
               </div>
             </div>
@@ -231,84 +236,100 @@ export default function CaseSubmissionForm({ onNavigate }) {
   }
 
   return (
-    <div className="form-container">
-      <div className="form-header">
-        <h1>Submit Your Case</h1>
-        <p>Fill in the details below to submit your legal case</p>
+    <div className="glass-container">
+      <div className="form-header-premium ultra-glass neon-border-accent mb-12">
+        <h1 className="text-grad-ocean">Case Initiation</h1>
+        <p className="text-slate-300">Submit your legal scenario for neural analysis and expert matching.</p>
+        
+        <div className="form-steps-indicator mt-8">
+          <div className="step-item active">
+            <span className="step-num">1</span>
+            <span className="step-txt">Identity</span>
+          </div>
+          <div className="step-line"></div>
+          <div className="step-item active">
+            <span className="step-num">2</span>
+            <span className="step-txt">Context</span>
+          </div>
+        </div>
       </div>
 
-      <form className="case-form" onSubmit={handleSubmit}>
-        <div className="form-section">
-          <h2>Personal Information</h2>
+      <form className="case-form-premium" onSubmit={handleSubmit}>
+        <div className="form-section-premium premium-card neon-border-primary mb-10">
+          <h2 className="text-grad-royal font-black text-xl mb-8 flex items-center gap-3">
+             <span className="text-2xl">👤</span> Personal Profile
+          </h2>
 
-          <div className="form-group">
-            <label htmlFor="fullName">Full Name *</label>
+          <div className="form-group mb-6">
+            <label className="form-label-premium">Full Legal Identity</label>
             <input
               type="text"
-              id="fullName"
               name="fullName"
               value={formData.fullName}
               onChange={handleInputChange}
               required
-              placeholder="Enter your full legal name"
+              className="form-input-premium"
+              placeholder="e.g. Alexander Vance"
             />
           </div>
 
-          <div className="form-row">
+          <div className="form-row-premium">
             <div className="form-group">
-              <label htmlFor="phone">Phone Number *</label>
+              <label className="form-label-premium">Contact Protocol (Tel)</label>
               <input
                 type="tel"
-                id="phone"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
                 required
+                className="form-input-premium"
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email ID *</label>
+              <label className="form-label-premium">Digital Correspondence (Email)</label>
               <input
                 type="email"
-                id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                placeholder="your.email@example.com"
+                className="form-input-premium"
+                placeholder="identity@sentira.law"
               />
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="address">Address *</label>
+          <div className="form-group mt-6">
+            <label className="form-label-premium">Residency / Service Address</label>
             <textarea
-              id="address"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
               required
-              placeholder="Enter your full address"
+              className="form-input-premium"
+              placeholder="Enter comprehensive physical address..."
               rows={3}
             />
           </div>
         </div>
 
-        <div className="form-section">
-          <h2>Case Details</h2>
+        <div className="form-section-premium premium-card neon-border-accent">
+          <h2 className="text-grad-ocean font-black text-xl mb-8 flex items-center gap-3">
+             <span className="text-2xl">⚖️</span> Scenario Parameters
+          </h2>
 
-          <div className="form-group">
-            <label htmlFor="issueType">Type of Legal Issue *</label>
+          <div className="form-group mb-8">
+            <label className="form-label-premium">Jurisdiction / Issue Category</label>
             <select
-              id="issueType"
               name="issueType"
               value={formData.issueType}
               onChange={handleInputChange}
               required
+              className="form-input-premium"
             >
-              <option value="">Select Issue Type</option>
+              <option value="">Select Domain</option>
               {issueTypes.map(type => (
                 <option key={type.value} value={type.value}>{type.label}</option>
               ))}
@@ -316,33 +337,47 @@ export default function CaseSubmissionForm({ onNavigate }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="caseDesc">Problem Description *</label>
-            <div>
+            <label className="form-label-premium">Detailed Narrative Breakdown</label>
+            <div className="relative">
               <textarea
-                id="caseDesc"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 required
-                placeholder="Describe your legal issue in detail..."
+                className="form-input-premium min-h-[200px]"
+                placeholder="Provide a comprehensive breakdown of the legal conflict..."
                 rows={5}
               />
-              <CaseAIAnalyzer description={formData.description} />
+              <div className="mt-6">
+                <CaseAIAnalyzer description={formData.description} />
+              </div>
             </div>
           </div>
         </div>
 
+        {error && (
+          <div className="error-card-premium ultra-glass text-red-400 p-6 rounded-xl mt-8 border border-red-500/30 flex items-center gap-4">
+             <span className="text-2xl">⚠️</span>
+             <div>
+               <p className="font-bold">System Interference</p>
+               <p className="text-sm opacity-80">{error}</p>
+             </div>
+          </div>
+        )}
 
-
-        {error && <div className="error-message bg-red-900/50 border border-red-500 text-red-200 p-4 rounded-lg mb-6">{error}</div>}
-
-        <button type="submit" className="submit-btn" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <><span className="ai-spinner mr-2" style={{ display: 'inline-block', verticalAlign: 'middle' }}></span>Submitting...</>
-          ) : (
-            'Submit Case'
-          )}
-        </button>
+        <div className="submit-section-premium mt-12 text-center">
+          <button type="submit" className="btn-primary-premium w-full text-xl py-6" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-4">
+                <span className="spinner-premium m-0 w-6 h-6 border-2"></span>
+                Processing Neural Submission...
+              </span>
+            ) : (
+              'Initiate Case Protocol'
+            )}
+          </button>
+          <p className="text-dim text-xs mt-6 uppercase tracking-widest opacity-50">Sentira Secure Encryption Active (256-bit)</p>
+        </div>
       </form>
     </div>
   )
