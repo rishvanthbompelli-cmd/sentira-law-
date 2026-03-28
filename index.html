@@ -12,10 +12,28 @@
         padding: 0;
         border: 0;
       }
+      /* Override styles for layout */
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script type="module">
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+      createChat({
+        webhookUrl: 'https://basinlike-hermila-nonmeditative.ngrok-free.dev/webhook/e8337304-9fe3-46f0-9283-69954e4700ba/chat',
+        mode: 'window',
+        initialMessages: ['Welcome to Sentira Law. How can I assist you with your legal matters today?'],
+        showWelcomeScreen: false,
+        i18n: {
+          en: {
+            title: 'Sentira AI Liaison',
+            subtitle: 'Neural Legal Mediator'
+          }
+        }
+      });
+    </script>
   </body>
 </html>

@@ -59,6 +59,35 @@ export default function Home() {
         </div>
       </div>
 
+      {/* How Sentira Law Works Section */}
+      <div className="premium-card neon-border-accent" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+        <div className="glass-content">
+          <h2 className="hero-title text-grad-ocean">How Sentira Law Works</h2>
+          <p className="hero-subtitle">
+            An intuitive 3-step process combining emotional intelligence with legal expertise.
+          </p>
+          <div className="features-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+            <div className="feature-item cursor-pointer">
+              <div className="feature-icon-wrapper" style={{ fontSize: '2rem' }}>1️⃣</div>
+              <h3 className="feature-title">AI Case Analysis</h3>
+              <p className="feature-desc">Submit your case details to our advanced emotional AI, which evaluates both the legal merits and the emotional context of your dispute.</p>
+            </div>
+            
+            <div className="feature-item cursor-pointer">
+              <div className="feature-icon-wrapper" style={{ fontSize: '2rem' }}>2️⃣</div>
+              <h3 className="feature-title">Strategic Matching</h3>
+              <p className="feature-desc">Based on the analysis, our system intelligently matches you with top-tier specialized lawyers perfectly suited for your specific situation.</p>
+            </div>
+
+            <div className="feature-item cursor-pointer">
+              <div className="feature-icon-wrapper" style={{ fontSize: '2rem' }}>3️⃣</div>
+              <h3 className="feature-title">Guided Resolution</h3>
+              <p className="feature-desc">Navigate negotiations and court proceedings through our secure dashboard, with continuous support from both your legal team and AI mediator.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* About Sentira Law Section */}
       <div className="premium-card about-section vibrant-glow-primary">
         <div className="glass-content">

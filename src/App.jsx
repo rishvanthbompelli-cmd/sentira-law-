@@ -83,8 +83,7 @@ function AppContent({ user, setUser, currentPage, setCurrentPage, handleLoginSuc
 
       </main>
 
-      {/* Floating AI Chatbot - Only visible when logged in */}
-      {user && <FloatingChatbot />}
+      {/* Floating AI Chatbot - Removed in favor of n8n bot */}
     </div>
   )
 }

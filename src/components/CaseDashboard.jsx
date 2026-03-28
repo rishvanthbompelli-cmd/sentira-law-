@@ -34,10 +34,11 @@ const RecommendedLawyer = memo(function RecommendedLawyer({ lawyer }) {
 
 function CaseDashboard() {
   const navigate = useNavigate()
-  const { cases, isLoading, refreshCases } = useCases()
+  const { cases, isLoading, refreshCases, deleteCase } = useCases()
   const [similarCases, setSimilarCases] = useState({})
   const [loadingSimilar, setLoadingSimilar] = useState({})
   const [selectedCaseId, setSelectedCaseId] = useState(null)
+  const [deletingCaseId, setDeletingCaseId] = useState(null)
   
   // Refs to store current state values for use in callbacks
   const similarCasesRef = useRef({})
@@ -97,6 +98,22 @@ function CaseDashboard() {
       fetchSimilarCases(caseId)
     }
   }, [fetchSimilarCases])
+
+  // Handle case deletion
+  const handleDeleteCase = useCallback(async (caseId) => {
+    if (!window.confirm('Are you sure you want to delete this case? This action cannot be undone.')) {
+      return
+    }
+    setDeletingCaseId(caseId)
+    try {
+      await deleteCase(caseId)
+    } catch (error) {
+      console.error('Error deleting case:', error)
+      alert('Failed to delete case. Please try again.')
+    } finally {
+      setDeletingCaseId(null)
+    }
+  }, [deleteCase])
 
   // Format the issue type for display
   const formatIssueType = useMemo(() => (type) => {

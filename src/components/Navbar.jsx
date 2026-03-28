@@ -1,11 +1,30 @@
-import { useState } from 'react'
-import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import './Navbar.css'
 
 export default function Navbar({ user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const navigate = useNavigate()
-  const location = useLocation()
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Add scrolled class if scrolled down more than 20px
+      if (window.scrollY > 20) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
 
   const navItems = [
     { id: 'home', label: 'Home', path: '/' },
@@ -16,77 +35,80 @@ export default function Navbar({ user, onLogout }) {
     { id: 'contact', label: 'Contact Us', path: '/contact' }
   ]
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
-
-  const isActive = (path) => {
-    if (path === '/' && location.pathname === '/') return true
-    if (path !== '/' && location.pathname.startsWith(path)) return true
-    return false
-  }
-
   return (
-    <nav className="fixed top-0 left-0 w-full z-[100] ultra-glass border-b border-white/10 shadow-2xl">
-      <div className="navbar-container">
-        {/* Left Section - Logo */}
-        <Link to="/" className="navbar-left">
-          <div className="navbar-logo-icon">⚖️</div>
-          <span className="navbar-logo-text uppercase tracking-widest font-black">Sentira-Law</span>
-        </Link>
+    <motion.div 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`navbar-wrapper ${scrolled ? 'scrolled' : ''}`}
+    >
+      <nav className="navbar-glass">
+        <div className="navbar-container">
+          {/* Left Section - Logo */}
+          <Link to="/" className="navbar-left">
+            <div className="navbar-logo-icon">⚖️</div>
+            <span className="navbar-logo-text">Sentira-Law</span>
+          </Link>
 
-        {/* Center Section - Navigation Links */}
-        <div className="navbar-center">
+          {/* Center Section - Navigation Links */}
+          <div className="navbar-center">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                // react-router-dom NavLink provides the active class automatically
+                className={({ isActive }) => `nav-link ${isActive && item.path !== '/' ? 'active' : ''}`}
+                // Specific override for home to only be active on exact root
+                end={item.path === '/'}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Right Section - Buttons and Hamburger */}
+          <div className="navbar-right">
+            {user ? (
+              <button className="btn-ghost" onClick={onLogout}>
+                Logout
+              </button>
+            ) : (
+              <Link to="/login" className="btn-login-ghost">
+                Login
+              </Link>
+            )}
+            
+            <Link to="/submit" className="btn-new-case">
+              <span className="btn-new-case-icon">+</span>
+              <span>New Case</span>
+            </Link>
+
+            {/* Mobile Hamburger Menu */}
+            <button 
+              className={`mobile-menu-btn ${mobileMenuOpen ? 'open' : ''}`} 
+              onClick={toggleMobileMenu}
+              aria-label="Toggle Navigation"
+            >
+              <div className="hamburger-icon"></div>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown */}
+        <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item.id}
               to={item.path}
-              className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
+              className={({ isActive }) => `mobile-nav-link ${isActive && item.path !== '/' ? 'active' : ''}`}
+              end={item.path === '/'}
+              onClick={() => setMobileMenuOpen(false)}
             >
-              <span>{item.label}</span>
-            </Link>
+              {item.label}
+            </NavLink>
           ))}
         </div>
-
-        {/* Right Section - New Case Button and Logout */}
-        <div className="navbar-right">
-          {user ? (
-            <button className="btn-logout" onClick={onLogout}>
-              Logout
-            </button>
-          ) : (
-            <Link to="/login" className="btn-login">
-              <span>Login</span>
-            </Link>
-          )}
-          <Link 
-            to="/submit"
-            className="btn-primary-premium flex items-center gap-2 px-6 py-2 no-underline"
-          >
-            <span className="text-xl">+</span>
-            <span>New Case</span>
-          </Link>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
-          <span className="mobile-menu-icon">{mobileMenuOpen ? '✕' : '☰'}</span>
-        </button>
-      </div>
-
-      {/* Mobile Dropdown */}
-      <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
-        {navItems.map((item) => (
-          <Link
-            key={item.id}
-            to={item.path}
-            className={`mobile-nav-link ${isActive(item.path) ? 'active' : ''}`}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </div>
-    </nav>
+      </nav>
+    </motion.div>
   )
 }
