@@ -318,7 +318,7 @@ export default function LawyerProfile() {
       </button>
 
       <div className="profile-header">
-        <div className="profile-photo">
+        <div className="lp-profile-photo">
           <img src={lawyer.photo} alt={lawyer.name} />
           <div className="rating-badge">
             <span>⭐ {lawyer.rating}/5.0</span>
@@ -424,24 +424,10 @@ export default function LawyerProfile() {
             
             <button 
               className="btn-toggle-map"
-              onClick={() => setShowMap(!showMap)}
+              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lawyer.name + ', ' + lawyer.location)}`, '_blank')}
             >
-              {showMap ? 'Hide Map' : '🗺️ View on Map'}
+              🗺️ View Directions on Map
             </button>
-            
-            {showMap && (
-              <div className="map-container">
-                <iframe
-                  title="Office Location"
-                  width="100%"
-                  height="250"
-                  style={{ border: 0, borderRadius: '10px' }}
-                  loading="lazy"
-                  allowFullScreen
-                  src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d${coords.lng}!3d${coords.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM3DCsDU1JzAwLjAiTiA3N8KwMzUnMjAuNCJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin`}
-                />
-              </div>
-            )}
           </div>
 
           {/* AI Recommendation */}

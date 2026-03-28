@@ -4,6 +4,13 @@
   padding: 2rem;
   position: relative;
   z-index: 1;
+
+  /* Explicit color variables to fix text visibility on the light card backgrounds */
+  --primary-color: #4f46e5;
+  --secondary-color: #818cf8;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  color: var(--text-primary);
 }
 
 .back-button {
@@ -32,7 +39,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.profile-photo {
+.lp-profile-photo {
   position: relative;
   width: 200px;
   height: 200px;
@@ -41,7 +48,7 @@
   flex-shrink: 0;
 }
 
-.profile-photo img {
+.lp-profile-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -375,7 +382,7 @@
     text-align: center;
   }
   
-  .profile-photo {
+  .lp-profile-photo {
     width: 150px;
     height: 150px;
   }

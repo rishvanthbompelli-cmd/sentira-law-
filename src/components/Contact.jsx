@@ -4,7 +4,7 @@ import './Contact.css'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     phone: '',
     subject: '',
@@ -28,13 +28,14 @@ export default function Contact() {
     setIsLoading(true)
 
     try {
+      // Fixed: Backend expects 'fullName', frontend was sending 'name'
       const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
+          fullName: formData.fullName,
           email: formData.email,
           phone: formData.phone,
           subject: formData.subject,
@@ -45,148 +46,194 @@ export default function Contact() {
       const data = await response.json()
 
       if (data.status === 'success' || data.success) {
-        setSuccess('Successfully saved to Database and Email Sent!')
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+        setSuccess('Your message has been securely transmitted. A legal specialist will contact you shortly.')
+        setFormData({ fullName: '', email: '', phone: '', subject: '', message: '' })
         
         setTimeout(() => {
           setSuccess('')
-        }, 5000)
+        }, 8000)
       } else {
-        setError(data.message || 'Submission failed. Please check your inputs.')
+        setError(data.message || data.error || 'Transmission failed. Please verify your inputs.')
       }
     } catch (err) {
       console.error('Contact form error:', err)
-      setError('Backend server is offline. Please start the Node.js server.')
+      setError('Communication link offline. Please ensure the Sentira secure server is active.')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="glass-container">
-      <div className="contact-header-premium ultra-glass neon-border-primary mb-12">
-        <h1 className="text-grad-royal">Connect with Sentira</h1>
-        <p className="text-slate-300">
-          Neural-assisted client support and strategic legal inquiries.
-          Our specialists are ready to analyze your scenario.
-        </p>
-      </div>
+    <div className="contact-page-wrapper">
+      <div className="contact-container-premium">
+        <div className="contact-grid">
+          {/* Left Side: Contact Information */}
+          <div className="contact-info-panel ultra-glass">
+            <div className="info-header">
+              <span className="premium-badge">Contact Us</span>
+              <h1 className="text-grad-royal">Connect with <br/>Sentira Law</h1>
+              <p className="subtitle">Neural-assisted client support and strategic legal inquiries.</p>
+            </div>
 
-      <div className="contact-content-premium">
-        <div className="contact-form-wrapper premium-card neon-border-accent vibrant-glow-accent">
-          <form className="contact-form-p" onSubmit={handleSubmit}>
-            <div className="form-group mb-6">
-              <label className="form-label-premium" htmlFor="contact-name">Full Name</label>
+            <div className="contact-details-list">
+              <div className="detail-item">
+                <div className="icon-box">📍</div>
+                <div className="detail-content">
+                  <h3>Legal Command Center</h3>
+                  <p>Cyber City, Phase II, Gurugram, India</p>
+                </div>
+              </div>
 
-              <input
-                type="text"
-                id="contact-name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                className="form-input-premium relative z-10"
-                placeholder="Full Name"
+              <div className="detail-item">
+                <div className="icon-box">📧</div>
+                <div className="detail-content">
+                  <h3>Digital Correspondence</h3>
+                  <p>strategy@sentira.law</p>
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <div className="icon-box">📞</div>
+                <div className="detail-content">
+                  <h3>Priority Line</h3>
+                  <p>+91 (0124) 456-7890</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="status-indicator">
+              <div className="pulse-dot"></div>
+              <span>Sentira AI is currently online & processing inquiries</span>
+            </div>
+          </div>
+
+          {/* Right Side: Contact Form */}
+          <div className="contact-form-panel premium-card neon-border-primary">
+            <form onSubmit={handleSubmit} className="premium-form">
+              <div className="form-section-title">
+                <h2>Send Message</h2>
+                <div className="title-underline"></div>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="fullName">Full Name</label>
+                <div className="input-wrapper">
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Enter your legal name"
+                    disabled={isLoading}
+                  />
+                  <div className="input-glow"></div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="input-group">
+                  <label htmlFor="email">Email Address</label>
+                  <div className="input-wrapper">
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="identity@sentira.law"
+                      disabled={isLoading}
+                    />
+                    <div className="input-glow"></div>
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <div className="input-wrapper">
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="+91 XXXXX XXXXX"
+                      disabled={isLoading}
+                    />
+                    <div className="input-glow"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="subject">Subject</label>
+                <div className="input-wrapper">
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Topic of Consultation"
+                    disabled={isLoading}
+                  />
+                  <div className="input-glow"></div>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="message">Detailed Message</label>
+                <div className="input-wrapper">
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Describe your legal requirement in detail..."
+                    rows={4}
+                    disabled={isLoading}
+                  />
+                  <div className="input-glow"></div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="form-feedback error ultra-glass animate-fade-in">
+                  <span className="icon">⚠️</span>
+                  <p>{error}</p>
+                </div>
+              )}
+
+              {success && (
+                <div className="form-feedback success ultra-glass animate-fade-in">
+                  <span className="icon">✨</span>
+                  <p>{success}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className={`btn-submit-premium ${isLoading ? 'loading' : ''}`}
                 disabled={isLoading}
-              />
-
-            </div>
-
-            <div className="form-row-premium mb-6">
-              <div className="form-group">
-                <label className="form-label-premium" htmlFor="contact-email">Email Address</label>
-
-                <input
-                  type="email"
-                  id="contact-email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="form-input-premium relative z-10"
-                  placeholder="identity@sentira.law"
-                  disabled={isLoading}
-                />
-
-              </div>
-
-              <div className="form-group">
-                <label className="form-label-premium" htmlFor="contact-phone">Phone Number</label>
-
-                <input
-                  type="tel"
-                  id="contact-phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="form-input-premium relative z-10"
-                  placeholder="+91 XXXXX XXXXX"
-                  disabled={isLoading}
-                />
-
-              </div>
-            </div>
-
-            <div className="form-group mb-6">
-              <label className="form-label-premium" htmlFor="contact-subject">Subject</label>
-
-              <input
-                type="text"
-                id="contact-subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-                required
-                className="form-input-premium relative z-10"
-                placeholder="Subject of Consultation"
-                disabled={isLoading}
-              />
-
-            </div>
-
-            <div className="form-group mb-8">
-              <label className="form-label-premium" htmlFor="contact-message">Detailed Message</label>
-
-              <textarea
-                id="contact-message"
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-                className="form-input-premium relative z-10 min-h-[150px]"
-                placeholder="Describe your legal inquiry or technical requirement in detail..."
-                rows={5}
-                disabled={isLoading}
-              />
-
-            </div>
-
-            {error && (
-              <div className="error-card-premium ultra-glass text-red-400 p-4 rounded-xl mb-6 border border-red-500/30 text-sm">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="success-banner-p ultra-glass text-accent p-4 rounded-xl mb-6 border border-accent/30 text-sm text-center">
-                ✨ {success}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn-primary-premium w-full py-4 text-lg font-black"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="spinner-premium m-0 w-5 h-5 border-2"></span>
-                  Sending...
-                </span>
-              ) : 'Send Message'}
-            </button>
-
-          </form>
+              >
+                {isLoading ? (
+                  <span className="loader-container">
+                    <span className="spinner-s"></span>
+                    Transmitting...
+                  </span>
+                ) : (
+                  <>
+                    <span>Send Protocol</span>
+                    <span className="btn-arrow">→</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

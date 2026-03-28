@@ -7,7 +7,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import SubmitCase from './components/SubmitCase'
-import TopLawyers, { preloadLawyers } from './components/TopLawyers'
+import TopLawyers from './components/TopLawyers'
 import LawyerProfile from './components/LawyerProfile'
 import QRCaseAccess from './components/QRCaseAccess'
 import CaseDashboard from './components/CaseDashboard'
@@ -28,8 +28,13 @@ import { CasesProvider, preloadCases } from './context/CasesContext'
 function AppContent({ user, setUser, currentPage, setCurrentPage, handleLoginSuccess, handleLogout }) {
   const location = useLocation()
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
   return (
-    <div className="app-container">
+    <div className="app">
       
       {/* Background */}
       <div className="animated-background">
@@ -102,7 +107,6 @@ function App() {
 
   // 🔹 Preload data
   useEffect(() => {
-    preloadLawyers().catch(() => { })
     preloadCases().catch(() => { })
   }, [])
 

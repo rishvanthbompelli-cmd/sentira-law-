@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { apiUrl } from '../apiClient'
 import './TopLawyers.css'
-
 
 // Import images individually to ensure correct mapping
 import harishSalveImg from '../../assets/harish salve.jpg'
@@ -14,7 +13,21 @@ import pinkyAnandImg from '../../assets/Pinky Anand.jpg'
 import arvindDatarImg from '../../assets/Arvind Datar.jpg'
 import salmanKhurshidImg from '../../assets/Salman Khurshid.jpg'
 import kParasaranImg from '../../assets/K. Parasaran.jpg'
-import indiraJaisingImg from '../../assets/Indira Jaising.jpg'
+import indiraJaisingImg from '../../assets/indira jaising.jpg'
+
+// Preload lawyers data
+export const preloadLawyers = async () => {
+  try {
+    const response = await fetch(apiUrl('/api/lawyers'))
+    if (response.ok) {
+      const data = await response.json()
+      return data.lawyers || []
+    }
+  } catch (error) {
+    console.log('Preload lawyers failed:', error.message)
+  }
+  return []
+}
 
 // Fallback lawyers data for when API is not available
 const fallbackLawyers = [
@@ -226,74 +239,15 @@ const fallbackLawyers = [
   }
 ]
 
-// Cache for lawyers data - using localStorage for persistence
-const CACHE_KEY = 'sentira_lawyers_cache'
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
-// Get cached lawyers from localStorage or return fallback
-const getCachedLawyers = () => {
-  try {
-    const cached = localStorage.getItem(CACHE_KEY)
-    if (cached) {
-      const { data, timestamp } = JSON.parse(cached)
-      if (Date.now() - timestamp < CACHE_DURATION) {
-        return data
-      }
-    }
-  } catch (e) {
-    console.log('Cache read error:', e.message)
-  }
-  return fallbackLawyers
-}
-
-// Save lawyers to localStorage cache
-const saveLawyersToCache = (lawyers) => {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      data: lawyers,
-      timestamp: Date.now()
-    }))
-  } catch (e) {
-    console.log('Cache save error:', e.message)
-  }
-}
-
-// Preload lawyers data (called from App.jsx)
-export const preloadLawyers = async () => {
-  try {
-    const response = await fetch(apiUrl('/api/lawyers'))
-    const data = await response.json()
-    if (data.success && data.lawyers && data.lawyers.length > 0) {
-      const mappedLawyers = data.lawyers.map((lawyer, index) => ({
-        ...lawyer,
-        photo: fallbackLawyers[index]?.photo || lawyer.photo,
-        cases: lawyer.cases || fallbackLawyers[index]?.cases || 0,
-        description: lawyer.description || fallbackLawyers[index]?.description || lawyer.about,
-        about: lawyer.about || fallbackLawyers[index]?.about || lawyer.description,
-        rating: lawyer.rating || fallbackLawyers[index]?.rating || 4.5,
-        consultationFee: lawyer.consultationFee || fallbackLawyers[index]?.consultationFee || "₹30,000",
-        email: lawyer.email || fallbackLawyers[index]?.email || "info@sentiralaw.com",
-        phone: lawyer.phone || fallbackLawyers[index]?.phone || "+91 98765 43210",
-        availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
-      }))
-      saveLawyersToCache(mappedLawyers)
-      return mappedLawyers
-    }
-  } catch (error) {
-    console.log('Preload failed, using fallback:', error.message)
-  }
-  return fallbackLawyers
-}
 
 export default function TopLawyers() {
-  const navigate = useNavigate()
-  const [lawyers, setLawyers] = useState(getCachedLawyers)
-  const [loading, setLoading] = useState(false) // Start with false since we have cached/fallback data
+  const [lawyers, setLawyers] = useState(fallbackLawyers)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Refresh data from server in background, but don't block rendering
     fetchLawyers()
-  }, []) // Empty dependency - only run once on mount
+  }, [])
 
   const fetchLawyers = async () => {
     try {
@@ -302,6 +256,7 @@ export default function TopLawyers() {
       if (data.success && data.lawyers && data.lawyers.length > 0) {
         const mappedLawyers = data.lawyers.map((lawyer, index) => ({
           ...lawyer,
+          id: lawyer.id || index + 1,
           photo: fallbackLawyers[index]?.photo || lawyer.photo,
           cases: lawyer.cases || fallbackLawyers[index]?.cases || 0,
           description: lawyer.description || fallbackLawyers[index]?.description || lawyer.about,
@@ -313,89 +268,97 @@ export default function TopLawyers() {
           availabilitySchedule: lawyer.availabilitySchedule || fallbackLawyers[index]?.availabilitySchedule || []
         }))
         setLawyers(mappedLawyers)
-        saveLawyersToCache(mappedLawyers)
       }
     } catch (error) {
-      console.log('Using cached/fallback lawyer data:', error.message)
+      console.log('Using fallback lawyer data:', error.message)
     }
     setLoading(false)
   }
 
-
-
-
-
-
-
-
-
-
-
-  // Skeleton loader
   if (loading) {
     return (
-      <div className="lawyers-container">
-        <div className="lawyers-header ultra-glass neon-border-accent">
-          <h1 className="text-grad-ocean">Top Indian Lawyers</h1>
-          <p className="text-slate-300">Expert legal professionals ready to help with your case</p>
-        </div>
-        <div className="lawyers-grid">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="lawyer-card-premium premium-card skeleton-card">
-              <div className="skeleton skeleton-photo"></div>
-              <div className="skeleton skeleton-name"></div>
-              <div className="skeleton skeleton-spec"></div>
-              <div className="skeleton skeleton-loc"></div>
-              <div className="skeleton skeleton-btn"></div>
-            </div>
-          ))}
+      <div className="lawyers-page-wrapper loading">
+        <div className="premium-loader-box">
+          <div className="spinner-l"></div>
+          <p>Syncing with Legal Database...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="lawyers-container">
-      <div className="lawyers-header ultra-glass neon-border-accent vibrant-glow-accent">
-        <h1 className="text-grad-ocean">Top Indian Lawyers</h1>
-        <p className="text-slate-300">Expert legal professionals ready to help with your case</p>
-      </div>
+    <div className="lawyers-page-wrapper">
+      <div className="lawyers-container-premium">
+        <div className="lawyers-header-premium ultra-glass">
+          <span className="premium-badge">Directory</span>
+          <h1 className="text-grad-ocean">Top Lawyers</h1>
+          <p className="subtitle">Connect with India's most distinguished legal minds, curated for complex litigation and strategic advisory.</p>
+        </div>
 
-      <div className="lawyers-grid">
-        {lawyers.map((lawyer) => (
-          <div 
-            key={lawyer.id} 
-            className="lawyer-card-premium premium-card"
-          >
-            <div className="lawyer-photo-wrapper">
-              <img 
-                src={lawyer.photo} 
-                alt={lawyer.name} 
-                className="lawyer-photo"
-                loading="lazy"
-              />
-              <div className="photo-glow"></div>
-            </div>
-            <div className="lawyer-info">
-              <h3 className="text-grad-royal">{lawyer.name}</h3>
-              <p className="lawyer-specialization-badge">{lawyer.specialization}</p>
-              <div className="lawyer-stats-grid">
-                <p className="lawyer-location">📍 {lawyer.location}</p>
-                <p className="lawyer-experience">💼 {lawyer.experience} Yrs Exp</p>
-                <p className="lawyer-cases">⚖️ {lawyer.cases}+ Cases</p>
+        <div className="lawyers-grid-premium">
+          {lawyers.map((lawyer) => (
+            <div key={lawyer.id} className="lawyer-card-premium premium-card neon-border-primary">
+              <div className="lc-card-inner">
+                {/* Left Column: Photo & Rating */}
+                <div className="lc-left-col">
+                  <div className="lc-image-wrapper">
+                    <img src={lawyer.photo} alt={lawyer.name} className="lc-image" />
+                    <div className="lc-rating">⭐ {lawyer.rating}</div>
+                  </div>
+                  <div className="lc-status">
+                    <span className="dot"></span> Available
+                  </div>
+                </div>
+
+                {/* Right Column: Info & Actions */}
+                <div className="lc-right-col">
+                  <div className="lc-body">
+                    <h3 className="lc-name">{lawyer.name}</h3>
+                    <div className="lc-spec-badge">{lawyer.specialization}</div>
+                    
+                    <div className="lc-details-grid">
+                      <div className="lc-detail-item">
+                        <span className="icon">📍</span>
+                        <span className="label">Location:</span>
+                        <span className="value">{lawyer.location}</span>
+                      </div>
+                      <div className="lc-detail-item">
+                        <span className="icon">💼</span>
+                        <span className="label">Experience:</span>
+                        <span className="value">{lawyer.experience} Years</span>
+                      </div>
+                      <div className="lc-detail-item">
+                        <span className="icon">⚖️</span>
+                        <span className="label">Cases Handled:</span>
+                        <span className="value">{lawyer.cases}+ High-Stake</span>
+                      </div>
+                      <div className="lc-detail-item">
+                        <span className="icon">💸</span>
+                        <span className="label">Consultation Fee:</span>
+                        <span className="value">{lawyer.consultationFee}</span>
+                      </div>
+                    </div>
+
+                    <p className="lc-description">{lawyer.description}</p>
+                  </div>
+
+                  <div className="lc-footer">
+                    <button 
+                      className="lc-btn location-btn"
+                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lawyer.name + ' ' + lawyer.location)}`, '_blank')}
+                    >
+                      <span className="btn-icon">🗺️</span> View Location
+                    </button>
+                    <Link to={`/lawyer/${lawyer.id}`} className="lc-btn primary">
+                      Consult Now
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <div className="lawyer-actions">
-                <Link to={`/lawyer/${lawyer.id}`}>
-                  <button className="btn-view-profile-flagship">
-                    View profile
-                  </button>
-                </Link>
-
-
-              </div>
+              <div className="lc-glow"></div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )
